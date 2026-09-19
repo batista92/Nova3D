@@ -1,0 +1,81 @@
+# =========================================
+# C# / .NET / Visual Studio
+# =========================================
+
+# Diretórios de compilação e saída
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]uild/
+[Ll]og/
+[Ll]ogs/
+
+# Arquivos de configuração de usuário do Visual Studio
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Pasta de configurações ocultas do Visual Studio
+.vs/
+
+# NuGet (Pacotes)
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Arquivos de teste e cobertura de código
+*.trx
+*.coverage
+*.coveragexml
+
+# =========================================
+# MonoGame Específico
+# =========================================
+
+# Arquivos compilados do Content Pipeline (XNB)
+# O MonoGame moderno compila os assets para a pasta bin/, mas se você tiver 
+# uma estrutura antiga ou personalizada, isso garante que os XNB não sejam commitados.
+**/Content/bin/
+**/Content/obj/
+**/*.xnb
+
+# Cache e arquivos temporários do MonoGame Content Builder (MGCB)
+**/.mgcache/
+*.mgcb.meta
+
+# Arquivos temporários gerais
+*.tmp
+
+# =========================================
+# Sistema Operacional (Windows / macOS / Linux)
+# =========================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+._*
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~
+.directory*
