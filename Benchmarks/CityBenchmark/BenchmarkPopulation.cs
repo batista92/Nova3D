@@ -1,30 +1,33 @@
-using CityBuilder.Tests.Vegetation;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nova3D.Rendering;
+using Nova3D.Rendering.Instancing;
 
 namespace CityBuilder.Benchmarks.CityBenchmark;
 
 internal sealed class BenchmarkPopulation : IDisposable
 {
-    private readonly InstanceBatch _buildings;
-    private readonly InstanceBatch _vehicles;
+    private readonly InstancedMeshBatch _buildings;
+    private readonly InstancedMeshBatch _vehicles;
 
     public BenchmarkPopulation(GraphicsDevice device)
     {
-        _buildings = new InstanceBatch(device, CreateBuildingMesh(device), CreateBuildings(), 1900f, 15f);
-        _vehicles = new InstanceBatch(device, CreateVehicleMesh(device), CreateVehicles(), 1300f, 4f);
+        _buildings = new InstancedMeshBatch(device, CreateBuildingMesh(device), CreateBuildings(),
+            1900f, 15f, Vector3.Up * 7.5f);
+        _vehicles = new InstancedMeshBatch(device, CreateVehicleMesh(device), CreateVehicles(),
+            1300f, 4f, Vector3.Up * 2f);
     }
 
     public int VisibleBuildings => _buildings.VisibleCount;
     public int VisibleVehicles => _vehicles.VisibleCount;
+    public int CandidateCount => _buildings.LastCandidateCount + _vehicles.LastCandidateCount;
     public int DrawCalls => _buildings.DrawCalls + _vehicles.DrawCalls;
     public long VisibleTriangles => _buildings.VisibleTriangles + _vehicles.VisibleTriangles;
 
-    public void Update(Matrix view, Matrix projection, Vector3 cameraPosition)
+    public void Update(Camera3D camera)
     {
-        _buildings.Update(view, projection, cameraPosition);
-        _vehicles.Update(view, projection, cameraPosition);
+        _buildings.Update(camera);
+        _vehicles.Update(camera);
     }
 
     public void Draw(GraphicsDevice device, Effect effect)
@@ -123,61 +126,4 @@ internal sealed class BenchmarkPopulation : IDisposable
         _vehicles.Dispose();
     }
 
-    private sealed class InstanceBatch : IDisposable
-    {
-        private readonly Mesh _mesh;
-        private readonly Matrix[] _transforms;
-        private readonly InstanceVertex[] _visible;
-        private readonly DynamicVertexBuffer _instances;
-        private readonly float _cullDistance;
-        private readonly float _boundsRadius;
-
-        public InstanceBatch(GraphicsDevice device, Mesh mesh, Matrix[] transforms, float cullDistance, float boundsRadius)
-        {
-            _mesh = mesh;
-            _transforms = transforms;
-            _visible = new InstanceVertex[transforms.Length];
-            _instances = new DynamicVertexBuffer(device, InstanceVertex.VertexDeclaration, transforms.Length, BufferUsage.WriteOnly);
-            _cullDistance = cullDistance;
-            _boundsRadius = boundsRadius;
-        }
-
-        public int VisibleCount { get; private set; }
-        public int DrawCalls => VisibleCount > 0 ? 1 : 0;
-        public long VisibleTriangles => (long)VisibleCount * _mesh.PrimitiveCount;
-
-        public void Update(Matrix view, Matrix projection, Vector3 cameraPosition)
-        {
-            VisibleCount = 0;
-            var frustum = new BoundingFrustum(view * projection);
-            foreach (var transform in _transforms)
-            {
-                var position = transform.Translation;
-                if (Vector3.DistanceSquared(cameraPosition, position) > _cullDistance * _cullDistance ||
-                    frustum.Contains(new BoundingSphere(position + Vector3.Up * (_boundsRadius * 0.5f), _boundsRadius)) == ContainmentType.Disjoint)
-                    continue;
-                _visible[VisibleCount++] = new InstanceVertex(transform);
-            }
-            if (VisibleCount > 0)
-                _instances.SetData(_visible, 0, VisibleCount, SetDataOptions.Discard);
-        }
-
-        public void Draw(GraphicsDevice device, Effect effect)
-        {
-            if (VisibleCount == 0) return;
-            device.SetVertexBuffers(new VertexBufferBinding(_mesh.VertexBuffer), new VertexBufferBinding(_instances, 0, 1));
-            device.Indices = _mesh.IndexBuffer;
-            foreach (var pass in effect.CurrentTechnique.Passes)
-            {
-                pass.Apply();
-                device.DrawInstancedPrimitives(PrimitiveType.TriangleList, 0, 0, _mesh.PrimitiveCount, VisibleCount);
-            }
-        }
-
-        public void Dispose()
-        {
-            _instances.Dispose();
-            _mesh.Dispose();
-        }
-    }
 }

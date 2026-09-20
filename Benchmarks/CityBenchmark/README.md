@@ -35,3 +35,17 @@ dotnet run --project .\CityBuilder.csproj -c Release
 ```
 
 `F1` alterna os modos de diagnóstico das cascatas de sombra.
+# Controles
+
+- `WASD`, `Q/E`: mover a câmera;
+- botão direito + mouse: olhar ao redor;
+- `Shift`: movimento rápido;
+- `F1`: debug das cascatas de sombra;
+- `F2`: deformação runtime do terreno;
+- `F3`: geometria de debug;
+- `F4`: alternar entre o benchmark da cidade e a galeria de validação GLB.
+
+A cidade procedural inicia ativa. A galeria procura arquivos locais em
+`LocalAssets/Models/validation` e pode ser aberta com `F4`. Essa pasta não faz
+parte do Git. O título mostra quantos GLBs foram carregados e quantos falharam;
+detalhes ficam em `Logs/citybuilder.log`.

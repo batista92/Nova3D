@@ -16,6 +16,13 @@ public sealed class ForwardLitMaterial : Material
         MaterialMode = materialMode;
     }
 
+    public ForwardLitMaterial(string name, Func<Effect> effectProvider, Vector3 lightDirection,
+        float materialMode = 0f, string? technique = null) : base(name, effectProvider, technique)
+    {
+        LightDirection = Vector3.Normalize(lightDirection);
+        MaterialMode = materialMode;
+    }
+
     public Vector3 LightDirection { get; set; }
     public float MaterialMode { get; set; }
 

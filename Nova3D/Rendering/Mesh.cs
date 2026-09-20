@@ -36,6 +36,31 @@ public sealed class Mesh : IDisposable
         return new Mesh(vertexBuffer, indexBuffer, indices.Length / 3);
     }
 
+    public static Mesh Create<TVertex>(GraphicsDevice device, TVertex[] vertices, int[] indices)
+        where TVertex : struct, IVertexType
+    {
+        ArgumentNullException.ThrowIfNull(device);
+        ArgumentNullException.ThrowIfNull(vertices);
+        ArgumentNullException.ThrowIfNull(indices);
+        if (vertices.Length == 0) throw new ArgumentException("A mesh needs at least one vertex.", nameof(vertices));
+        if (indices.Length == 0 || indices.Length % 3 != 0)
+            throw new ArgumentException("Triangle indices must be non-empty and divisible by three.", nameof(indices));
+        if (indices.Any(index => index < 0 || index >= vertices.Length))
+            throw new ArgumentOutOfRangeException(nameof(indices), "An index is outside the vertex array.");
+
+        var vertexBuffer = new VertexBuffer(device, vertices[0].VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
+        vertexBuffer.SetData(vertices);
+        var useSixteenBits = vertices.Length <= ushort.MaxValue && indices.All(index => index <= ushort.MaxValue);
+        var indexBuffer = new IndexBuffer(device,
+            useSixteenBits ? IndexElementSize.SixteenBits : IndexElementSize.ThirtyTwoBits,
+            indices.Length, BufferUsage.WriteOnly);
+        if (useSixteenBits)
+            indexBuffer.SetData(indices.Select(index => (ushort)index).ToArray());
+        else
+            indexBuffer.SetData(indices);
+        return new Mesh(vertexBuffer, indexBuffer, indices.Length / 3);
+    }
+
     public void Bind(GraphicsDevice device)
     {
         device.SetVertexBuffer(VertexBuffer);

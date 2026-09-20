@@ -8,16 +8,26 @@ namespace Nova3D.Rendering.Materials;
 /// </summary>
 public abstract class Material
 {
+    private readonly Func<Effect> _effectProvider;
+
     protected Material(string name, Effect effect, string? technique = null)
+        : this(name, () => effect, technique)
+    {
+        ArgumentNullException.ThrowIfNull(effect);
+    }
+
+    protected Material(string name, Func<Effect> effectProvider, string? technique = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         Name = name;
-        Effect = effect ?? throw new ArgumentNullException(nameof(effect));
+        _effectProvider = effectProvider ?? throw new ArgumentNullException(nameof(effectProvider));
+        _ = Effect;
         Technique = technique;
     }
 
     public string Name { get; }
-    public Effect Effect { get; }
+    public Effect Effect => _effectProvider() ?? throw new InvalidOperationException(
+        $"Effect provider for material '{Name}' returned null.");
     public string? Technique { get; }
 
     public void Apply(RenderContext context)

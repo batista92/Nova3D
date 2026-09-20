@@ -1,36 +1,42 @@
-# CityBuilder — pesquisa MonoGame
+# Nova3D v0.1
 
-Projeto DesktopGL mínimo para executar as provas de conceito descritas no
-[`ROADMAP.md`](ROADMAP.md). Nesta fase, o objetivo é validar o MonoGame antes de
-criar abstrações de engine.
+Toolkit 3D reutilizável para MonoGame, validado pelo benchmark do CityBuilder.
+
+Inclui PBR, CSM, instancing, LOD, terrain, vegetação, streaming, água, post-FX,
+importação glTF/GLB, asset management, shader hot reload, debug e profiling.
 
 ## Requisitos
 
-- .NET 8 SDK ou superior
-- OpenGL 3.3+ (ou o backend suportado pelo MonoGame DesktopGL na plataforma)
+- .NET 8 SDK ou superior;
+- backend suportado pelo MonoGame DesktopGL.
 
-## Executar
+## Instalar o template local
+
+```powershell
+.\eng\install-template.ps1
+```
+
+O instalador empacota `Nova3D` e `Nova3D.Templates`, registra o feed local e
+instala o comando `nova3d`.
+
+## Criar um jogo
+
+```powershell
+dotnet new nova3d -n MyGame
+cd MyGame
+dotnet run
+```
+
+O projeto gerado abre uma cena 3D com câmera e cubo rotativo e fornece pastas
+para modelos, texturas, áudio, shaders, Content e código do jogo.
+
+## Executar o benchmark
 
 ```powershell
 dotnet tool restore
 dotnet run
 ```
 
-A aplicação abre atualmente a prova de conceito de vegetação instanciada. A base
-PBR, terrain e iluminação continua disponível nos testes anteriores.
-Na inicialização, um céu HDR procedural gera:
-
-- cubemap do ambiente e skybox;
-- irradiance map para iluminação difusa;
-- cubemap prefiltrado com mipmaps para reflexos por rugosidade;
-- BRDF LUT para o split-sum specular IBL.
-
-- Arraste com o botão esquerdo do mouse para orbitar a câmera.
-- Use a roda do mouse para aproximar ou afastar.
-- Pressione `Esc` para sair.
-- O título mostra instâncias visíveis, distribuição por LOD e draw calls.
-- Arraste com o botão esquerdo para orbitar e use a roda para testar os LODs.
-
-## Próximo marco
-
-Validar 10.000 árvores com GPU instancing, frustum culling e três níveis de LOD.
+A cidade procedural inicia ativa. Assets opcionais colocados em
+`LocalAssets/Models/validation` aparecem na galeria com `F4`; `LocalAssets/`
+não é versionado. Consulte [ROADMAP.md](ROADMAP.md) para o histórico dos gates.

@@ -12,7 +12,9 @@ Gate #1 — Terrain Triplanar    APROVADO
 Gate #2 — City Benchmark       APROVADO
 MonoGame                       APROVADO
 Fase 2 — Nova3D M1             CONCLUÍDO
-Fase 2 — Nova3D M2             PRÓXIMO
+Fase 2 — Nova3D M2             CONCLUÍDO
+Fase 2 — Nova3D M3             CONCLUÍDO
+Fase 2 — Nova3D M4             CONCLUÍDO
 ```
 
 Os testes demonstraram que MonoGame fornece uma base 3D adequada quando o
@@ -504,9 +506,24 @@ Configuration
 Logging
 ```
 
+Estado atual:
+
+```text
+Asset management       CONCLUÍDO (handles versionados e reload transacional)
+Hot reload de shaders  CONCLUÍDO (reload transacional + materiais versionados)
+Debug rendering        CONCLUÍDO
+Profiler               CONCLUÍDO
+Configuration          CONCLUÍDO
+Logging                CONCLUÍDO
+glTF/GLB                CONCLUÍDO (importador + texturas PBR + shadow pass)
+```
+
 Sistemas específicos do city builder só serão extraídos depois desses quatro
 marcos. A ferramenta permanece dentro do projeto enquanto as fronteiras ainda
 estiverem sendo comprovadas.
+
+Validação final do M4: 37 arquivos GLB reais carregados e renderizados com
+materiais PBR, texturas e sombras; zero falhas de importação.
 
 ---
 
@@ -909,15 +926,12 @@ FASE 1 — VALIDAR                         CONCLUÍDA
 FASE 2 — NOVA3D
 │
 ├─ M1 Fundação                           CONCLUÍDO
-├─ M2 Renderer                           PRÓXIMO
-├─ M3 World
-└─ M4 Production
+├─ M2 Renderer                           CONCLUÍDO
+├─ M3 World                              CONCLUÍDO
+└─ M4 Production                         CONCLUÍDO
              │
              ▼
-          Nova3D v0.1
-             │
-             ▼
-       CITY BUILDER MVP
+          Nova3D v0.1                    CONCLUÍDA
 ```
 
 Os oito testes produziram evidência suficiente para investir na ferramenta. A

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework.Graphics;
+using Nova3D.Production.Profiling;
 
 namespace Nova3D.Rendering;
 
@@ -17,12 +18,14 @@ public sealed class RenderContext
     public Camera3D? Camera { get; private set; }
     public RenderStatistics Statistics { get; } = new();
     public RenderStatistics LastFrameStatistics { get; } = new();
+    public FrameProfiler Profiler { get; } = new();
     public ulong FrameIndex { get; private set; }
 
     public void BeginFrame(Camera3D camera)
     {
         Camera = camera ?? throw new ArgumentNullException(nameof(camera));
         LastFrameStatistics.CopyFrom(Statistics);
+        Profiler.BeginFrame();
         Statistics.Reset();
         FrameIndex++;
     }

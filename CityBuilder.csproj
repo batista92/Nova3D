@@ -7,6 +7,8 @@
     <Nullable>enable</Nullable>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Nova3D\**;templates\**;artifacts\**</DefaultItemExcludes>
+    <EnableMGCBItems>false</EnableMGCBItems>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +17,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="Nova3D\Nova3D.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\nova3d.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="LocalAssets\Models\**\*.glb" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="LocalAssets\Models\**\*.png" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="LocalAssets\Models\**\*.jpg" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="LocalAssets\Models\**\*.jpeg" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

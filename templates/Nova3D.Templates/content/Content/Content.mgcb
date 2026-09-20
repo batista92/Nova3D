@@ -1,0 +1,52 @@
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:HiDef
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+#---------------------------------- Content ---------------------------------#
+
+#begin ../Shaders/PBR.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/PBR.fx;Shaders/PBR
+
+#begin ../Shaders/Skybox.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/Skybox.fx;Shaders/Skybox
+
+#begin ../Shaders/ShadowDepth.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/ShadowDepth.fx;Shaders/ShadowDepth
+
+#begin ../Shaders/InstancedShadow.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/InstancedShadow.fx;Shaders/InstancedShadow
+
+#begin ../Shaders/LargeTerrain.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/LargeTerrain.fx;Shaders/LargeTerrain
+
+#begin ../Shaders/Vegetation.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/Vegetation.fx;Shaders/Vegetation
+
+#begin ../Shaders/Water.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/Water.fx;Shaders/Water
+
+#begin ../Shaders/PostProcess.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:../Shaders/PostProcess.fx;Shaders/PostProcess

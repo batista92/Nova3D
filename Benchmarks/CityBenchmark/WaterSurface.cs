@@ -1,15 +1,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Nova3D.Rendering;
 
 namespace CityBuilder.Benchmarks.CityBenchmark;
 
-internal sealed class WaterSurface : IDisposable
+internal static class WaterSurface
 {
-    private readonly VertexBuffer _vertices;
-    private readonly IndexBuffer _indices;
-    public int PrimitiveCount { get; }
-
-    public WaterSurface(GraphicsDevice device)
+    public static Mesh CreateMesh(GraphicsDevice device)
     {
         const int segments = 64;
         const float centerX = 420f, centerZ = -330f;
@@ -32,23 +29,6 @@ internal sealed class WaterSurface : IDisposable
             indices[i * 3 + 1] = (ushort)((i + 1) % segments + 1);
             indices[i * 3 + 2] = (ushort)(i + 1);
         }
-        _vertices = new VertexBuffer(device, WorldVertex.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
-        _vertices.SetData(vertices);
-        _indices = new IndexBuffer(device, IndexElementSize.SixteenBits, indices.Length, BufferUsage.WriteOnly);
-        _indices.SetData(indices);
-        PrimitiveCount = indices.Length / 3;
+        return Mesh.Create(device, vertices, indices);
     }
-
-    public void Draw(GraphicsDevice device, Effect effect)
-    {
-        device.SetVertexBuffer(_vertices);
-        device.Indices = _indices;
-        foreach (var pass in effect.CurrentTechnique.Passes)
-        {
-            pass.Apply();
-            device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, PrimitiveCount);
-        }
-    }
-
-    public void Dispose() { _vertices.Dispose(); _indices.Dispose(); }
 }

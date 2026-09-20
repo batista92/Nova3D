@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Nova3D",
+  "classifications": [ "Game", "MonoGame", "3D" ],
+  "identity": "Nova3D.Templates.Game",
+  "name": "Nova3D Game",
+  "shortName": "nova3d",
+  "sourceName": "Nova3DGame",
+  "defaultName": "Nova3DGame",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    { "path": "Nova3DGame.csproj" }
+  ]
+}

@@ -29,6 +29,21 @@ float2 ShadowMapTexelSize;
 float4 CascadeSplits;
 float4 CascadeBlendStarts;
 float ShowCascades;
+float HasBaseColorTexture;
+float HasNormalTexture;
+float HasMetallicRoughnessTexture;
+float HasOcclusionTexture;
+float NormalScale;
+float OcclusionStrength;
+
+texture BaseColorTexture;
+sampler2D BaseColorSampler = sampler_state { Texture = <BaseColorTexture>; MinFilter = Linear; MagFilter = Linear; MipFilter = Linear; AddressU = Wrap; AddressV = Wrap; };
+texture NormalTexture;
+sampler2D NormalSampler = sampler_state { Texture = <NormalTexture>; MinFilter = Linear; MagFilter = Linear; MipFilter = Linear; AddressU = Wrap; AddressV = Wrap; };
+texture MetallicRoughnessTexture;
+sampler2D MetallicRoughnessSampler = sampler_state { Texture = <MetallicRoughnessTexture>; MinFilter = Linear; MagFilter = Linear; MipFilter = Linear; AddressU = Wrap; AddressV = Wrap; };
+texture OcclusionTexture;
+sampler2D OcclusionSampler = sampler_state { Texture = <OcclusionTexture>; MinFilter = Linear; MagFilter = Linear; MipFilter = Linear; AddressU = Wrap; AddressV = Wrap; };
 
 texture ShadowMap0;
 sampler2D ShadowSampler0 = sampler_state
@@ -86,6 +101,7 @@ struct VertexShaderInput
 {
     float4 Position : POSITION0;
     float3 Normal : NORMAL0;
+    float2 TextureCoordinate : TEXCOORD0;
 };
 
 struct VertexShaderOutput
@@ -98,6 +114,7 @@ struct VertexShaderOutput
     float4 LightPosition2 : TEXCOORD4;
     float4 LightPosition3 : TEXCOORD5;
     float ViewDepth : TEXCOORD6;
+    float2 TextureCoordinate : TEXCOORD7;
 };
 
 VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
@@ -111,6 +128,7 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     output.LightPosition2 = mul(worldPosition, LightViewProjection2);
     output.LightPosition3 = mul(worldPosition, LightViewProjection3);
     output.ViewDepth = -mul(worldPosition, View).z;
+    output.TextureCoordinate = input.TextureCoordinate;
     output.Position = mul(mul(worldPosition, View), Projection);
     return output;
 }
@@ -221,42 +239,75 @@ float3 FresnelSchlickRoughness(float cosine, float3 f0, float roughness)
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
 {
     float3 normal = normalize(input.Normal);
+    if (HasNormalTexture > 0.5)
+    {
+        float3 tangentNormal = tex2D(NormalSampler, input.TextureCoordinate).xyz * 2.0 - 1.0;
+        tangentNormal.xy *= NormalScale;
+        float3 dpdx = ddx(input.WorldPosition);
+        float3 dpdy = ddy(input.WorldPosition);
+        float2 duvdx = ddx(input.TextureCoordinate);
+        float2 duvdy = ddy(input.TextureCoordinate);
+        float determinant = duvdx.x * duvdy.y - duvdx.y * duvdy.x;
+        if (abs(determinant) > 0.000001)
+        {
+            float3 tangent = normalize((dpdx * duvdy.y - dpdy * duvdx.y) / determinant);
+            tangent = normalize(tangent - normal * dot(normal, tangent));
+            float3 bitangent = normalize(cross(normal, tangent));
+            normal = normalize(tangent * tangentNormal.x + bitangent * tangentNormal.y + normal * tangentNormal.z);
+        }
+    }
+    float3 albedo = Albedo;
+    if (HasBaseColorTexture > 0.5)
+        albedo *= pow(max(tex2D(BaseColorSampler, input.TextureCoordinate).rgb, 0.0001), 2.2);
+    float metallic = Metallic;
+    float roughness = Roughness;
+    if (HasMetallicRoughnessTexture > 0.5)
+    {
+        float4 metallicRoughnessSample = tex2D(MetallicRoughnessSampler, input.TextureCoordinate);
+        roughness *= metallicRoughnessSample.g;
+        metallic *= metallicRoughnessSample.b;
+    }
+    roughness = clamp(roughness, 0.045, 1.0);
+    metallic = saturate(metallic);
+    float ambientOcclusion = AmbientOcclusion;
+    if (HasOcclusionTexture > 0.5)
+        ambientOcclusion *= lerp(1.0, tex2D(OcclusionSampler, input.TextureCoordinate).r, OcclusionStrength);
     float3 viewDirection = normalize(CameraPosition - input.WorldPosition);
     float3 lightDirection = normalize(-LightDirection);
     float3 halfway = normalize(viewDirection + lightDirection);
-    float3 f0 = lerp(float3(0.04, 0.04, 0.04), Albedo, Metallic);
+    float3 f0 = lerp(float3(0.04, 0.04, 0.04), albedo, metallic);
     float3 fresnel = FresnelSchlick(max(dot(halfway, viewDirection), 0.0), f0);
-    float distribution = DistributionGGX(normal, halfway, max(Roughness, 0.045));
-    float geometry = GeometrySmith(normal, viewDirection, lightDirection, Roughness);
+    float distribution = DistributionGGX(normal, halfway, roughness);
+    float geometry = GeometrySmith(normal, viewDirection, lightDirection, roughness);
     float3 numerator = distribution * geometry * fresnel;
     float denominator = 4.0 * max(dot(normal, viewDirection), 0.0) *
                         max(dot(normal, lightDirection), 0.0) + 0.0001;
     float3 specular = numerator / denominator;
-    float3 diffuseWeight = (1.0 - fresnel) * (1.0 - Metallic);
+    float3 diffuseWeight = (1.0 - fresnel) * (1.0 - metallic);
     float nDotL = max(dot(normal, lightDirection), 0.0);
     // Faces opostas a luz ja possuem contribuicao direta zero. Consultar o
     // shadow map nelas apenas cria auto-sombra sem efeito visual e desperdiça PCF.
     int cascadeIndex;
     float shadowVisibility = CalculateCascadedShadow(input, nDotL, cascadeIndex);
-    float3 direct = (diffuseWeight * Albedo / PI + specular) * LightColor * nDotL * shadowVisibility;
+    float3 direct = (diffuseWeight * albedo / PI + specular) * LightColor * nDotL * shadowVisibility;
     float nDotV = max(dot(normal, viewDirection), 0.0);
-    float3 ambientFresnel = FresnelSchlickRoughness(nDotV, f0, Roughness);
-    float3 ambientDiffuseWeight = (1.0 - ambientFresnel) * (1.0 - Metallic);
+    float3 ambientFresnel = FresnelSchlickRoughness(nDotV, f0, roughness);
+    float3 ambientDiffuseWeight = (1.0 - ambientFresnel) * (1.0 - metallic);
     float3 irradiance = texCUBE(IrradianceSampler, normal).rgb;
-    float3 diffuseIbl = irradiance * Albedo;
+    float3 diffuseIbl = irradiance * albedo;
     float3 reflection = reflect(-viewDirection, normal);
-    float3 prefiltered = texCUBElod(PrefilteredSampler, float4(reflection, Roughness * MaxReflectionLod)).rgb;
-    float2 brdf = tex2D(BrdfSampler, float2(nDotV, Roughness)).rg;
-    float3 diffuseContribution = ambientDiffuseWeight * diffuseIbl * AmbientOcclusion;
+    float3 prefiltered = texCUBElod(PrefilteredSampler, float4(reflection, roughness * MaxReflectionLod)).rgb;
+    float2 brdf = tex2D(BrdfSampler, float2(nDotV, roughness)).rg;
+    float3 diffuseContribution = ambientDiffuseWeight * diffuseIbl * ambientOcclusion;
     float3 splitSum = ambientFresnel * brdf.x + brdf.y;
-    float3 specularIbl = prefiltered * splitSum * AmbientOcclusion;
+    float3 specularIbl = prefiltered * splitSum * ambientOcclusion;
     float3 ambient = diffuseContribution + specularIbl;
     float3 color = (direct + ambient) * Exposure;
 
     // 1: albedo para dieletricos / F0 para metais; 2: luz direta;
     // 3: IBL difuso; 4: IBL especular. As teclas 1-5 selecionam a visao.
     if (DebugView > 0.5 && DebugView < 1.5)
-        color = lerp(Albedo, f0, Metallic);
+        color = lerp(albedo, f0, metallic);
     else if (DebugView > 1.5 && DebugView < 2.5)
         color = direct * Exposure;
     else if (DebugView > 2.5 && DebugView < 3.5)
