@@ -15,46 +15,58 @@
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/PBR.fx
+/build:../Nova3D/Shaders/PBR.fx;Shaders/PBR
 
 #begin Shaders/Skybox.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/Skybox.fx
+/build:../Nova3D/Shaders/Skybox.fx;Shaders/Skybox
 
 #begin Shaders/ShadowDepth.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/ShadowDepth.fx
+/build:../Nova3D/Shaders/ShadowDepth.fx;Shaders/ShadowDepth
 
 #begin Shaders/Terrain.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/Terrain.fx
+/build:../Nova3D/Shaders/Terrain.fx;Shaders/Terrain
 
 #begin Shaders/Vegetation.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/Vegetation.fx
+/build:../Nova3D/Shaders/Vegetation.fx;Shaders/Vegetation
 
 #begin Shaders/LargeWorld.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/LargeWorld.fx
+/build:../Benchmarks/CityBenchmark/Shaders/LargeWorld.fx;Shaders/LargeWorld
 
 #begin Shaders/InstancedShadow.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/InstancedShadow.fx
+/build:../Nova3D/Shaders/InstancedShadow.fx;Shaders/InstancedShadow
 
 #begin Shaders/PostProcess.fx
 /importer:EffectImporter
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
-/build:Shaders/PostProcess.fx
+/build:../Nova3D/Shaders/PostProcess.fx;Shaders/PostProcess
+
+#begin Shaders/LargeTerrain.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../Nova3D/Shaders/LargeTerrain.fx;Shaders/LargeTerrain
+
+#begin Shaders/Water.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../Nova3D/Shaders/Water.fx;Shaders/Water

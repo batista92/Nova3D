@@ -1,0 +1,18 @@
+{
+  "window": {
+    "width": 1280,
+    "height": 720,
+    "vSync": false
+  },
+  "renderer": {
+    "shadowResolution": 4096,
+    "exposure": 0.95,
+    "bloomStrength": 0.12
+  },
+  "streaming": {
+    "loadRadius": 2200.0,
+    "retainRadius": 2350.0,
+    "maxLoadsPerFrame": 32,
+    "maxUnloadsPerFrame": 64
+  }
+}

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageType>Template</PackageType>
+    <PackageId>Nova3D.Templates</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Nova3D</Authors>
+    <Description>Project templates for Nova3D.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <TargetFramework>net8.0</TargetFramework>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="content\**\*" Exclude="content\**\bin\**;content\**\obj\**"
+             PackagePath="content" />
+    <Content Include="..\..\AGENTS.md" PackagePath="content" />
+    <Content Include="..\..\Docs\ProjectTemplate.md" PackagePath="README.md" />
+    <Content Include="..\..\.config\dotnet-tools.json" PackagePath="content\.config" />
+    <Content Include="..\..\Docs\getting-started.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\architecture.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\rendering.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\terrain.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\materials.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\shaders.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\performance.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\AI_GUIDE.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Nova3D\Shaders\**\*.fx" PackagePath="content\Shaders" />
+    <Compile Remove="content\**\*.cs" />
+    <None Remove="content\**\*" />
+  </ItemGroup>
+
+</Project>

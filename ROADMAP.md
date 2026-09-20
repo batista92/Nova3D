@@ -4,6 +4,25 @@ MonoGame é adequado como fundação porque já nos entrega o framework .NET, pi
 
 Está dividido em **duas fases grandes: primeiro provar que vale a pena; só depois construir a ferramenta.**
 
+## Estado do projeto — 20/09/2026
+
+```text
+Fase 1 — Provas de conceito    CONCLUÍDA
+Gate #1 — Terrain Triplanar    APROVADO
+Gate #2 — City Benchmark       APROVADO
+MonoGame                       APROVADO
+Fase 2 — Nova3D M1             CONCLUÍDO
+Fase 2 — Nova3D M2             CONCLUÍDO
+Fase 2 — Nova3D M3             CONCLUÍDO
+Fase 2 — Nova3D M4             CONCLUÍDO
+```
+
+Os testes demonstraram que MonoGame fornece uma base 3D adequada quando o
+renderer necessário é construído explicitamente sobre ele. As limitações
+encontradas ficaram sob nosso controle: shaders, samplers, atlas, shadows,
+culling, LOD e organização dos passes puderam ser diagnosticados e corrigidos
+sem depender de uma camada fechada de engine.
+
 # Fase 1 — Provas de conceito
 
 O objetivo aqui é **tentar matar a ideia rapidamente**. Não vamos construir arquitetura bonita antes de sabermos que MonoGame consegue entregar o que precisamos.
@@ -325,9 +344,53 @@ Se tivermos:
 
 A partir daí: **MonoGame está aprovado.**
 
+## Baseline congelada — CityBenchmark
+
+O Teste 08 deixa de ser código descartável e passa a ser o benchmark permanente
+de regressão do renderer.
+
+```text
+Build                 Release
+Backend               DesktopGL
+Resolução             1920 × 1080
+VSync                  off
+Terrain                2048 × 2048
+Terrain chunks         32 × 32 (1024)
+Árvores                10.000
+Prédios                1.000
+Veículos               500
+CSM                    4 × 4096²
+Água                   shader próprio
+PostFX                 HDR + exposure + ACES + bloom + FXAA
+
+Baseline observada
+Frame                  3,31 ms
+FPS                    302
+Draw calls             748
+Triângulos visíveis    61k
+```
+
+O valor de frame acima é o intervalo observado do frame completo, não uma
+medição isolada de GPU. Hardware, driver e resolução devem acompanhar futuras
+medições. Quando o profiler estiver disponível, a baseline será dividida em:
+
+```text
+CPU update
+CPU render
+GPU frame
+shadow pass
+terrain pass
+geometry pass
+water pass
+post-processing
+```
+
+Toda mudança relevante no renderer deve executar novamente o CityBenchmark.
+Regressões precisam ser explicadas e registradas antes de serem aceitas.
+
 ---
 
-# Fase 2 — Nossa ferramenta
+# Fase 2 — Nova3D
 
 Aqui eu daria até um nome temporário, por exemplo:
 
@@ -345,9 +408,122 @@ O objetivo do `Nova3D` não seria competir com Godot.
 
 Seria uma **camada 3D code-first extremamente amigável para IA**.
 
+Definição de produto:
+
+> **Nova3D — 3D rendering/world toolkit for MonoGame.**
+
+Nova3D não substitui MonoGame e, neste estágio, não será tratada como uma
+engine. MonoGame continua responsável por plataforma, game loop, input, áudio,
+gráficos e tipos matemáticos fundamentais.
+
 A filosofia seria:
 
 > Poucas abstrações, código C#, shaders HLSL explícitos e zero magia.
+
+## Regra arquitetural: não esconder MonoGame
+
+Não criaremos wrappers que apenas renomeiam tipos já claros:
+
+```text
+Não criar                 Continuar usando
+NovaGraphicsDevice       GraphicsDevice
+NovaTexture              Texture2D
+NovaVector3              Vector3
+NovaMatrix               Matrix
+NovaVertexBuffer         VertexBuffer
+```
+
+Nova3D abstrai os conceitos que pertencem à nossa ferramenta:
+
+```text
+Terrain
+TerrainMaterial
+PbrMaterial
+Mesh
+DirectionalLight
+ShadowSystem
+VegetationSystem
+WorldRenderer
+PostProcessPipeline
+```
+
+Isso mantém a API pequena, explícita e compreensível tanto por pessoas quanto
+por IA.
+
+## Marcos de execução
+
+### M1 — Fundação
+
+```text
+Core
+Resources
+Shader management
+Camera
+Mesh
+Material
+RenderContext
+RenderStatistics
+```
+
+O CityBenchmark foi movido para `Benchmarks/CityBenchmark` e consome essas APIs
+sem perder comportamento ou desempenho.
+
+### M2 — Renderer
+
+```text
+PBR
+Lighting
+CSM
+Instancing
+LOD
+Culling
+HDR pipeline
+PostFX
+Water
+```
+
+### M3 — World
+
+```text
+Terrain
+Terrain chunks
+Runtime deformation
+Terrain materials
+Vegetation
+Spatial partition
+World streaming
+```
+
+### M4 — Production
+
+```text
+glTF/GLB
+Asset management
+Hot reload de shaders
+Debug rendering
+Profiler
+Configuration
+Logging
+```
+
+Estado atual:
+
+```text
+Asset management       CONCLUÍDO (handles versionados e reload transacional)
+Hot reload de shaders  CONCLUÍDO (reload transacional + materiais versionados)
+Debug rendering        CONCLUÍDO
+Profiler               CONCLUÍDO
+Configuration          CONCLUÍDO
+Logging                CONCLUÍDO
+glTF/GLB                CONCLUÍDO (importador + texturas PBR + shadow pass)
+```
+
+Sistemas específicos do city builder só serão extraídos depois desses quatro
+marcos. A ferramenta permanece dentro do projeto enquanto as fronteiras ainda
+estiverem sendo comprovadas.
+
+Validação final do M4: 37 arquivos GLB reais carregados e renderizados com
+materiais PBR, texturas e sombras; zero falhas de importação.
 
 ---
 
@@ -731,47 +907,37 @@ Isso evita passarmos seis meses construindo uma engine imaginária para jogos qu
 
 ## Roadmap resumido
 
-Eu colocaria nossos gates assim:
-
 ```text
-FASE 1 — VALIDAR
+FASE 1 — VALIDAR                         CONCLUÍDA
 │
-├─ 01 PBR
-├─ 02 Shadows
-├─ 03 Terrain Triplanar     ← GATE #1
-├─ 04 Terrain Runtime
-├─ 05 Instancing + LOD
-├─ 06 Large World
-├─ 07 Post Processing
-└─ 08 City Benchmark        ← GATE #2
+├─ 01 PBR                                APROVADO
+├─ 02 Shadows                            APROVADO
+├─ 03 Terrain Triplanar     ← GATE #1    APROVADO
+├─ 04 Terrain Runtime                    APROVADO
+├─ 05 Instancing + LOD                   APROVADO
+├─ 06 Large World                        APROVADO
+├─ 07 Post Processing                    APROVADO
+└─ 08 City Benchmark        ← GATE #2    APROVADO
              │
              ▼
        MONOGAME APROVADO
              │
              ▼
-FASE 2 — CONSTRUIR
+FASE 2 — NOVA3D
 │
-├─ 09 Core
-├─ 10 Renderer
-├─ 11 Shader Library
-├─ 12 Materials
-├─ 13 Terrain
-├─ 14 Vegetation
-├─ 15 World Rendering
-├─ 16 Assets
-├─ 17 Debug/Profiler
-└─ 18 Physics integration
+├─ M1 Fundação                           CONCLUÍDO
+├─ M2 Renderer                           CONCLUÍDO
+├─ M3 World                              CONCLUÍDO
+└─ M4 Production                         CONCLUÍDO
              │
              ▼
-          Nova3D v0.1
-             │
-             ▼
-       CITY BUILDER MVP
+          Nova3D v0.1                    CONCLUÍDA
 ```
 
-E eu seria disciplinado principalmente nos **8 primeiros passos**. Não escreveria `Nova3D.Core`, ECS, scene system ou qualquer arquitetura de engine antes do Gate #2.
-
-Se o MonoGame morrer no **teste 3**, perdemos alguns dias. Se passar pelos oito, aí temos evidência concreta de que vale investir na ferramenta — em vez de repetir o que aconteceu com Stride depois de já termos construído metade do protótipo. ([MonoGame Docs][2])
+Os oito testes produziram evidência suficiente para investir na ferramenta. A
+extração começa pelo M1 e deve preservar o benchmark funcionando a cada etapa.
+Não criaremos ECS, scene system ou abstrações de engine sem uma necessidade
+concreta do city builder.
 
 E há um bônus interessante: o MonoGame continua suportando Windows, Linux e macOS, enquanto Vulkan/DX12 estão entrando como suporte preview na linha 3.8.5. Então podemos começar conservadoramente no backend estável e manter espaço para evoluir depois. ([GitHub][1])
 

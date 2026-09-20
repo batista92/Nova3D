@@ -1,6 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nova3D.Rendering;
+using Nova3D.Rendering.Lighting;
+using Nova3D.Rendering.Materials;
+using NovaDirectionalLight = Nova3D.Rendering.Lighting.DirectionalLight;
 
 namespace CityBuilder.Tests.Pbr;
 
@@ -15,13 +19,17 @@ internal sealed class PbrScene : IDisposable
     private readonly PrimitiveMesh _cube;
     private readonly IblEnvironment _environment;
     private readonly OrbitCamera _camera = new();
+    private readonly Camera3D _renderCamera = new() { NearPlane = 0.1f, FarPlane = 100f };
+    private readonly RenderContext _renderContext;
+    private readonly PbrMaterial _pbrMaterial;
     private KeyboardState _previousKeyboard;
     private int _debugView;
     private readonly Matrix[] _lightViewProjections = new Matrix[4];
     private readonly float[] _cascadeSplits = new float[4];
     private readonly float[] _cascadeBlendStarts = new float[4];
     private bool _showCascades;
-    private static readonly Vector3 LightDirection = Vector3.Normalize(new(-0.4f, -1f, -0.6f));
+    private readonly NovaDirectionalLight _light = new(new Vector3(-0.4f, -1f, -0.6f),
+        new Vector3(3.0f, 2.85f, 2.65f));
     private readonly (Vector3 Position, Vector3 Albedo, float Metallic, float Roughness)[] _materials =
     {
         (new Vector3(-2.5f, 1f, 0f), new Vector3(1.00f, 0.71f, 0.29f), 1.0f, 0.18f),
@@ -38,6 +46,13 @@ internal sealed class PbrScene : IDisposable
         _plane = PrimitiveMesh.CreatePlane(device);
         _cube = PrimitiveMesh.CreateCube(device);
         _environment = new IblEnvironment(device);
+        _renderContext = new RenderContext(device);
+        _pbrMaterial = new PbrMaterial("pbr-test", effect, _light,
+            new ImageBasedLighting(_environment.EnvironmentMap, _environment.IrradianceMap,
+                _environment.PrefilteredMap, _environment.BrdfLut, _environment.PrefilterMipCount))
+        {
+            Exposure = 0.85f
+        };
         for (var i = 0; i < _shadowMaps.Length; i++)
             _shadowMaps[i] = new RenderTarget2D(
                 device, 1024, 1024, false, SurfaceFormat.Single, DepthFormat.Depth24,
@@ -76,6 +91,10 @@ internal sealed class PbrScene : IDisposable
     public void Draw(float aspectRatio)
     {
         var device = _effect.GraphicsDevice;
+        _renderCamera.Position = _camera.Position;
+        _renderCamera.Direction = Vector3.Normalize(_camera.Target - _camera.Position);
+        _renderCamera.SetAspectRatio(aspectRatio);
+        _renderContext.BeginFrame(_renderCamera);
         DrawShadowMaps(aspectRatio);
         DrawSkybox(aspectRatio);
         device.DepthStencilState = DepthStencilState.Default;
@@ -83,18 +102,9 @@ internal sealed class PbrScene : IDisposable
         // As primitivas procedurais usam winding anti-horario visto de fora.
         device.RasterizerState = RasterizerState.CullClockwise;
 
-        _effect.Parameters["View"].SetValue(_camera.View);
-        _effect.Parameters["Projection"].SetValue(Matrix.CreatePerspectiveFieldOfView(
-            MathHelper.ToRadians(45f), aspectRatio, 0.1f, 100f));
-        _effect.Parameters["CameraPosition"].SetValue(_camera.Position);
-        _effect.Parameters["LightDirection"].SetValue(LightDirection);
-        _effect.Parameters["LightColor"].SetValue(new Vector3(3.0f, 2.85f, 2.65f));
-        _effect.Parameters["Exposure"].SetValue(0.85f);
-        _effect.Parameters["IrradianceMap"].SetValue(_environment.IrradianceMap);
-        _effect.Parameters["PrefilteredMap"].SetValue(_environment.PrefilteredMap);
-        _effect.Parameters["BrdfLut"].SetValue(_environment.BrdfLut);
-        _effect.Parameters["MaxReflectionLod"].SetValue(_environment.PrefilterMipCount - 1f);
-        _effect.Parameters["DebugView"].SetValue((float)_debugView);
+        _pbrMaterial.DebugView = _debugView;
+        _pbrMaterial.ShowCascades = _showCascades;
+        _pbrMaterial.Apply(_renderContext);
         _effect.Parameters["LightViewProjection0"].SetValue(_lightViewProjections[0]);
         _effect.Parameters["LightViewProjection1"].SetValue(_lightViewProjections[1]);
         _effect.Parameters["LightViewProjection2"].SetValue(_lightViewProjections[2]);
@@ -110,7 +120,6 @@ internal sealed class PbrScene : IDisposable
         _effect.Parameters["ShadowMap3"].SetValue(_shadowMaps[3]);
         _effect.Parameters["ShadowMapTexelSize"].SetValue(new Vector2(
             1f / _shadowMaps[0].Width, 1f / _shadowMaps[0].Height));
-        _effect.Parameters["ShowCascades"].SetValue(_showCascades ? 1f : 0f);
 
         DrawMesh(_plane, Matrix.Identity, SrgbToLinear(new Vector3(0.38f, 0.39f, 0.41f)), 0f, 0.76f, 1f);
         foreach (var material in _materials)
@@ -175,15 +184,15 @@ internal sealed class PbrScene : IDisposable
                 radius = MathF.Max(radius, Vector3.Distance(center, corner));
             radius = MathF.Ceiling(radius * 16f) / 16f;
 
-            var lightRight = Vector3.Normalize(Vector3.Cross(Vector3.Up, LightDirection));
-            var lightUp = Vector3.Normalize(Vector3.Cross(LightDirection, lightRight));
+            var lightRight = Vector3.Normalize(Vector3.Cross(Vector3.Up, _light.Direction));
+            var lightUp = Vector3.Normalize(Vector3.Cross(_light.Direction, lightRight));
             var unitsPerTexel = (radius * 2f) / _shadowMaps[cascade].Width;
             var rightCoordinate = MathF.Round(Vector3.Dot(center, lightRight) / unitsPerTexel) * unitsPerTexel;
             var upCoordinate = MathF.Round(Vector3.Dot(center, lightUp) / unitsPerTexel) * unitsPerTexel;
             center += lightRight * (rightCoordinate - Vector3.Dot(center, lightRight));
             center += lightUp * (upCoordinate - Vector3.Dot(center, lightUp));
 
-            var lightPosition = center - LightDirection * (radius + shadowDepthPadding);
+            var lightPosition = center - _light.Direction * (radius + shadowDepthPadding);
             var lightView = Matrix.CreateLookAt(lightPosition, center, lightUp);
             var lightProjection = Matrix.CreateOrthographic(
                 radius * 2f, radius * 2f, 0.1f, radius * 2f + shadowDepthPadding * 2f);
@@ -253,12 +262,11 @@ internal sealed class PbrScene : IDisposable
 
     private void DrawMesh(PrimitiveMesh mesh, Matrix world, Vector3 albedo, float metallic, float roughness, float ao)
     {
-        _effect.Parameters["World"].SetValue(world);
-        _effect.Parameters["WorldInverseTranspose"].SetValue(Matrix.Transpose(Matrix.Invert(world)));
-        _effect.Parameters["Albedo"].SetValue(albedo);
-        _effect.Parameters["Metallic"].SetValue(metallic);
-        _effect.Parameters["Roughness"].SetValue(roughness);
-        _effect.Parameters["AmbientOcclusion"].SetValue(ao);
+        _pbrMaterial.Albedo = albedo;
+        _pbrMaterial.Metallic = metallic;
+        _pbrMaterial.Roughness = roughness;
+        _pbrMaterial.AmbientOcclusion = ao;
+        _pbrMaterial.ApplySurface(world);
 
         foreach (var pass in _effect.CurrentTechnique.Passes)
         {
@@ -275,8 +283,5 @@ internal sealed class PbrScene : IDisposable
         _environment.Dispose();
         foreach (var shadowMap in _shadowMaps)
             shadowMap.Dispose();
-        _effect.Dispose();
-        _skyboxEffect.Dispose();
-        _shadowEffect.Dispose();
     }
 }
