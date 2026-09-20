@@ -5,9 +5,10 @@ benchmark is a consumer and is not included in either package.
 
 ## Pre-release checklist
 
-- Choose and add the project license.
-- Replace placeholder author metadata and add the repository URL.
-- Confirm that the `Nova3D` and `Nova3D.Templates` package IDs are available.
+- [x] Add the MIT license.
+- [x] Set the author and repository metadata.
+- [ ] Confirm that the `Nova3D` and `Nova3D.Templates` package IDs are available
+  before the first NuGet publication.
 - Run the benchmark baseline and record the result.
 - Build the runtime and create both packages in Release configuration.
 - Install the template package in an isolated CLI home.

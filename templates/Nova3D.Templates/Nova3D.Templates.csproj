@@ -4,9 +4,14 @@
     <PackageType>Template</PackageType>
     <PackageId>Nova3D.Templates</PackageId>
     <Version>0.1.0</Version>
-    <Authors>Nova3D</Authors>
+    <Authors>Bruno Batista</Authors>
+    <Copyright>Copyright © 2026 Bruno Batista</Copyright>
     <Description>Project templates for Nova3D.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/batista92/Nova3D</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/batista92/Nova3D.git</RepositoryUrl>
     <TargetFramework>net8.0</TargetFramework>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
