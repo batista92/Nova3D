@@ -58,3 +58,15 @@
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Shaders/PostProcess.fx
+
+#begin Shaders/LargeTerrain.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/LargeTerrain.fx
+
+#begin Shaders/Water.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Water.fx

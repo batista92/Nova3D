@@ -36,6 +36,8 @@ public sealed class CityBuilderGame : Game
         _scene = new LargeWorldScene(
             GraphicsDevice,
             Content.Load<Effect>("Shaders/LargeWorld"),
+            Content.Load<Effect>("Shaders/LargeTerrain"),
+            Content.Load<Effect>("Shaders/Water"),
             Content.Load<Effect>("Shaders/Vegetation"),
             Content.Load<Effect>("Shaders/Skybox"),
             Content.Load<Effect>("Shaders/ShadowDepth"),

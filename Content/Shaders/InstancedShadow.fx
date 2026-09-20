@@ -14,7 +14,11 @@ VSOut VSMain(VSIn input)
 {
     VSOut output; float4x4 world=float4x4(input.R0,input.R1,input.R2,input.R3);
     float4 clip=mul(mul(input.Position,world),LightViewProjection);
-    output.Position=clip; output.Depth=clip.z/clip.w; return output;
+    output.Position=clip; output.Depth=clip.z/clip.w;
+#if OPENGL
+    output.Depth=output.Depth*0.5+0.5;
+#endif
+    return output;
 }
 float4 PSMain(VSOut input):COLOR0 { return input.Depth.xxxx; }
 technique InstancedShadow { pass Pass0 { VertexShader=compile VS_SHADERMODEL VSMain(); PixelShader=compile PS_SHADERMODEL PSMain(); } }

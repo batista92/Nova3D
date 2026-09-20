@@ -27,6 +27,9 @@ VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
     float4 clipPosition = mul(mul(input.Position, World), LightViewProjection);
     output.Position = clipPosition;
     output.Depth = clipPosition.z / clipPosition.w;
+#if OPENGL
+    output.Depth = output.Depth * 0.5 + 0.5;
+#endif
     return output;
 }
 

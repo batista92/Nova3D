@@ -10,6 +10,7 @@ internal sealed class InstancedForest : IDisposable
     private readonly TreeMesh[] _meshes;
     private readonly DynamicVertexBuffer[] _instanceBuffers;
     private readonly Matrix[] _transforms = new Matrix[TreeCount];
+    private readonly bool[] _enabled = new bool[TreeCount];
     private readonly InstanceVertex[][] _visible = { new InstanceVertex[TreeCount], new InstanceVertex[TreeCount], new InstanceVertex[TreeCount] };
     private readonly float _lod0Distance;
     private readonly float _lod1Distance;
@@ -21,7 +22,8 @@ internal sealed class InstancedForest : IDisposable
         float lod0Distance = 50f,
         float lod1Distance = 150f,
         float cullDistance = 400f,
-        Func<float, float, float>? heightProvider = null)
+        Func<float, float, float>? heightProvider = null,
+        Func<float, float, bool>? placementAllowed = null)
     {
         _lod0Distance = lod0Distance;
         _lod1Distance = lod1Distance;
@@ -41,6 +43,7 @@ internal sealed class InstancedForest : IDisposable
             var yaw = (float)random.NextDouble() * MathF.Tau;
             var y = heightProvider?.Invoke(x, z) ?? 0f;
             _transforms[i] = Matrix.CreateScale(scale) * Matrix.CreateRotationY(yaw) * Matrix.CreateTranslation(x, y, z);
+            _enabled[i] = placementAllowed?.Invoke(x, z) ?? true;
         }
     }
 
@@ -54,8 +57,10 @@ internal sealed class InstancedForest : IDisposable
     {
         Array.Clear(VisibleCounts);
         var frustum = new BoundingFrustum(view * projection);
-        foreach (var transform in _transforms)
+        for (var index = 0; index < _transforms.Length; index++)
         {
+            if (!_enabled[index]) continue;
+            var transform = _transforms[index];
             var position = transform.Translation;
             var distance = Vector3.Distance(cameraPosition, position);
             if (distance >= _cullDistance || frustum.Contains(new BoundingSphere(position + Vector3.Up * 1.6f, 2.4f)) == ContainmentType.Disjoint)

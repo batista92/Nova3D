@@ -13,6 +13,7 @@ internal sealed class LargeWorldTerrain : IDisposable
     private static readonly int[] Segments = { 16, 8, 4 };
     private readonly Chunk[] _chunks = new Chunk[TotalChunks];
     private readonly List<VisibleChunk> _visible = new(TotalChunks);
+    private readonly ShadowMesh _shadowMesh;
 
     public int[] VisibleLods { get; } = new int[3];
     public int VisibleCount => _visible.Count;
@@ -21,6 +22,7 @@ internal sealed class LargeWorldTerrain : IDisposable
 
     public LargeWorldTerrain(GraphicsDevice device)
     {
+        _shadowMesh = new ShadowMesh(device, 128);
         var index = 0;
         for (var z = 0; z < ChunkCountPerAxis; z++)
         for (var x = 0; x < ChunkCountPerAxis; x++)
@@ -67,9 +69,63 @@ internal sealed class LargeWorldTerrain : IDisposable
         }
     }
 
+    public void DrawShadow(GraphicsDevice device, Effect effect)
+    {
+        device.SetVertexBuffer(_shadowMesh.VertexBuffer);
+        device.Indices = _shadowMesh.IndexBuffer;
+        foreach (var pass in effect.CurrentTechnique.Passes)
+        {
+            pass.Apply();
+            device.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, _shadowMesh.PrimitiveCount);
+        }
+    }
+
     public void Dispose()
     {
+        _shadowMesh.Dispose();
         foreach (var chunk in _chunks) chunk.Dispose();
+    }
+
+    private sealed class ShadowMesh : IDisposable
+    {
+        public readonly VertexBuffer VertexBuffer;
+        public readonly IndexBuffer IndexBuffer;
+        public readonly int PrimitiveCount;
+
+        public ShadowMesh(GraphicsDevice device, int segments)
+        {
+            var vertices = new WorldVertex[(segments + 1) * (segments + 1)];
+            var step = WorldSize / segments;
+            for (var z = 0; z <= segments; z++)
+            for (var x = 0; x <= segments; x++)
+            {
+                var wx = -WorldSize * 0.5f + x * step;
+                var wz = -WorldSize * 0.5f + z * step;
+                vertices[z * (segments + 1) + x] = new WorldVertex(
+                    new Vector3(wx, SampleHeight(wx, wz), wz), Vector3.Up, Color.White);
+            }
+
+            var indices = new ushort[segments * segments * 6];
+            var at = 0;
+            for (var z = 0; z < segments; z++)
+            for (var x = 0; x < segments; x++)
+            {
+                var a = (ushort)(z * (segments + 1) + x);
+                var b = (ushort)(a + 1);
+                var c = (ushort)(a + segments + 1);
+                var d = (ushort)(c + 1);
+                indices[at++] = a; indices[at++] = c; indices[at++] = d;
+                indices[at++] = a; indices[at++] = d; indices[at++] = b;
+            }
+
+            VertexBuffer = new VertexBuffer(device, WorldVertex.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
+            VertexBuffer.SetData(vertices);
+            IndexBuffer = new IndexBuffer(device, IndexElementSize.SixteenBits, indices.Length, BufferUsage.WriteOnly);
+            IndexBuffer.SetData(indices);
+            PrimitiveCount = indices.Length / 3;
+        }
+
+        public void Dispose() { VertexBuffer.Dispose(); IndexBuffer.Dispose(); }
     }
 
     private sealed class Chunk : IDisposable

@@ -41,5 +41,11 @@ internal sealed class LargeWorldCamera
         if (keyboard.IsKeyDown(Keys.E)) movement += Vector3.Up;
         if (keyboard.IsKeyDown(Keys.Q)) movement -= Vector3.Up;
         if (movement.LengthSquared() > 0f) Position += Vector3.Normalize(movement) * speed * dt;
+
+        // Keep the free camera above the surface. Looking at the scene from
+        // below made one-sided road/water geometry appear inverted.
+        var minimumHeight = LargeWorldTerrain.SampleHeight(Position.X, Position.Z) + 4f;
+        if (Position.Y < minimumHeight)
+            Position = new Vector3(Position.X, minimumHeight, Position.Z);
     }
 }
