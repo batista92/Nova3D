@@ -11,7 +11,8 @@ Fase 1 — Provas de conceito    CONCLUÍDA
 Gate #1 — Terrain Triplanar    APROVADO
 Gate #2 — City Benchmark       APROVADO
 MonoGame                       APROVADO
-Fase 2 — Nova3D M1             PRÓXIMO
+Fase 2 — Nova3D M1             CONCLUÍDO
+Fase 2 — Nova3D M2             PRÓXIMO
 ```
 
 Os testes demonstraram que MonoGame fornece uma base 3D adequada quando o
@@ -462,8 +463,8 @@ RenderContext
 RenderStatistics
 ```
 
-O CityBenchmark será movido para `Benchmarks/CityBenchmark` e passará a consumir
-essas APIs sem perder comportamento ou desempenho.
+O CityBenchmark foi movido para `Benchmarks/CityBenchmark` e consome essas APIs
+sem perder comportamento ou desempenho.
 
 ### M2 — Renderer
 
@@ -907,8 +908,8 @@ FASE 1 — VALIDAR                         CONCLUÍDA
              ▼
 FASE 2 — NOVA3D
 │
-├─ M1 Fundação                           PRÓXIMO
-├─ M2 Renderer
+├─ M1 Fundação                           CONCLUÍDO
+├─ M2 Renderer                           PRÓXIMO
 ├─ M3 World
 └─ M4 Production
              │

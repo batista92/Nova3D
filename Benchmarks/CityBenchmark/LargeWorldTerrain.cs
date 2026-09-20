@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CityBuilder.Tests.LargeWorld;
+namespace CityBuilder.Benchmarks.CityBenchmark;
 
 internal sealed class LargeWorldTerrain : IDisposable
 {
@@ -19,6 +19,7 @@ internal sealed class LargeWorldTerrain : IDisposable
     public int VisibleCount => _visible.Count;
     public int DrawCalls => _visible.Count;
     public long VisibleTriangles { get; private set; }
+    public int ShadowPrimitiveCount => _shadowMesh.PrimitiveCount;
 
     public LargeWorldTerrain(GraphicsDevice device)
     {

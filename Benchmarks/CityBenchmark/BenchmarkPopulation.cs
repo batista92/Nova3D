@@ -1,8 +1,9 @@
 using CityBuilder.Tests.Vegetation;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Nova3D.Rendering;
 
-namespace CityBuilder.Tests.LargeWorld;
+namespace CityBuilder.Benchmarks.CityBenchmark;
 
 internal sealed class BenchmarkPopulation : IDisposable
 {
@@ -83,14 +84,37 @@ internal sealed class BenchmarkPopulation : IDisposable
         return dx * dx + dz * dz < 1.15f;
     }
 
-    private static BenchmarkMesh CreateBuildingMesh(GraphicsDevice device)
+    private static Mesh CreateBuildingMesh(GraphicsDevice device)
     {
-        return BenchmarkMesh.CreateBox(device, new Color(68, 79, 91), new Color(112, 126, 138));
+        return CreateBox(device, new Color(68, 79, 91), new Color(112, 126, 138));
     }
 
-    private static BenchmarkMesh CreateVehicleMesh(GraphicsDevice device)
+    private static Mesh CreateVehicleMesh(GraphicsDevice device)
     {
-        return BenchmarkMesh.CreateBox(device, new Color(165, 45, 38), new Color(225, 112, 48));
+        return CreateBox(device, new Color(165, 45, 38), new Color(225, 112, 48));
+    }
+
+    private static Mesh CreateBox(GraphicsDevice device, Color side, Color top)
+    {
+        var vertices = new List<WorldVertex>();
+        var indices = new List<ushort>();
+        AddFace(vertices, indices, new(0.5f, 0, -0.5f), new(-1, 0, 0), new(0, 1, 0), Vector3.Forward, side);
+        AddFace(vertices, indices, new(-0.5f, 0, 0.5f), new(1, 0, 0), new(0, 1, 0), Vector3.Backward, side);
+        AddFace(vertices, indices, new(-0.5f, 0, -0.5f), new(0, 0, 1), new(0, 1, 0), Vector3.Left, side);
+        AddFace(vertices, indices, new(0.5f, 0, 0.5f), new(0, 0, -1), new(0, 1, 0), Vector3.Right, side);
+        AddFace(vertices, indices, new(-0.5f, 1, 0.5f), new(1, 0, 0), new(0, 0, -1), Vector3.Up, top);
+        return Mesh.Create(device, vertices.ToArray(), indices.ToArray());
+    }
+
+    private static void AddFace(List<WorldVertex> vertices, List<ushort> indices, Vector3 origin, Vector3 axisA, Vector3 axisB, Vector3 normal, Color color)
+    {
+        var start = (ushort)vertices.Count;
+        vertices.Add(new WorldVertex(origin, normal, color));
+        vertices.Add(new WorldVertex(origin + axisA, normal, color));
+        vertices.Add(new WorldVertex(origin + axisA + axisB, normal, color));
+        vertices.Add(new WorldVertex(origin + axisB, normal, color));
+        indices.Add(start); indices.Add((ushort)(start + 1)); indices.Add((ushort)(start + 2));
+        indices.Add(start); indices.Add((ushort)(start + 2)); indices.Add((ushort)(start + 3));
     }
 
     public void Dispose()
@@ -101,14 +125,14 @@ internal sealed class BenchmarkPopulation : IDisposable
 
     private sealed class InstanceBatch : IDisposable
     {
-        private readonly BenchmarkMesh _mesh;
+        private readonly Mesh _mesh;
         private readonly Matrix[] _transforms;
         private readonly InstanceVertex[] _visible;
         private readonly DynamicVertexBuffer _instances;
         private readonly float _cullDistance;
         private readonly float _boundsRadius;
 
-        public InstanceBatch(GraphicsDevice device, BenchmarkMesh mesh, Matrix[] transforms, float cullDistance, float boundsRadius)
+        public InstanceBatch(GraphicsDevice device, Mesh mesh, Matrix[] transforms, float cullDistance, float boundsRadius)
         {
             _mesh = mesh;
             _transforms = transforms;
@@ -156,47 +180,4 @@ internal sealed class BenchmarkPopulation : IDisposable
             _mesh.Dispose();
         }
     }
-}
-
-internal sealed class BenchmarkMesh : IDisposable
-{
-    private BenchmarkMesh(GraphicsDevice device, WorldVertex[] vertices, ushort[] indices)
-    {
-        VertexBuffer = new VertexBuffer(device, WorldVertex.VertexDeclaration, vertices.Length, BufferUsage.WriteOnly);
-        VertexBuffer.SetData(vertices);
-        IndexBuffer = new IndexBuffer(device, IndexElementSize.SixteenBits, indices.Length, BufferUsage.WriteOnly);
-        IndexBuffer.SetData(indices);
-        PrimitiveCount = indices.Length / 3;
-    }
-
-    public VertexBuffer VertexBuffer { get; }
-    public IndexBuffer IndexBuffer { get; }
-    public int PrimitiveCount { get; }
-
-    public static BenchmarkMesh CreateBox(GraphicsDevice device, Color side, Color top)
-    {
-        var vertices = new List<WorldVertex>();
-        var indices = new List<ushort>();
-        // Each face uses axisA x axisB as its geometric outward normal.
-        // The previous ordering pointed all four walls into the box.
-        AddFace(vertices, indices, new(0.5f, 0, -0.5f), new(-1, 0, 0), new(0, 1, 0), Vector3.Forward, side);
-        AddFace(vertices, indices, new(-0.5f, 0, 0.5f), new(1, 0, 0), new(0, 1, 0), Vector3.Backward, side);
-        AddFace(vertices, indices, new(-0.5f, 0, -0.5f), new(0, 0, 1), new(0, 1, 0), Vector3.Left, side);
-        AddFace(vertices, indices, new(0.5f, 0, 0.5f), new(0, 0, -1), new(0, 1, 0), Vector3.Right, side);
-        AddFace(vertices, indices, new(-0.5f, 1, 0.5f), new(1, 0, 0), new(0, 0, -1), Vector3.Up, top);
-        return new BenchmarkMesh(device, vertices.ToArray(), indices.ToArray());
-    }
-
-    private static void AddFace(List<WorldVertex> vertices, List<ushort> indices, Vector3 origin, Vector3 axisA, Vector3 axisB, Vector3 normal, Color color)
-    {
-        var start = (ushort)vertices.Count;
-        vertices.Add(new WorldVertex(origin, normal, color));
-        vertices.Add(new WorldVertex(origin + axisA, normal, color));
-        vertices.Add(new WorldVertex(origin + axisA + axisB, normal, color));
-        vertices.Add(new WorldVertex(origin + axisB, normal, color));
-        indices.Add(start); indices.Add((ushort)(start + 1)); indices.Add((ushort)(start + 2));
-        indices.Add(start); indices.Add((ushort)(start + 2)); indices.Add((ushort)(start + 3));
-    }
-
-    public void Dispose() { VertexBuffer.Dispose(); IndexBuffer.Dispose(); }
 }

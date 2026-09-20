@@ -4,8 +4,10 @@ using CityBuilder.Tests.Vegetation;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nova3D.Rendering;
+using Nova3D.Rendering.Materials;
 
-namespace CityBuilder.Tests.LargeWorld;
+namespace CityBuilder.Benchmarks.CityBenchmark;
 
 internal sealed class LargeWorldScene : IDisposable
 {
@@ -29,6 +31,9 @@ internal sealed class LargeWorldScene : IDisposable
     private readonly RoadNetwork _roads;
     private readonly TerrainMaterialTextures _terrainTextures;
     private readonly LargeWorldCamera _camera = new();
+    private readonly RenderContext _renderContext;
+    private readonly ForwardLitMaterial _vegetationMaterial;
+    private readonly ForwardLitMaterial _cityMaterial;
     private Matrix _projection;
     private readonly Matrix[] _lightViewProjections = new Matrix[4];
     private readonly float[] _cascadeSplits = new float[4];
@@ -57,6 +62,9 @@ internal sealed class LargeWorldScene : IDisposable
         _instancedShadowEffect = instancedShadowEffect;
         _postProcessEffect = postProcessEffect;
         _spriteBatch = new SpriteBatch(device);
+        _renderContext = new RenderContext(device);
+        _vegetationMaterial = new ForwardLitMaterial("vegetation", vegetationEffect, LightDirection);
+        _cityMaterial = new ForwardLitMaterial("city", vegetationEffect, LightDirection, materialMode: 1f);
         for (var i = 0; i < 4; i++)
             _shadowMaps[i] = new RenderTarget2D(device, 4096, 4096, false, SurfaceFormat.Single,
                 DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents);
@@ -86,22 +94,22 @@ internal sealed class LargeWorldScene : IDisposable
             _shadowDebugMode = (_shadowDebugMode + 1) % 5;
         _shadowDebugKeyWasDown = debugKeyDown;
         _camera.Update(gameTime, window);
+        _camera.SetViewport(_vegetationEffect.GraphicsDevice.Viewport);
+        _renderContext.BeginFrame(_camera.Camera);
         _time += (float)gameTime.ElapsedGameTime.TotalSeconds;
-        _projection = Matrix.CreatePerspectiveFieldOfView(
-            MathHelper.PiOver4, _vegetationEffect.GraphicsDevice.Viewport.AspectRatio, 1f, 3200f);
+        _projection = _camera.Projection;
         _terrain.Update(_camera.View, _projection, _camera.Position);
         _forest.Update(_camera.View, _projection, _camera.Position);
         _population.Update(_camera.View, _projection, _camera.Position);
 
         var elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
         if (elapsed > 0) _smoothedFrameMilliseconds = _smoothedFrameMilliseconds * 0.95 + elapsed * 0.05;
-        var draws = _terrain.DrawCalls + 4 + (_forest.DrawCalls + _population.DrawCalls) * 5 + 6;
-        var triangles = _terrain.VisibleTriangles + _forest.VisibleTriangles + _population.VisibleTriangles + _water.PrimitiveCount + _roads.PrimitiveCount;
-        window.Title = $"CityBuilder - Teste 08: City Benchmark | FPS {1000.0 / _smoothedFrameMilliseconds:F0} | {_smoothedFrameMilliseconds:F2} ms | " +
+        var statistics = _renderContext.LastFrameStatistics;
+        window.Title = $"CityBuilder - CityBenchmark | FPS {1000.0 / _smoothedFrameMilliseconds:F0} | {_smoothedFrameMilliseconds:F2} ms | " +
                        $"chunks {_terrain.VisibleCount}/{LargeWorldTerrain.TotalChunks} [{_terrain.VisibleLods[0]}/{_terrain.VisibleLods[1]}/{_terrain.VisibleLods[2]}] | " +
                        $"arvores {_forest.TotalVisible}/10000 [{_forest.VisibleCounts[0]}/{_forest.VisibleCounts[1]}/{_forest.VisibleCounts[2]}] | " +
                        $"predios {_population.VisibleBuildings}/1000 | veiculos {_population.VisibleVehicles}/500 | " +
-                       $"draws {draws} | tris {triangles / 1000f:F0}k | shadow debug {_shadowDebugMode} | " +
+                       $"draws {statistics.DrawCalls} | tris {statistics.Triangles / 1000f:F0}k | shadow {statistics.ShadowDrawCalls} | shadow debug {_shadowDebugMode} | " +
                        $"CPU xy {_shadowCpuMaxXY:F2} z {_shadowCpuMinZ:F2}..{_shadowCpuMaxZ:F2}";
     }
 
@@ -113,6 +121,7 @@ internal sealed class LargeWorldScene : IDisposable
         device.SetRenderTarget(_hdrScene);
         device.Clear(new Color(18, 22, 30));
         DrawSkybox();
+        _renderContext.Statistics.RecordDraw(_skybox.PrimitiveCount);
         device.BlendState = BlendState.Opaque;
         device.DepthStencilState = DepthStencilState.Default;
         device.RasterizerState = RasterizerState.CullClockwise;
@@ -126,24 +135,26 @@ internal sealed class LargeWorldScene : IDisposable
         SetTerrainTextures();
         SetShadowParameters(_terrainMaterialEffect);
         _terrain.Draw(device, _terrainMaterialEffect);
+        _renderContext.Statistics.RecordDraws(_terrain.DrawCalls, _terrain.VisibleTriangles);
+        _renderContext.Statistics.RecordVisibleChunks(_terrain.VisibleCount);
 
         _terrainEffect.Parameters["ViewProjection"].SetValue(_camera.View * _projection);
         SetShadowParameters(_terrainEffect);
         _terrainEffect.Parameters["LightDirection"].SetValue(LightDirection);
         _terrainEffect.Parameters["View"].SetValue(_camera.View);
         _roads.Draw(device, _terrainEffect);
+        _renderContext.Statistics.RecordDraw(_roads.PrimitiveCount);
 
         device.DepthStencilState = DepthStencilState.Default;
         device.RasterizerState = RasterizerState.CullNone;
-        _vegetationEffect.Parameters["ViewProjection"].SetValue(_camera.View * _projection);
-        _vegetationEffect.Parameters["CameraPosition"].SetValue(_camera.Position);
-        _vegetationEffect.Parameters["LightDirection"].SetValue(LightDirection);
-        _vegetationEffect.Parameters["View"].SetValue(_camera.View);
         SetShadowParameters(_vegetationEffect);
-        _vegetationEffect.Parameters["MaterialMode"].SetValue(0f);
-        _forest.Draw(device, _vegetationEffect);
-        _vegetationEffect.Parameters["MaterialMode"].SetValue(1f);
-        _population.Draw(device, _vegetationEffect);
+        _vegetationMaterial.Apply(_renderContext);
+        _forest.Draw(device, _vegetationMaterial.Effect);
+        _renderContext.Statistics.RecordDraws(_forest.DrawCalls, _forest.VisibleTriangles, _forest.TotalVisible);
+        _cityMaterial.Apply(_renderContext);
+        _population.Draw(device, _cityMaterial.Effect);
+        _renderContext.Statistics.RecordDraws(_population.DrawCalls, _population.VisibleTriangles,
+            _population.VisibleBuildings + _population.VisibleVehicles);
 
         device.BlendState = BlendState.AlphaBlend;
         device.DepthStencilState = DepthStencilState.DepthRead;
@@ -153,6 +164,7 @@ internal sealed class LargeWorldScene : IDisposable
         _waterEffect.Parameters["LightDirection"].SetValue(LightDirection);
         _waterEffect.Parameters["Time"].SetValue(_time);
         _water.Draw(device, _waterEffect);
+        _renderContext.Statistics.RecordDraw(_water.PrimitiveCount);
         device.BlendState = BlendState.Opaque;
         DrawPostProcess();
     }
@@ -204,6 +216,7 @@ internal sealed class LargeWorldScene : IDisposable
             DepthStencilState.None, RasterizerState.CullNone, _postProcessEffect);
         _spriteBatch.Draw(source, destination, Color.White);
         _spriteBatch.End();
+        _renderContext.Statistics.RecordDraw(2);
     }
 
     private void DrawShadowMap()
@@ -220,10 +233,15 @@ internal sealed class LargeWorldScene : IDisposable
             _shadowEffect.Parameters["World"].SetValue(Matrix.Identity);
             _shadowEffect.Parameters["LightViewProjection"].SetValue(_lightViewProjections[cascade]);
             _terrain.DrawShadow(device, _shadowEffect);
+            _renderContext.Statistics.RecordDraw(_terrain.ShadowPrimitiveCount, shadow: true);
             device.RasterizerState = RasterizerState.CullNone;
             _instancedShadowEffect.Parameters["LightViewProjection"].SetValue(_lightViewProjections[cascade]);
             _forest.Draw(device, _instancedShadowEffect);
+            _renderContext.Statistics.RecordDraws(_forest.DrawCalls, _forest.VisibleTriangles,
+                _forest.TotalVisible, shadow: true);
             _population.Draw(device, _instancedShadowEffect);
+            _renderContext.Statistics.RecordDraws(_population.DrawCalls, _population.VisibleTriangles,
+                _population.VisibleBuildings + _population.VisibleVehicles, shadow: true);
         }
         device.SetRenderTarget(null);
     }
@@ -353,19 +371,11 @@ internal sealed class LargeWorldScene : IDisposable
         _terrain.Dispose();
         _skybox.Dispose();
         _environment.Dispose();
-        _terrainEffect.Dispose();
-        _terrainMaterialEffect.Dispose();
-        _waterEffect.Dispose();
-        _shadowEffect.Dispose();
-        _instancedShadowEffect.Dispose();
-        _postProcessEffect.Dispose();
         _spriteBatch.Dispose();
         _hdrScene?.Dispose();
         _bloomA?.Dispose();
         _bloomB?.Dispose();
         foreach (var shadowMap in _shadowMaps) shadowMap.Dispose();
         _shadowRasterizer.Dispose();
-        _vegetationEffect.Dispose();
-        _skyboxEffect.Dispose();
     }
 }

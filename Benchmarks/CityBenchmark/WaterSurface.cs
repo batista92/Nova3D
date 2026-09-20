@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CityBuilder.Tests.LargeWorld;
+namespace CityBuilder.Benchmarks.CityBenchmark;
 
 internal sealed class WaterSurface : IDisposable
 {
