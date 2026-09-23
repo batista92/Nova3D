@@ -40,6 +40,31 @@ public sealed class DebugRenderer : IDisposable
         Line(c[2], c[6], color); Line(c[3], c[7], color);
     }
 
+    public void OrientedBox(Matrix world, Vector3 size, Color color)
+    {
+        Vector3 half = size * 0.5f;
+        var corners = new[]
+        {
+            new Vector3(-half.X, -half.Y, -half.Z), new Vector3( half.X, -half.Y, -half.Z),
+            new Vector3( half.X, -half.Y,  half.Z), new Vector3(-half.X, -half.Y,  half.Z),
+            new Vector3(-half.X,  half.Y, -half.Z), new Vector3( half.X,  half.Y, -half.Z),
+            new Vector3( half.X,  half.Y,  half.Z), new Vector3(-half.X,  half.Y,  half.Z)
+        };
+        for (int i = 0; i < corners.Length; i++) corners[i] = Vector3.Transform(corners[i], world);
+        AddLoop(corners, 0, 1, 2, 3, color);
+        AddLoop(corners, 4, 5, 6, 7, color);
+        Line(corners[0], corners[4], color); Line(corners[1], corners[5], color);
+        Line(corners[2], corners[6], color); Line(corners[3], corners[7], color);
+    }
+
+    public void WireSphere(Vector3 center, float radius, Color color, int segments = 24)
+    {
+        if (segments < 6) throw new ArgumentOutOfRangeException(nameof(segments));
+        AddCircle(center, radius, Vector3.Right, Vector3.Up, color, segments);
+        AddCircle(center, radius, Vector3.Right, Vector3.Backward, color, segments);
+        AddCircle(center, radius, Vector3.Up, Vector3.Backward, color, segments);
+    }
+
     public void Frustum(BoundingFrustum frustum, Color color)
     {
         var c = frustum.GetCorners();
@@ -78,6 +103,19 @@ public sealed class DebugRenderer : IDisposable
     {
         Line(corners[a], corners[b], color); Line(corners[b], corners[c], color);
         Line(corners[c], corners[d], color); Line(corners[d], corners[a], color);
+    }
+
+    private void AddCircle(Vector3 center, float radius, Vector3 axisA, Vector3 axisB,
+        Color color, int segments)
+    {
+        Vector3 previous = center + axisA * radius;
+        for (int i = 1; i <= segments; i++)
+        {
+            float angle = MathHelper.TwoPi * i / segments;
+            Vector3 current = center + (axisA * MathF.Cos(angle) + axisB * MathF.Sin(angle)) * radius;
+            Line(previous, current, color);
+            previous = current;
+        }
     }
 
     public void Dispose() => _effect.Dispose();

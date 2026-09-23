@@ -21,6 +21,8 @@ benchmark is a consumer and is not included in either package.
 ```powershell
 dotnet build .\CityBuilder.csproj -c Release --no-restore
 dotnet pack .\Nova3D\Nova3D.csproj -c Release -o .\artifacts\packages
+dotnet pack .\Nova3D.Physics.Bepu\Nova3D.Physics.Bepu.csproj `
+  -c Release -o .\artifacts\packages
 dotnet pack .\templates\Nova3D.Templates\Nova3D.Templates.csproj `
   -c Release -o .\artifacts\packages
 ```

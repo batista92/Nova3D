@@ -905,6 +905,45 @@ Isso evita passarmos seis meses construindo uma engine imaginária para jogos qu
 
 ---
 
+## FASE 3 — FÍSICA OPCIONAL
+
+```text
+P1 — Fundação                                      CONCLUÍDO
+   pacote Nova3D.Physics.Bepu
+   fixed timestep e multithreading
+   box, sphere, capsule e static box
+   raycast e ownership de shapes
+   benchmark headless com 1.000 corpos
+
+P2 — Diagnóstico e filtros                         CONCLUÍDO
+   collision layers e masks
+   materiais físicos configuráveis
+   debug draw de colliders
+   estatísticas da simulação
+
+P3 — Terrain physics                               CONCLUÍDO
+   collider por terrain chunk
+   streaming cria/remove collider junto do chunk
+   deformação reconstrói somente chunks afetados
+   teste de alinhamento visual/físico
+
+P4 — Gameplay foundations                          CONCLUÍDO
+   kinematic bodies e triggers
+   sweep/shape cast
+   character-controller sample
+   constraints essenciais
+
+P5 — Physics Gate                                  EM ANDAMENTO
+   cena visual interativa                           IMPLEMENTADA (VALIDAR)
+   stress test e alocações por frame                AUTOMATIZADO
+   validação de determinismo local                  AUTOMATIZADO
+   documentação e template opcional                 VALIDADO
+```
+
+Regras do gate: `Nova3D` não depende de BEPU; física usa passo fixo; chunks
+visuais e físicos compartilham a mesma fonte de altura; e recursos avançados
+continuam acessíveis por `BepuPhysicsWorld.Simulation` sem duplicar a API BEPU.
+
 ## Roadmap resumido
 
 ```text

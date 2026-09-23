@@ -1,6 +1,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nova3D.Rendering;
+#if (physics)
+using Nova3D.Physics.Bepu;
+#endif
 
 namespace Nova3DGame.Game;
 
@@ -16,7 +19,12 @@ public sealed class World : IDisposable
         NearPlane = 0.1f,
         FarPlane = 100f
     };
+#if (physics)
+    private readonly BepuPhysicsWorld _physics;
+    private readonly BepuBody _body;
+#else
     private float _rotation;
+#endif
 
     public World(GraphicsDevice device)
     {
@@ -27,11 +35,20 @@ public sealed class World : IDisposable
             VertexColorEnabled = true,
             LightingEnabled = false
         };
+#if (physics)
+        _physics = new BepuPhysicsWorld();
+        _physics.CreateStaticBox(new Vector3(0f, -0.5f, 0f), new Vector3(12f, 1f, 12f));
+        _body = _physics.CreateDynamicBox(new Vector3(0f, 4f, 0f), new Vector3(2f));
+#endif
     }
 
     public void Update(GameTime gameTime, float aspectRatio)
     {
+#if (physics)
+        _physics.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+#else
         _rotation += (float)gameTime.ElapsedGameTime.TotalSeconds * 0.65f;
+#endif
         _camera.SetAspectRatio(aspectRatio);
     }
 
@@ -40,9 +57,19 @@ public sealed class World : IDisposable
         _device.DepthStencilState = DepthStencilState.Default;
         _device.BlendState = BlendState.Opaque;
         _device.RasterizerState = RasterizerState.CullCounterClockwise;
-        _effect.World = Matrix.CreateRotationY(_rotation) * Matrix.CreateRotationX(_rotation * 0.35f);
         _effect.View = _camera.View;
         _effect.Projection = _camera.Projection;
+#if (physics)
+        DrawCube(Matrix.CreateScale(6f, 0.5f, 6f) * Matrix.CreateTranslation(0f, -0.5f, 0f));
+        DrawCube(_body.WorldMatrix);
+#else
+        DrawCube(Matrix.CreateRotationY(_rotation) * Matrix.CreateRotationX(_rotation * 0.35f));
+#endif
+    }
+
+    private void DrawCube(Matrix world)
+    {
+        _effect.World = world;
         foreach (var pass in _effect.CurrentTechnique.Passes)
         {
             pass.Apply();
@@ -73,6 +100,9 @@ public sealed class World : IDisposable
 
     public void Dispose()
     {
+#if (physics)
+        _physics.Dispose();
+#endif
         _cube.Dispose();
         _effect.Dispose();
     }

@@ -9,6 +9,9 @@
 
   <ItemGroup>
     <PackageReference Include="Nova3D" Version="0.1.0" />
+    <!--#if (physics)-->
+    <PackageReference Include="Nova3D.Physics.Bepu" Version="0.1.0" />
+    <!--#endif-->
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
   </ItemGroup>

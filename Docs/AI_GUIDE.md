@@ -100,6 +100,25 @@ general engine conventions or speculative abstractions.
 - Do not rebuild the whole terrain for a local edit.
 - Do not create GPU objects or large temporary arrays every frame.
 
+## Physics
+
+- Physics is optional and lives in `Nova3D.Physics.Bepu`; core Nova3D must not
+  reference BEPU.
+- Use a fixed timestep. Rendering frame time must not be passed directly to
+  `Simulation.Timestep`.
+- BEPU uses `System.Numerics`; convert only at the physics/rendering boundary.
+- Physics owns simulation handles and collision shapes; rendering owns meshes.
+- Removing a body or static must also release its collision shape.
+- Terrain colliders follow terrain chunk ownership and must be rebuilt only for
+  affected chunks after deformation.
+- Gameplay owns the meaning of collisions. Do not put game-specific collision
+  rules in the reusable physics module.
+- `KinematicCharacterController.Move` receives displacement, not velocity.
+- Keep input, gravity, jumping and character state in gameplay code; the reusable
+  controller only owns collision queries and sweep-and-slide movement.
+- Access `BepuPhysicsWorld.Simulation` directly for advanced BEPU features
+  instead of duplicating the complete BEPU API.
+
 ## Change protocol
 
 Before editing:

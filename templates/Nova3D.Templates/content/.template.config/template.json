@@ -12,6 +12,14 @@
     "language": "C#",
     "type": "project"
   },
+  "symbols": {
+    "physics": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include the optional Nova3D.Physics.Bepu module and physics starter scene."
+    }
+  },
   "primaryOutputs": [
     { "path": "Nova3DGame.csproj" }
   ]

@@ -50,9 +50,14 @@ internal sealed class LargeWorldTerrain : IDisposable
     public int PendingChunkLoads => _terrain.PendingChunkLoads;
     public int ChunkLoadsLastUpdate => _terrain.ChunkLoadsLastUpdate;
     public int ChunkUnloadsLastUpdate => _terrain.ChunkUnloadsLastUpdate;
+    public IHeightProvider HeightProvider => _heights;
 
-    public int DeformRadial(float x, float z, float radius, float delta) =>
-        _terrain.DeformRadial(x, z, radius, delta);
+    public TerrainRegion DeformRadial(float x, float z, float radius, float delta)
+    {
+        TerrainRegion region = _heights.ApplyRadialDelta(x, z, radius, delta);
+        _terrain.RebuildRegion(region);
+        return region;
+    }
 
     public static float SampleHeight(float x, float z)
     {

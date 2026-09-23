@@ -11,7 +11,9 @@ using Nova3D.Rendering.Water;
 using Nova3D.Production.Configuration;
 using Nova3D.Production.Debugging;
 using Nova3D.Production.Logging;
+using Nova3D.Physics.Bepu;
 using Nova3D.World.Terrain;
+using Nova3D.World.Streaming;
 using Nova3D.World.Vegetation;
 using NovaDirectionalLight = Nova3D.Rendering.Lighting.DirectionalLight;
 
@@ -44,6 +46,9 @@ internal sealed class LargeWorldScene : IDisposable
     private readonly GltfValidationGallery _gltfGallery;
     private readonly ForwardLitMaterial _vegetationMaterial;
     private readonly ForwardLitMaterial _cityMaterial;
+    private readonly BepuPhysicsWorld _physics;
+    private readonly TerrainPhysics _physicsTerrain;
+    private readonly List<BepuBody> _physicsBodies = new();
     private Matrix _projection;
     private double _smoothedFrameMilliseconds = 16.67;
     private int _shadowDebugMode;
@@ -53,6 +58,9 @@ internal sealed class LargeWorldScene : IDisposable
     private bool _showDebugGeometry;
     private bool _galleryKeyWasDown;
     private bool _showGltfGallery;
+    private bool _physicsDebugKeyWasDown;
+    private bool _physicsResetKeyWasDown;
+    private bool _showPhysicsDebug;
     private float _time;
 
     public LargeWorldScene(GraphicsDevice device, Effect terrainEffect, Effect terrainMaterialEffect, Effect waterEffect, Effect vegetationEffect, Effect skyboxEffect,
@@ -84,6 +92,24 @@ internal sealed class LargeWorldScene : IDisposable
         _gltfGallery = new GltfValidationGallery(device, pbrEffect, _sun, _imageBasedLighting,
             Path.Combine(AppContext.BaseDirectory, "LocalAssets", "Models", "validation"), logger);
         _terrain = new LargeWorldTerrain(device, configuration.Streaming);
+        _physics = new BepuPhysicsWorld();
+        _physicsTerrain = new TerrainPhysics(_physics, _terrain.HeightProvider,
+            new TerrainPhysicsSettings
+            {
+                WorldSize = LargeWorldTerrain.WorldSize,
+                ChunksPerAxis = LargeWorldTerrain.ChunkCountPerAxis,
+                SegmentsPerChunk = 16,
+                Streaming = new WorldStreamingSettings
+                {
+                    CellSize = LargeWorldTerrain.WorldSize / LargeWorldTerrain.ChunkCountPerAxis,
+                    Origin = new Vector2(-LargeWorldTerrain.WorldSize * 0.5f),
+                    LoadRadius = configuration.Streaming.LoadRadius,
+                    RetainRadius = configuration.Streaming.RetainRadius,
+                    MaxLoadsPerUpdate = configuration.Streaming.MaxLoadsPerFrame,
+                    MaxUnloadsPerUpdate = configuration.Streaming.MaxUnloadsPerFrame
+                }
+            });
+        ResetPhysicsBodies();
         var vegetation = VegetationScatter.CreateGrid(10_000, 1900f, 9127,
             LargeWorldTerrain.SampleHeight,
             static (x, z) => !BenchmarkPopulation.InsideLake(x, z) &&
@@ -120,7 +146,10 @@ internal sealed class LargeWorldScene : IDisposable
         _shadowDebugKeyWasDown = debugKeyDown;
         var deformKeyDown = Keyboard.GetState().IsKeyDown(Keys.F2);
         if (deformKeyDown && !_deformKeyWasDown)
-            _terrain.DeformRadial(0f, 0f, 95f, 12f);
+        {
+            TerrainRegion changed = _terrain.DeformRadial(0f, 0f, 95f, 12f);
+            _physicsTerrain.RebuildRegion(changed);
+        }
         _deformKeyWasDown = deformKeyDown;
         var geometryDebugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F3);
         if (geometryDebugKeyDown && !_debugKeyWasDown)
@@ -130,6 +159,14 @@ internal sealed class LargeWorldScene : IDisposable
         if (galleryKeyDown && !_galleryKeyWasDown)
             _showGltfGallery = !_showGltfGallery;
         _galleryKeyWasDown = galleryKeyDown;
+        var physicsDebugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F5);
+        if (physicsDebugKeyDown && !_physicsDebugKeyWasDown)
+            _showPhysicsDebug = !_showPhysicsDebug;
+        _physicsDebugKeyWasDown = physicsDebugKeyDown;
+        var physicsResetKeyDown = Keyboard.GetState().IsKeyDown(Keys.F6);
+        if (physicsResetKeyDown && !_physicsResetKeyWasDown)
+            ResetPhysicsBodies();
+        _physicsResetKeyWasDown = physicsResetKeyDown;
         _camera.Update(gameTime, window);
         _camera.SetViewport(_vegetationEffect.GraphicsDevice.Viewport);
         _renderContext.BeginFrame(_camera.Camera);
@@ -138,6 +175,8 @@ internal sealed class LargeWorldScene : IDisposable
         _terrain.Update(_camera.View, _projection, _camera.Position);
         _forest.Update(_camera.Camera);
         _population.Update(_camera.Camera);
+        _physicsTerrain.Update(_camera.Position);
+        _physics.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
         var elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
         if (elapsed > 0) _smoothedFrameMilliseconds = _smoothedFrameMilliseconds * 0.95 + elapsed * 0.05;
@@ -155,6 +194,9 @@ internal sealed class LargeWorldScene : IDisposable
                        $"world {_renderContext.Profiler.GetSmoothedMilliseconds("world"):F2} " +
                        $"post {_renderContext.Profiler.GetSmoothedMilliseconds("post"):F2} ms | dbg {(_showDebugGeometry ? 1 : 0)} | " +
                        $"CPU xy {_shadows.DebugMaxXY:F2} z {_shadows.DebugMinZ:F2}..{_shadows.DebugMaxZ:F2}";
+        if (_showPhysicsDebug)
+            window.Title += $" | PHYS {_physics.LastStepMilliseconds:F2} ms " +
+                            $"bodies {_physics.BodyCount} chunks {_physicsTerrain.ChunkCount} | F6 reset";
         if (_showGltfGallery)
             window.Title += $" | GLB {_gltfGallery.LoadedCount}/{_gltfGallery.FileCount} falhas {_gltfGallery.FailedCount}";
     }
@@ -214,6 +256,11 @@ internal sealed class LargeWorldScene : IDisposable
                 _debugRenderer.Frustum(_camera.Camera.Frustum, Color.Yellow);
                 _debugRenderer.Flush(_renderContext);
             }
+            if (_showPhysicsDebug)
+            {
+                _physics.DebugDraw(_debugRenderer, Color.Cyan);
+                _debugRenderer.Flush(_renderContext);
+            }
         }
         using (_renderContext.Profiler.Measure("post"))
             _postProcess.EndScene(_renderContext.Statistics);
@@ -265,8 +312,27 @@ internal sealed class LargeWorldScene : IDisposable
         }
     }
 
+    private void ResetPhysicsBodies()
+    {
+        foreach (BepuBody body in _physicsBodies)
+            _physics.Remove(body);
+        _physicsBodies.Clear();
+
+        const int columns = 10;
+        for (int i = 0; i < 100; i++)
+        {
+            float x = (i % columns - columns * 0.5f) * 10f;
+            float z = 390f + (i / columns - columns * 0.5f) * 10f;
+            float y = _terrain.HeightProvider.SampleHeight(x, z) + 10f + (i % 5) * 9f;
+            _physicsBodies.Add(_physics.CreateDynamicBox(
+                new Vector3(x, y, z), new Vector3(7f)));
+        }
+    }
+
     public void Dispose()
     {
+        _physicsTerrain.Dispose();
+        _physics.Dispose();
         _forest.Dispose();
         _population.Dispose();
         _water.Dispose();

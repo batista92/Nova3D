@@ -13,8 +13,11 @@ importação glTF/GLB, asset management, shader hot reload, debug e profiling.
 ## Instalar o template local
 
 ```powershell
-.\eng\install-template.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\eng\install-template.ps1
 ```
+
+O `Bypass` vale apenas para esse processo e nÃ£o altera permanentemente a
+polÃ­tica de execuÃ§Ã£o do Windows.
 
 O instalador empacota `Nova3D` e `Nova3D.Templates`, registra o feed local e
 instala o comando `nova3d`.

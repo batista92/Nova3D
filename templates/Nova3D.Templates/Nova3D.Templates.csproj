@@ -33,6 +33,7 @@
     <Content Include="..\..\Docs\materials.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\shaders.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\performance.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\physics.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\AI_GUIDE.md" PackagePath="content\Docs" />
     <Content Include="..\..\Nova3D\Shaders\**\*.fx" PackagePath="content\Shaders" />
     <Compile Remove="content\**\*.cs" />
