@@ -207,3 +207,10 @@ physics chunks while the overlay is enabled. The headless `PhysicsBenchmark`
 separately checks steady-state allocations and local single-thread determinism.
 Multithread simulation is treated as a performance mode, not as a cross-run or
 cross-platform determinism guarantee.
+
+## Physics gate result
+
+The optional physics gate is approved. Interactive terrain/body alignment was
+validated in the CityBenchmark, while the headless benchmark covers 1,000-body
+stress, steady-state allocations, ray queries and local deterministic replay.
+Physics remains an optional package and core `Nova3D` has no BEPU dependency.

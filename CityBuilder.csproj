@@ -7,7 +7,7 @@
     <Nullable>enable</Nullable>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
-    <DefaultItemExcludes>$(DefaultItemExcludes);Nova3D\**;Nova3D.Physics.Bepu\**;Benchmarks\PhysicsBenchmark\**;templates\**;artifacts\**</DefaultItemExcludes>
+    <DefaultItemExcludes>$(DefaultItemExcludes);Nova3D\**;Nova3D.Physics.Bepu\**;Nova3D.UI.Gum\**;Benchmarks\PhysicsBenchmark\**;Samples\**;templates\**;artifacts\**</DefaultItemExcludes>
     <EnableMGCBItems>false</EnableMGCBItems>
   </PropertyGroup>
 
@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="Nova3D\Nova3D.csproj" />
     <ProjectReference Include="Nova3D.Physics.Bepu\Nova3D.Physics.Bepu.csproj" />
+    <ProjectReference Include="Nova3D.UI.Gum\Nova3D.UI.Gum.csproj" />
   </ItemGroup>
 
   <ItemGroup>

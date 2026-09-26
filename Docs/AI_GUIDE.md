@@ -119,7 +119,47 @@ general engine conventions or speculative abstractions.
 - Access `BepuPhysicsWorld.Simulation` directly for advanced BEPU features
   instead of duplicating the complete BEPU API.
 
+## UI
+
+- Game UI is optional and uses Gum; core Nova3D must not reference Gum.
+- Use Gum Forms controls directly. Do not create wrappers such as `NovaButton`,
+  `NovaLabel` or `NovaPanel`.
+- Update Gum once per frame and draw it after the HDR scene is resolved.
+- Gameplay owns UI content and actions; reusable integration owns lifecycle,
+  scaling, input routing and screen navigation only.
+- Register keyboard and gamepads explicitly and provide an initial focused
+  control when controller navigation is expected.
+- Preserve anchors and usable hit targets when the window is resized.
+- UI timings are CPU timings. Measure managed allocations separately.
+- `GumUiScreenStack` owns every screen after `Push`; do not reuse or manually
+  dispose a pushed screen.
+- Only the top UI screen updates. Use `CoversPrevious = false` for a modal that
+  leaves the previous screen visible but inactive.
+- Keep HUD controls alive. Use `GumValueBinding<T>` or an equivalent change
+  check instead of recreating controls or rewriting unchanged values per frame.
+- `GumWorldMarker` converts viewport pixels to Gum canvas coordinates; do not
+  position markers with back-buffer pixels when virtual scaling is enabled.
+- Preallocate transient HUD controls. `GumNotificationQueue` reuses a fixed
+  label pool and intentionally replaces the oldest slot when full.
+- `GumUiTheme` styles Gum V3 visuals in place; it is not a control factory and
+  must not own or dispose controls. Custom visuals remain styled by game code.
+- Gum owns generated/loaded fonts. `GumFontStyle` only assigns font properties
+  and must not cache or dispose Gum font resources.
+- Read UI back navigation from `GumUiHost.Navigation`; do not create separate
+  Escape and gamepad-B paths that can fire twice in one frame.
+- Apply accessibility hit targets after setting explicit control dimensions.
+  Theme foreground/surface contrast must satisfy the configured ratio.
+- `ReducedMotion` is a user preference consumed by screen/game animations; it
+  must not disable input feedback or functional state changes.
+- Template UI code must remain behind the `ui` template symbol. The default
+  `dotnet new nova3d` output must not reference Gum or `Nova3D.UI.Gum`.
+
 ## Change protocol
+
+For an external game, first read `Docs/README.md`, `Docs/game-project-guide.md`
+and the topic document for the module being changed. Record suspected toolkit
+defects using `Docs/NOVA3D_EVALUATION_TEMPLATE.md`. Do not move game-specific
+rules into Nova3D merely to share code inside one game.
 
 Before editing:
 

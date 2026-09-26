@@ -24,16 +24,31 @@
     <Content Include="content\**\*" Exclude="content\**\bin\**;content\**\obj\**"
              PackagePath="content" />
     <Content Include="..\..\AGENTS.md" PackagePath="content" />
+    <Content Include="..\..\skills\nova3d-game-development\**\*"
+             PackagePath="content\.agents\skills\nova3d-game-development" />
     <Content Include="..\..\Docs\ProjectTemplate.md" PackagePath="README.md" />
     <Content Include="..\..\.config\dotnet-tools.json" PackagePath="content\.config" />
     <Content Include="..\..\Docs\getting-started.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\AI_QUICKSTART.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\agent-skill.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\API_INDEX.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\README.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\game-project-guide.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\troubleshooting.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\NOVA3D_EVALUATION_TEMPLATE.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\Recipes\**\*.md" PackagePath="content\Docs\Recipes" />
     <Content Include="..\..\Docs\architecture.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\AssetManagement.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\GltfImport.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\rendering.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\terrain.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\materials.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\shaders.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\performance.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\physics.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\releasing.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\validation.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\ui.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\AI_GUIDE.md" PackagePath="content\Docs" />
     <Content Include="..\..\Nova3D\Shaders\**\*.fx" PackagePath="content\Shaders" />
     <Compile Remove="content\**\*.cs" />

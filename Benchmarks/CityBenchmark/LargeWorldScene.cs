@@ -63,6 +63,10 @@ internal sealed class LargeWorldScene : IDisposable
     private bool _showPhysicsDebug;
     private float _time;
 
+    public Matrix View => _camera.View;
+    public Matrix Projection => _projection;
+    public Vector3 HudMarkerPosition => new(0f, LargeWorldTerrain.SampleHeight(0f, 0f) + 45f, 0f);
+
     public LargeWorldScene(GraphicsDevice device, Effect terrainEffect, Effect terrainMaterialEffect, Effect waterEffect, Effect vegetationEffect, Effect skyboxEffect,
         Effect shadowEffect, Effect instancedShadowEffect, Effect postProcessEffect, Effect pbrEffect,
         Nova3DConfiguration configuration, ILogger logger)

@@ -1,5 +1,10 @@
 # Getting started
 
+This is the shortest path to a running project. Continue with the
+[game project guide](game-project-guide.md) for lifecycle, module boundaries,
+audio and executable publishing. Use [troubleshooting.md](troubleshooting.md)
+when the generated project does not behave as described.
+
 ## Install the local template
 
 From the Nova3D repository:
@@ -22,6 +27,22 @@ dotnet run
 The generated project opens a 3D scene containing a rotating cube. Press
 `Escape` to close it.
 
+Create the same scene with the optional Gum HUD/menu starter:
+
+```powershell
+dotnet new nova3d -n MyUiGame --ui
+cd MyUiGame
+dotnet run
+```
+
+`--ui` adds `Nova3D.UI.Gum`, initializes the UI after MonoGame, draws it after
+the 3D scene and disposes it on the graphics thread. Omit the option and the
+generated project has no Gum dependency. Options can be combined:
+
+```powershell
+dotnet new nova3d -n MyFullGame --physics --ui
+```
+
 ```text
 MyGame/
 ├── Assets/
@@ -33,7 +54,8 @@ MyGame/
 ├── Docs/
 ├── Game/
 │   ├── MyGame.cs
-│   └── World.cs
+│   ├── World.cs
+│   └── UiOverlay.cs       # generated with --ui
 ├── Shaders/
 ├── AGENTS.md
 ├── MyGame.csproj
@@ -59,3 +81,21 @@ var model = new GltfImporter(GraphicsDevice)
 
 Create GPU resources on the graphics thread and dispose `GltfModel` when its
 owner unloads. Prefer GLB over glTF for portable runtime assets and hot reload.
+
+## Validate the installation
+
+```powershell
+dotnet new nova3d -h
+dotnet build -c Release
+```
+
+Template help must show the `--physics` and `--ui` options. A normal Release
+build validates compilation and MGCB processing; run the game to validate the
+graphics backend and runtime assets.
+
+## Report a Nova3D problem
+
+Copy [NOVA3D_EVALUATION_TEMPLATE.md](NOVA3D_EVALUATION_TEMPLATE.md) to the game
+repository. Reproduce the issue with the smallest scene possible and determine
+whether the owner is game code, documentation, a Nova3D package or an upstream
+dependency before changing toolkit code.

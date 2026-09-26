@@ -7,10 +7,12 @@ $packages = Join-Path $repository 'artifacts\packages'
 $templateProject = Join-Path $repository 'templates\Nova3D.Templates\Nova3D.Templates.csproj'
 $novaProject = Join-Path $repository 'Nova3D\Nova3D.csproj'
 $physicsProject = Join-Path $repository 'Nova3D.Physics.Bepu\Nova3D.Physics.Bepu.csproj'
+$uiProject = Join-Path $repository 'Nova3D.UI.Gum\Nova3D.UI.Gum.csproj'
 
 New-Item -ItemType Directory -Force -Path $packages | Out-Null
 dotnet pack $novaProject -c Release -o $packages
 dotnet pack $physicsProject -c Release -o $packages
+dotnet pack $uiProject -c Release -o $packages
 dotnet pack $templateProject -c Release -o $packages
 
 $existing = (dotnet nuget list source --format short) -join [Environment]::NewLine
@@ -38,3 +40,9 @@ Write-Host '  dotnet run'
 Write-Host ''
 Write-Host 'Optional physics:'
 Write-Host '  dotnet new nova3d -n MyPhysicsGame --physics'
+Write-Host ''
+Write-Host 'Optional UI:'
+Write-Host '  dotnet new nova3d -n MyUiGame --ui'
+Write-Host ''
+Write-Host 'Physics + UI:'
+Write-Host '  dotnet new nova3d -n MyFullGame --physics --ui'

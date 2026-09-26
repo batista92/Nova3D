@@ -4,7 +4,7 @@ MonoGame é adequado como fundação porque já nos entrega o framework .NET, pi
 
 Está dividido em **duas fases grandes: primeiro provar que vale a pena; só depois construir a ferramenta.**
 
-## Estado do projeto — 20/09/2026
+## Estado do projeto — 25/09/2026
 
 ```text
 Fase 1 — Provas de conceito    CONCLUÍDA
@@ -15,6 +15,9 @@ Fase 2 — Nova3D M1             CONCLUÍDO
 Fase 2 — Nova3D M2             CONCLUÍDO
 Fase 2 — Nova3D M3             CONCLUÍDO
 Fase 2 — Nova3D M4             CONCLUÍDO
+Fase 3 — Física opcional       CONCLUÍDA
+Fase 4 — UI opcional           CONCLUÍDA
+Fase 5 — AI Developer Experience CONCLUÍDA
 ```
 
 Os testes demonstraram que MonoGame fornece uma base 3D adequada quando o
@@ -933,8 +936,8 @@ P4 — Gameplay foundations                          CONCLUÍDO
    character-controller sample
    constraints essenciais
 
-P5 — Physics Gate                                  EM ANDAMENTO
-   cena visual interativa                           IMPLEMENTADA (VALIDAR)
+P5 — Physics Gate                                  APROVADO
+   cena visual interativa                           VALIDADA
    stress test e alocações por frame                AUTOMATIZADO
    validação de determinismo local                  AUTOMATIZADO
    documentação e template opcional                 VALIDADO
@@ -943,6 +946,155 @@ P5 — Physics Gate                                  EM ANDAMENTO
 Regras do gate: `Nova3D` não depende de BEPU; física usa passo fixo; chunks
 visuais e físicos compartilham a mesma fonte de altura; e recursos avançados
 continuam acessíveis por `BepuPhysicsWorld.Simulation` sem duplicar a API BEPU.
+
+---
+
+## FASE 4 — UI OPCIONAL
+
+```text
+U1 — Spike Gum                                      APROVADO
+   compatibilidade com MonoGame 3.8.4.1             VALIDADO
+   inicialização, update e draw                     VALIDADO
+   redimensionamento da janela                      VALIDADO
+   mouse, teclado e gamepad                         VALIDADO
+   medição de tempo e alocações                     VALIDADO
+
+U2 — Fundação                                       CONCLUÍDO
+   pacote Nova3D.UI.Gum                             IMPLEMENTADO
+   lifecycle explícito                             IMPLEMENTADO
+   escala virtual e DPI                            IMPLEMENTADO
+   ordem de renderização                           IMPLEMENTADO
+   captura de input                                IMPLEMENTADO
+   ownership e dispose                             IMPLEMENTADO
+
+U3 — Navegação                                      CONCLUÍDO
+   UiScreen                                         IMPLEMENTADO
+   screen stack                                     IMPLEMENTADO
+   menu principal e pause menu                     IMPLEMENTADO
+   modal/dialog                                     IMPLEMENTADO
+   hooks de transição                               IMPLEMENTADO
+
+U4 — HUD                                            CONCLUÍDO
+   labels e barras                                  IMPLEMENTADO
+   atualização sem recriar controles                IMPLEMENTADO
+   ancoragem responsiva                             IMPLEMENTADO
+   world-to-screen markers                          IMPLEMENTADO
+   notificações                                     IMPLEMENTADO
+
+U5 — Produção                                       CONCLUÍDO
+   temas e fontes                                   VALIDADO
+   navegação por gamepad                            VALIDADO
+   acessibilidade básica                            VALIDADO
+   template --ui                                    VALIDADO
+   documentação para IA                             CONCLUÍDO
+   UI benchmark e gate                              APROVADO
+```
+
+Regras: `Nova3D` não depende de Gum; a integração permanece opcional; tipos e
+controles Gum não serão duplicados por wrappers Nova3D; gameplay controla o
+conteúdo e as ações da UI; e o spike deve medir custo antes da extração do módulo.
+
+---
+
+## FASE 5 — AI DEVELOPER EXPERIENCE
+
+Objetivo: permitir que um agente sem histórico do CityBuilder crie, valide e
+publique um jogo Nova3D completo carregando apenas o contexto necessário. Mais
+documentação não é sucesso por si só; o gate mede autonomia, correção e custo de
+contexto.
+
+```text
+A1 — Contexto mínimo                                 CONCLUÍDO
+   AI_QUICKSTART.md com caminho feliz               IMPLEMENTADO
+   mapa de documentos por tarefa                    IMPLEMENTADO
+   limites e ownership em formato compacto          IMPLEMENTADO
+   AGENTS.md como roteador, não manual completo      IMPLEMENTADO
+
+A2 — Receitas operacionais                           CONCLUÍDO
+   formato padrão: quando/arquivos/código/validação  IMPLEMENTADO
+   criar jogo e lifecycle                            IMPLEMENTADO
+   GLB, material e cena                              IMPLEMENTADO
+   corpo físico, esfera e câmera follow              IMPLEMENTADO
+   menu, HUD, timer e game flow                      IMPLEMENTADO
+   áudio, settings, saves e publicação               IMPLEMENTADO
+
+A3 — Catálogo da API                                 CONCLUÍDO
+   API_INDEX.md por tipo público                     IMPLEMENTADO
+   propósito, ownership e dispose                    IMPLEMENTADO
+   módulo/pacote e link para receita                 IMPLEMENTADO
+   limites v0.1 próximos da API afetada              IMPLEMENTADO
+
+A4 — Validação de um comando                         CONCLUÍDO
+   eng/validate.ps1 para o toolkit                   IMPLEMENTADO
+   validação de jogo gerado                          IMPLEMENTADO
+   build, MGCB, testes, packages e templates         IMPLEMENTADO
+   saída curta, determinística e amigável para IA    IMPLEMENTADO
+
+A5 — Samples compiláveis                             CONCLUÍDO
+   Minimal3D                                         IMPLEMENTADO
+   PhysicsPlayground                                 IMPLEMENTADO
+   GumMenus                                          IMPLEMENTADO
+   RollingBall vertical slice                        IMPLEMENTADO
+   build dos samples como regressão                  IMPLEMENTADO
+
+A6 — Pacote para agentes                             CONCLUÍDO
+   skill nova3d-game-development                     IMPLEMENTADO
+   roteamento progressivo de contexto                IMPLEMENTADO
+   comandos e protocolo de diagnóstico               IMPLEMENTADO
+   modelo de avaliação de problemas                  IMPLEMENTADO
+
+A7 — Presets e AI Gate                               CONCLUÍDO
+   avaliar preset arcade3d com evidência dos samples IMPLEMENTADO (ADIADO)
+   projeto Marble3D criado em repositório externo    IMPLEMENTADO
+   catálogo real de problemas Nova3D                 IMPLEMENTADO (N3D-001)
+   build executável validado                         APROVADO
+   menu, áudio, física, checkpoint e vitória         VALIDADOS MANUALMENTE
+   relatório de autonomia e contexto                 IMPLEMENTADO
+```
+
+### Restrições da Fase 5
+
+- Receitas não podem esconder MonoGame nem duplicar suas APIs.
+- Código específico do Marble3D permanece no repositório do jogo.
+- Um preset só será criado depois que dois samples demonstrarem repetição real.
+- Snippets críticos devem existir também em sample compilável ou teste.
+- Documentos longos não entram no contexto inicial; o agente os abre por tópico.
+- A skill roteia fontes existentes e scripts; não copia todo o manual.
+- Problemas devem ser reproduzidos antes de alterar Nova3D.
+
+### Métricas do AI Gate
+
+```text
+Contexto inicial
+   somente AGENTS.md + AI_QUICKSTART.md
+   AI_QUICKSTART alvo: até 250 linhas
+   receita alvo: até 150 linhas por tarefa
+
+Autonomia
+   agente novo cria o projeto sem histórico do CityBuilder
+   build Release e validação executados por um único comando
+   nenhuma cópia de código interno da Nova3D para o jogo
+
+Correção
+   ownership e ordem de lifecycle preservados
+   física e UI continuam opcionais
+   problemas registrados com reprodução e evidência
+
+Entrega
+   menu, fase jogável, checkpoint, timer, áudio, settings,
+   vitória/derrota e executável do Marble3D
+```
+
+O Gate #5 foi aprovado em 2026-09-25. Um agente em contexto novo entregou o
+Marble3D usando os pacotes públicos/locais e a documentação distribuída pelo
+template; build, publicação e startup foram validados automaticamente, e menu,
+áudio, física, checkpoint e vitória foram validados manualmente. Intervenções,
+contexto consumido e problemas encontrados permanecem registrados para orientar
+a próxima versão da Nova3D.
+
+Débito visual não bloqueante: a geometria verde do checkpoint aparece sobre a
+parte inferior da esfera durante a sobreposição. O owner permanece `Unknown`
+até existir uma reprodução mínima; não está classificado como defeito Nova3D.
 
 ## Roadmap resumido
 
@@ -971,6 +1123,21 @@ FASE 2 — NOVA3D
              │
              ▼
           Nova3D v0.1                    CONCLUÍDA
+             │
+             ▼
+FASE 3 — FÍSICA OPCIONAL                 APROVADA
+│
+└─ P1–P5 Nova3D.Physics.Bepu             CONCLUÍDO
+             │
+             ▼
+FASE 4 — UI OPCIONAL                     APROVADA
+│
+└─ U1–U5 Nova3D.UI.Gum                   CONCLUÍDO
+             │
+             ▼
+FASE 5 — AI DEVELOPER EXPERIENCE         CONCLUÍDA
+│
+└─ A1–A7 Marble3D              ← GATE #5 APROVADO
 ```
 
 Os oito testes produziram evidência suficiente para investir na ferramenta. A

@@ -18,8 +18,24 @@
       "datatype": "bool",
       "defaultValue": "false",
       "description": "Include the optional Nova3D.Physics.Bepu module and physics starter scene."
+    },
+    "ui": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include the optional Nova3D.UI.Gum module and UI starter overlay."
     }
   },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(!ui)",
+          "exclude": [ "Game/UiOverlay.cs" ]
+        }
+      ]
+    }
+  ],
   "primaryOutputs": [
     { "path": "Nova3DGame.csproj" }
   ]

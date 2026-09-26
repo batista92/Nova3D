@@ -1,11 +1,12 @@
 using CityBuilder.Benchmarks.CityBenchmark;
+using CityBuilder.Benchmarks.UiBenchmark;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Nova3D.Production.Assets;
 using Nova3D.Resources;
 using Nova3D.Production.Configuration;
 using Nova3D.Production.Logging;
+using Nova3D.UI.Gum;
 
 namespace CityBuilder;
 
@@ -18,6 +19,8 @@ public sealed class CityBuilderGame : Game
     private LargeWorldScene? _scene;
     private ResourceLibrary? _resources;
     private ShaderLibrary? _shaders;
+    private GumUiSpike? _ui;
+    private GumUiHost? _uiHost;
 
     public CityBuilderGame()
     {
@@ -43,6 +46,25 @@ public sealed class CityBuilderGame : Game
         Window.AllowUserResizing = true;
         Window.Title = "CityBuilder - Teste 01: PBR";
         _logger.Log(LogLevel.Information, "Game", "CityBuilder initialized.");
+    }
+
+    protected override void Initialize()
+    {
+        base.Initialize();
+        _uiHost = new GumUiHost(this, new GumUiHostOptions
+        {
+            ScalingMode = GumUiScalingMode.Expand,
+            InputMode = GumUiInputMode.Overlay,
+            Accessibility = new GumUiAccessibilitySettings
+            {
+                TextScale = 1f,
+                MinimumHitTarget = 44f,
+                MinimumContrastRatio = 4.5f,
+                ReducedMotion = true
+            }
+        });
+        _ui = new GumUiSpike(_uiHost, Exit);
+        _logger.Log(LogLevel.Information, "UI", "Gum U1 spike initialized.");
     }
 
     protected override void LoadContent()
@@ -76,12 +98,15 @@ public sealed class CityBuilderGame : Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         // File-backed resources are polled and swapped on the graphics thread.
         _fileAssets.Update();
-        _scene?.Update(gameTime, Window);
+        _uiHost?.Update(gameTime);
+        if (_uiHost?.Navigation.BackPressed == true && !(_ui?.HandleBack() ?? false))
+            Exit();
+        if (_ui is not null && _scene is not null)
+            _ui.Update(gameTime, _scene.HudMarkerPosition, _scene.View, _scene.Projection, GraphicsDevice.Viewport);
+        if (_uiHost is null || !(_uiHost.CapturesMouse || _uiHost.CapturesKeyboard || _uiHost.CapturesGamePad))
+            _scene?.Update(gameTime, Window);
         base.Update(gameTime);
     }
 
@@ -89,11 +114,16 @@ public sealed class CityBuilderGame : Game
     {
         GraphicsDevice.Clear(new Color(18, 22, 30));
         _scene?.Draw(GraphicsDevice.Viewport.AspectRatio);
+        _uiHost?.Draw();
         base.Draw(gameTime);
     }
 
     protected override void UnloadContent()
     {
+        _ui?.Dispose();
+        _ui = null;
+        _uiHost?.Dispose();
+        _uiHost = null;
         _scene?.Dispose();
         _scene = null;
         _shaders?.Clear();
