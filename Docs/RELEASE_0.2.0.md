@@ -63,3 +63,14 @@ The four final packages were rebuilt from and embed repository commit:
 
 Annotated tag `v0.2.0` points to that commit and was pushed to `origin` on
 2026-09-26.
+
+## GitHub Release
+
+The public [Nova3D v0.2.0 release](https://github.com/batista92/Nova3D/releases/tag/v0.2.0)
+was published on 2026-09-27 as a stable release with five assets:
+
+- `Nova3D.0.2.0.nupkg`;
+- `Nova3D.Physics.Bepu.0.2.0.nupkg`;
+- `Nova3D.UI.Gum.0.2.0.nupkg`;
+- `Nova3D.Templates.0.2.0.nupkg`;
+- `Nova3D-0.2.0-SHA256SUMS.txt`.

@@ -18,7 +18,7 @@ Fase 2 — Nova3D M4             CONCLUÍDO
 Fase 3 — Física opcional       CONCLUÍDA
 Fase 4 — UI opcional           CONCLUÍDA
 Fase 5 — AI Developer Experience CONCLUÍDA
-Fase 6 — Release v0.2.0        EM ANDAMENTO
+Fase 6 — Release v0.2.0        CONCLUÍDA
 ```
 
 Os testes demonstraram que MonoGame fornece uma base 3D adequada quando o
@@ -1142,11 +1142,11 @@ R6 — Auditar conteúdo dos .nupkg                     CONCLUÍDO
    ausência de bin/obj e assets acidentais           APROVADO
    auditoria integrada ao validate.ps1               IMPLEMENTADO
 
-R7 — Tag e GitHub Release                            EM ANDAMENTO
+R7 — Tag e GitHub Release                            CONCLUÍDO
    confirmar IDs no NuGet                            APROVADO
    criar commit e reconstruir pacotes                APROVADO
    criar tag v0.2.0 no commit dos pacotes            APROVADO
-   criar GitHub Release e anexar artefatos           AGUARDANDO AUTENTICAÇÃO
+   criar GitHub Release e anexar artefatos           APROVADO
 ```
 
 A tag `v0.1.0` permanece no marco original do toolkit. Ela não será movida; os
@@ -1196,9 +1196,9 @@ FASE 5 — AI DEVELOPER EXPERIENCE         CONCLUÍDA
 └─ A1–A7 Marble3D              ← GATE #5 APROVADO
              │
              ▼
-FASE 6 — RELEASE v0.2.0                   EM ANDAMENTO
+FASE 6 — RELEASE v0.2.0                   CONCLUÍDA
 │
-└─ R1–R7                         ← R1–R6 CONCLUÍDOS; R7 EM ANDAMENTO
+└─ R1–R7                         ← RELEASE v0.2.0 PUBLICADA
 ```
 
 Os oito testes produziram evidência suficiente para investir na ferramenta. A

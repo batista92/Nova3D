@@ -25,9 +25,8 @@ packages. The CityBuilder benchmark is a consumer and is not included in them.
   without the .NET SDK.
 - [x] Tag the same `0.2.0` source revision used to create the packages
   (`532eb0986bed9846a6cb64d1c8bc81b84abfdbe1`).
-- [ ] Create the GitHub Release and attach the four `.nupkg` files. This needs an
-  authenticated GitHub CLI/session; Git push credentials alone are not exposed
-  as an API token.
+- [x] Create the [GitHub Release](https://github.com/batista92/Nova3D/releases/tag/v0.2.0)
+  and attach the four `.nupkg` files plus their SHA-256 manifest.
 
 ## Local validation
 
