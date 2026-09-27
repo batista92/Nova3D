@@ -337,6 +337,10 @@ function Test-TemplateVariants {
         if (-not (Test-Path -LiteralPath $gitIgnore)) {
             throw "Generated project is missing repository ignore rules: $gitIgnore"
         }
+        $gitIgnoreContents = Get-Content -Raw -LiteralPath $gitIgnore
+        if ($gitIgnoreContents -notmatch '(?m)^dist/$') {
+            throw "Generated project does not ignore publish output: $gitIgnore"
+        }
         Invoke-DotNetStep ("restore {0}" -f $variant.Name) @(
             'restore', $project, '--configfile', $nugetConfig)
         Invoke-DotNetStep ("build {0}" -f $variant.Name) @(

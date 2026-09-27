@@ -25,21 +25,26 @@ dotnet run -c Release
 Publish a self-contained executable:
 
 ```powershell
-dotnet publish -c Release -r win-x64 --self-contained true
+dotnet publish -c Release -r win-x64 --self-contained true `
+  -o .\dist\win-x64
 ```
 
-Output is normally:
+The distributable output is:
 
 ```text
-bin/Release/net8.0/win-x64/publish/
+dist/win-x64/
 ```
+
+Do not distribute `bin/Release/net8.0/win-x64/`. It is RID-specific staging and
+can contain a second copy under `publish/`. The explicit `dist/` output avoids
+mistaking both copies for one release. The template ignores `dist/` in Git.
 
 The template already copies runtime `Assets/**` and `Shaders/**`. MGCB places
 compiled content under `Content/`. If adding another runtime folder, add an
 explicit `CopyToOutputDirectory`/`CopyToPublishDirectory` item in the project.
 
-Create a zip from the contents of `publish/`, not its parent directory. Keep
-logs and writable saves outside this directory at runtime.
+Create a zip from the contents of `dist/win-x64/`, not the `dist/` directory
+itself. Keep logs and writable saves outside this directory at runtime.
 
 ## Ownership
 

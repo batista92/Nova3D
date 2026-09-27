@@ -2,6 +2,14 @@
 
 All notable changes to Nova3D are recorded in this file.
 
+## [Unreleased]
+
+### Changed
+
+- Windows publishing now uses an explicit `dist/win-x64` output so RID staging
+  under `bin/` cannot be mistaken for the distributable folder;
+- generated projects ignore `dist/`.
+
 ## [0.2.0] - 2026-09-26
 
 ### Added

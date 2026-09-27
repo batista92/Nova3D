@@ -111,13 +111,15 @@ dotnet build -c Release
 Then publish for a concrete runtime, for example Windows x64:
 
 ```powershell
-dotnet publish -c Release -r win-x64 --self-contained true
+dotnet publish -c Release -r win-x64 --self-contained true `
+  -o .\dist\win-x64
 ```
 
-The executable is written below `bin/Release/net8.0/win-x64/publish`. Verify on
-a clean machine or VM that `Content/`, runtime `Assets/`, shaders and native
-MonoGame dependencies are present. Do not treat a successful compile as a
-successful distributable build.
+The distributable executable is written below `dist/win-x64`. The similarly
+named folder under `bin/Release/net8.0/` is build/publish staging and must not be
+shipped. Verify on a clean machine or VM that `Content/`, runtime `Assets/`,
+shaders and native MonoGame dependencies are present. Do not treat a successful
+compile as a successful distributable build.
 
 ## Before reporting a toolkit issue
 
