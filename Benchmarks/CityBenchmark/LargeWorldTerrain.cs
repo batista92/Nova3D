@@ -5,7 +5,7 @@ using Nova3D.World.Terrain;
 using Nova3D.World.Streaming;
 using Nova3D.Production.Configuration;
 
-namespace CityBuilder.Benchmarks.CityBenchmark;
+namespace Nova3D.Benchmarks.CityBenchmark;
 
 /// <summary>CityBenchmark terrain configuration over Nova3D's chunked terrain.</summary>
 internal sealed class LargeWorldTerrain : IDisposable

@@ -7,7 +7,7 @@ using Nova3D.Rendering.Lighting;
 using Nova3D.Rendering.Models;
 using NovaDirectionalLight = Nova3D.Rendering.Lighting.DirectionalLight;
 
-namespace CityBuilder.Benchmarks.CityBenchmark;
+namespace Nova3D.Benchmarks.CityBenchmark;
 
 internal sealed class GltfValidationGallery : IDisposable
 {

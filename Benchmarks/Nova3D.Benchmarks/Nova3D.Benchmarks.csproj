@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Nova3D.Benchmarks</RootNamespace>
+    <AssemblyName>Nova3D.Benchmarks</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <TieredCompilation>false</TieredCompilation>
+    <EnableMGCBItems>false</EnableMGCBItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1" />
+    <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Nova3D\Nova3D.csproj" />
+    <ProjectReference Include="..\..\Nova3D.Physics.Bepu\Nova3D.Physics.Bepu.csproj" />
+    <ProjectReference Include="..\..\Nova3D.UI.Gum\Nova3D.UI.Gum.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CityBenchmark\**\*.cs" Link="CityBenchmark\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\UiBenchmark\**\*.cs" Link="UiBenchmark\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Validation\**\*.cs" Link="Validation\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MonoGameContentReference Include="Content\Content.mgcb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config\nova3d.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\LocalAssets\Models\**\*.glb" Link="LocalAssets\Models\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\LocalAssets\Models\**\*.png" Link="LocalAssets\Models\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\LocalAssets\Models\**\*.jpg" Link="LocalAssets\Models\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\LocalAssets\Models\**\*.jpeg" Link="LocalAssets\Models\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

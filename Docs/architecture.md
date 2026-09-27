@@ -34,7 +34,7 @@ Rendering  World  Production
 - Game code may depend on every Nova3D module.
 - World systems may depend on Rendering.
 - Rendering must not depend on game simulation or city-builder rules.
-- Nova3D must not depend on the benchmark or `CityBuilder.Tests`.
+- Nova3D must not depend on `Nova3D.Benchmarks` or its validation scenes.
 - Gameplay state must not be stored in renderers, materials or GPU buffers.
 
 ## Ownership

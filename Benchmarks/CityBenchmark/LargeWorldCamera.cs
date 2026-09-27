@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nova3D.Rendering;
 
-namespace CityBuilder.Benchmarks.CityBenchmark;
+namespace Nova3D.Benchmarks.CityBenchmark;
 
 internal sealed class LargeWorldCamera
 {

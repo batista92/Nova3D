@@ -1,7 +1,7 @@
 # Releasing Nova3D 0.2.0
 
 Nova3D, its optional physics/UI modules and its project template are independent
-packages. The CityBuilder benchmark is a consumer and is not included in them.
+packages. `Nova3D.Benchmarks` is a consumer and is not included in them.
 
 ## Pre-release checklist
 

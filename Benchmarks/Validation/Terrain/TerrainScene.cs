@@ -1,9 +1,9 @@
-using CityBuilder.Tests.Pbr;
+using Nova3D.Benchmarks.Validation.Pbr;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace CityBuilder.Tests.Terrain;
+namespace Nova3D.Benchmarks.Validation.Terrain;
 
 internal sealed class TerrainScene : IDisposable
 {
@@ -89,10 +89,10 @@ internal sealed class TerrainScene : IDisposable
         var tool = _brushMode.ToString().ToUpperInvariant();
         window.Title = _debugView switch
         {
-            1 => "CityBuilder - TERRAIN DEBUG: layer weights",
-            2 => "CityBuilder - TERRAIN DEBUG: mapped normals",
-            3 => "CityBuilder - TERRAIN DEBUG: shadow factor",
-            _ => $"CityBuilder - Teste 04: terrain runtime | {tool} | chunks atualizados: {_terrain.LastUpdatedChunkCount}"
+            1 => "Nova3D - TERRAIN DEBUG: layer weights",
+            2 => "Nova3D - TERRAIN DEBUG: mapped normals",
+            3 => "Nova3D - TERRAIN DEBUG: shadow factor",
+            _ => $"Nova3D - Teste 04: terrain runtime | {tool} | chunks atualizados: {_terrain.LastUpdatedChunkCount}"
         };
     }
 

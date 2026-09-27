@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CityBuilder.Tests.Pbr;
+namespace Nova3D.Benchmarks.Validation.Pbr;
 
 internal sealed class PrimitiveMesh : IDisposable
 {

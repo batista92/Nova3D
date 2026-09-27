@@ -44,4 +44,4 @@ the skill:
 Skill metadata and structure can be checked with the Codex `skill-creator`
 validator when that system skill is available. Behavioral validation remains
 the AI Gate in A7: a new agent must build the external Marble3D project without
-the CityBuilder conversation history.
+the Nova3D implementation history.

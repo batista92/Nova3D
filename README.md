@@ -1,6 +1,6 @@
 # Nova3D v0.2
 
-Toolkit 3D reutilizável para MonoGame, validado pelo benchmark do CityBuilder.
+Toolkit 3D reutilizável para MonoGame, validado pelo CityBenchmark.
 
 Inclui PBR, CSM, instancing, LOD, terrain, vegetação, streaming, água, post-FX,
 importação glTF/GLB, asset management, shader hot reload, debug e profiling.
@@ -57,9 +57,22 @@ O protocolo independente de validação por IA está em
 
 ```powershell
 dotnet tool restore
-dotnet run
+dotnet run --project .\Benchmarks\Nova3D.Benchmarks\Nova3D.Benchmarks.csproj -c Release
 ```
 
 A cidade procedural inicia ativa. Assets opcionais colocados em
 `LocalAssets/Models/validation` aparecem na galeria com `F4`; `LocalAssets/`
 não é versionado. Consulte [ROADMAP.md](ROADMAP.md) para o histórico dos gates.
+
+## Estrutura do repositório
+
+```text
+Nova3D/                    biblioteca principal
+Nova3D.Physics.Bepu/       módulo opcional de física
+Nova3D.UI.Gum/             módulo opcional de UI
+Benchmarks/                hosts, cenários e validações de desempenho
+Samples/                   exemplos pequenos e independentes
+templates/                 template `dotnet new nova3d`
+Docs/                      documentação orientada por tarefa
+eng/                       scripts de build, validação e release
+```

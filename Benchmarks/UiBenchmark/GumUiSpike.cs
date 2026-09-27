@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nova3D.UI.Gum;
 
-namespace CityBuilder.Benchmarks.UiBenchmark;
+namespace Nova3D.Benchmarks.UiBenchmark;
 
 /// <summary>Interactive U1-U4 validation using direct Gum controls.</summary>
 internal sealed class GumUiSpike : IDisposable

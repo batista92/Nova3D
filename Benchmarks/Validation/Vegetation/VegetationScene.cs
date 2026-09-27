@@ -1,8 +1,8 @@
-using CityBuilder.Tests.Pbr;
+using Nova3D.Benchmarks.Validation.Pbr;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CityBuilder.Tests.Vegetation;
+namespace Nova3D.Benchmarks.Validation.Vegetation;
 
 internal sealed class VegetationScene : IDisposable
 {
@@ -48,7 +48,7 @@ internal sealed class VegetationScene : IDisposable
         if (frameMilliseconds > 0)
             _smoothedFrameMilliseconds = _smoothedFrameMilliseconds * 0.95 + frameMilliseconds * 0.05;
         var fps = 1000.0 / _smoothedFrameMilliseconds;
-        window.Title = $"CityBuilder - Teste 05: GPU Instancing | " +
+        window.Title = $"Nova3D - Teste 05: GPU Instancing | " +
                        $"FPS {fps:F0} | frame {_smoothedFrameMilliseconds:F2} ms | " +
                        $"LOD0 {_forest.VisibleCounts[0]} | LOD1 {_forest.VisibleCounts[1]} | " +
                        $"LOD2 {_forest.VisibleCounts[2]} | visiveis {_forest.TotalVisible}/10000 | draws {_forest.DrawCalls}";

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Nova3D.Rendering;
 using Nova3D.Rendering.Instancing;
 
-namespace CityBuilder.Tests.Vegetation;
+namespace Nova3D.Benchmarks.Validation.Vegetation;
 
 internal sealed class InstancedForest : IDisposable
 {

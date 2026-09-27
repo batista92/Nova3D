@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CityBuilder.Tests.Vegetation;
+namespace Nova3D.Benchmarks.Validation.Vegetation;
 
 internal sealed class TreeMesh : IDisposable
 {

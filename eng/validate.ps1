@@ -355,7 +355,7 @@ try {
     }
     else {
         $scope = 'repository'
-        $rootProject = Join-Path $repository 'CityBuilder.csproj'
+        $benchmarkProject = Join-Path $repository 'Benchmarks\Nova3D.Benchmarks\Nova3D.Benchmarks.csproj'
         $physicsBenchmark = Join-Path $repository 'Benchmarks\PhysicsBenchmark\PhysicsBenchmark.csproj'
         $packages = Join-Path $repository 'artifacts\packages'
         $sampleProjects = @(
@@ -373,10 +373,10 @@ try {
 
         New-Item -ItemType Directory -Force -Path $packages | Out-Null
         if (-not $NoRestore) {
-            Invoke-DotNetStep 'repository restore' @('restore', $rootProject)
+            Invoke-DotNetStep 'repository restore' @('restore', $benchmarkProject)
         }
         Invoke-DotNetStep 'repository Release build + MGCB' (
-            @('build', $rootProject, '-c', 'Release') + (Get-RestoreArguments))
+            @('build', $benchmarkProject, '-c', 'Release') + (Get-RestoreArguments))
 
         if (-not $SkipPhysicsBenchmark) {
             Invoke-DotNetStep 'physics regression benchmark' (

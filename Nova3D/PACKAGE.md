@@ -4,4 +4,4 @@
 
 The package provides rendering, PBR materials, CSM, instancing, terrain,
 vegetation, streaming, glTF/GLB assets, profiling and debug rendering. It uses
-MonoGame types directly and does not depend on the CityBuilder benchmark.
+MonoGame types directly and does not depend on `Nova3D.Benchmarks`.

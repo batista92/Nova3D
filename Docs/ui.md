@@ -1,8 +1,7 @@
 # UI
 
-Nova3D uses Gum as the candidate optional game-UI backend. The U1 spike lives in
-the CityBuilder executable until compatibility, input, resizing and frame cost
-are validated. Core `Nova3D` must not reference Gum.
+Nova3D uses Gum as the optional game-UI backend. Its integration benchmark lives
+in `Nova3D.Benchmarks`; core `Nova3D` must not reference Gum.
 
 The integration is intended for game menus and HUDs. Debug/editor tooling may
 use a different immediate-mode UI in the future.

@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CityBuilder.Tests.Terrain;
+namespace Nova3D.Benchmarks.Validation.Terrain;
 
 internal enum TerrainBrushMode { Raise, Lower, Flatten, Smooth }
 

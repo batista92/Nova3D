@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nova3D.Rendering;
 
-namespace CityBuilder.Benchmarks.CityBenchmark;
+namespace Nova3D.Benchmarks.CityBenchmark;
 
 internal static class WaterSurface
 {

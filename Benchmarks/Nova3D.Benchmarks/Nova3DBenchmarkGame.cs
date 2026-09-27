@@ -1,5 +1,5 @@
-using CityBuilder.Benchmarks.CityBenchmark;
-using CityBuilder.Benchmarks.UiBenchmark;
+using Nova3D.Benchmarks.CityBenchmark;
+using Nova3D.Benchmarks.UiBenchmark;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nova3D.Production.Assets;
@@ -8,9 +8,9 @@ using Nova3D.Production.Configuration;
 using Nova3D.Production.Logging;
 using Nova3D.UI.Gum;
 
-namespace CityBuilder;
+namespace Nova3D.Benchmarks;
 
-public sealed class CityBuilderGame : Game
+public sealed class Nova3DBenchmarkGame : Game
 {
     private readonly GraphicsDeviceManager _graphics;
     private readonly FileLogger _logger;
@@ -22,9 +22,9 @@ public sealed class CityBuilderGame : Game
     private GumUiSpike? _ui;
     private GumUiHost? _uiHost;
 
-    public CityBuilderGame()
+    public Nova3DBenchmarkGame()
     {
-        _logger = new FileLogger(Path.Combine(AppContext.BaseDirectory, "Logs", "citybuilder.log"));
+        _logger = new FileLogger(Path.Combine(AppContext.BaseDirectory, "Logs", "nova3d-benchmarks.log"));
         _fileAssets = new FileAssetManager(_logger);
         _configuration = ConfigurationLoader.LoadOrDefault(
             Path.Combine(AppContext.BaseDirectory, "Config", "nova3d.json"), _logger);
@@ -44,8 +44,8 @@ public sealed class CityBuilderGame : Game
         IsFixedTimeStep = false;
         IsMouseVisible = true;
         Window.AllowUserResizing = true;
-        Window.Title = "CityBuilder - Teste 01: PBR";
-        _logger.Log(LogLevel.Information, "Game", "CityBuilder initialized.");
+        Window.Title = "Nova3D - CityBenchmark";
+        _logger.Log(LogLevel.Information, "Game", "Nova3D benchmark host initialized.");
     }
 
     protected override void Initialize()

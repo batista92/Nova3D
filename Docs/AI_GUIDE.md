@@ -16,7 +16,7 @@ general engine conventions or speculative abstractions.
 ## Boundaries
 
 - Rendering and simulation must remain separate.
-- Nova3D must never reference CityBuilder gameplay, benchmarks or test scenes.
+- Nova3D packages must never reference benchmark or game-specific scenes.
 - Game code owns gameplay state; renderers consume render data.
 - MonoGame owns the platform/game loop. Do not wrap `Game` or `GraphicsDevice`.
 - GPU resources are created and destroyed on the graphics thread in v0.2.

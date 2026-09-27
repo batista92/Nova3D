@@ -31,7 +31,7 @@ triângulos do passe principal e draw calls das sombras.
 ## Execução
 
 ```powershell
-dotnet run --project .\CityBuilder.csproj -c Release
+dotnet run --project .\Benchmarks\Nova3D.Benchmarks\Nova3D.Benchmarks.csproj -c Release
 ```
 
 `F1` alterna os modos de diagnóstico das cascatas de sombra.
@@ -48,4 +48,4 @@ dotnet run --project .\CityBuilder.csproj -c Release
 A cidade procedural inicia ativa. A galeria procura arquivos locais em
 `LocalAssets/Models/validation` e pode ser aberta com `F4`. Essa pasta não faz
 parte do Git. O título mostra quantos GLBs foram carregados e quantos falharam;
-detalhes ficam em `Logs/citybuilder.log`.
+detalhes ficam em `Logs/nova3d-benchmarks.log`.

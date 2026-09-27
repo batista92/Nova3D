@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Nova3D.Rendering;
 using Nova3D.Rendering.Instancing;
 
-namespace CityBuilder.Benchmarks.CityBenchmark;
+namespace Nova3D.Benchmarks.CityBenchmark;
 
 internal sealed class BenchmarkPopulation : IDisposable
 {

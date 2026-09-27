@@ -1,5 +1,5 @@
-using CityBuilder.Tests.Pbr;
-using CityBuilder.Tests.Terrain;
+using Nova3D.Benchmarks.Validation.Pbr;
+using Nova3D.Benchmarks.Validation.Terrain;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -17,7 +17,7 @@ using Nova3D.World.Streaming;
 using Nova3D.World.Vegetation;
 using NovaDirectionalLight = Nova3D.Rendering.Lighting.DirectionalLight;
 
-namespace CityBuilder.Benchmarks.CityBenchmark;
+namespace Nova3D.Benchmarks.CityBenchmark;
 
 internal sealed class LargeWorldScene : IDisposable
 {
@@ -185,7 +185,7 @@ internal sealed class LargeWorldScene : IDisposable
         var elapsed = gameTime.ElapsedGameTime.TotalMilliseconds;
         if (elapsed > 0) _smoothedFrameMilliseconds = _smoothedFrameMilliseconds * 0.95 + elapsed * 0.05;
         var statistics = _renderContext.LastFrameStatistics;
-        window.Title = $"CityBuilder - CityBenchmark | FPS {1000.0 / _smoothedFrameMilliseconds:F0} | {_smoothedFrameMilliseconds:F2} ms | " +
+        window.Title = $"Nova3D - CityBenchmark | FPS {1000.0 / _smoothedFrameMilliseconds:F0} | {_smoothedFrameMilliseconds:F2} ms | " +
                        $"chunks {_terrain.VisibleCount}/{_terrain.ResidentChunkCount}/{LargeWorldTerrain.TotalChunks} " +
                        $"[{_terrain.VisibleLods[0]}/{_terrain.VisibleLods[1]}/{_terrain.VisibleLods[2]}] " +
                        $"stream +{_terrain.ChunkLoadsLastUpdate}/-{_terrain.ChunkUnloadsLastUpdate} pend {_terrain.PendingChunkLoads} | " +

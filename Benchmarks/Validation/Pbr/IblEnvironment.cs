@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CityBuilder.Tests.Pbr;
+namespace Nova3D.Benchmarks.Validation.Pbr;
 
 /// <summary>
 /// Builds the complete split-sum IBL data set from a small analytic HDR sky.

@@ -6,7 +6,7 @@ using Nova3D.Rendering.Lighting;
 using Nova3D.Rendering.Materials;
 using NovaDirectionalLight = Nova3D.Rendering.Lighting.DirectionalLight;
 
-namespace CityBuilder.Tests.Pbr;
+namespace Nova3D.Benchmarks.Validation.Pbr;
 
 internal sealed class PbrScene : IDisposable
 {
@@ -74,17 +74,17 @@ internal sealed class PbrScene : IDisposable
         _previousKeyboard = keyboard;
         window.Title = _debugView switch
         {
-            1 => "CityBuilder - PBR DEBUG: Albedo/F0",
-            2 => "CityBuilder - PBR DEBUG: luz direta",
-            3 => "CityBuilder - PBR DEBUG: IBL difuso",
-            4 => "CityBuilder - PBR DEBUG: IBL especular",
-            5 => "CityBuilder - PBR DEBUG: Fresnel/F0 efetivo",
-            6 => "CityBuilder - PBR DEBUG: cubemap prefiltrado",
-            7 => "CityBuilder - PBR DEBUG: BRDF LUT (A/B)",
-            8 => "CityBuilder - SHADOW DEBUG: fator PCF",
+            1 => "Nova3D - PBR DEBUG: Albedo/F0",
+            2 => "Nova3D - PBR DEBUG: luz direta",
+            3 => "Nova3D - PBR DEBUG: IBL difuso",
+            4 => "Nova3D - PBR DEBUG: IBL especular",
+            5 => "Nova3D - PBR DEBUG: Fresnel/F0 efetivo",
+            6 => "Nova3D - PBR DEBUG: cubemap prefiltrado",
+            7 => "Nova3D - PBR DEBUG: BRDF LUT (A/B)",
+            8 => "Nova3D - SHADOW DEBUG: fator PCF",
             _ => _showCascades
-                ? "CityBuilder - CSM DEBUG: cascatas 0/1/2/3"
-                : "CityBuilder - Teste 02: 4 cascaded shadow maps"
+                ? "Nova3D - CSM DEBUG: cascatas 0/1/2/3"
+                : "Nova3D - Teste 02: 4 cascaded shadow maps"
         };
     }
 

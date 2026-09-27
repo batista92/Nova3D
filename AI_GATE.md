@@ -3,7 +3,7 @@
 Status: Gate #5 approved on 2026-09-25.
 
 The gate tests whether a new agent can deliver a small complete game from the
-distributed Nova3D product, without the CityBuilder conversation history or
+distributed Nova3D product, without the Nova3D implementation history or
 access to internal implementation as its starting context.
 
 ## Isolation
@@ -15,7 +15,7 @@ The evaluator receives only:
 3. the documentation and agent skill distributed in that project;
 4. public/local Nova3D packages.
 
-The evaluator must not read `Samples/`, CityBuilder scenes or this gate's
+The evaluator must not read `Samples/`, benchmark scenes or this gate's
 expected findings before its first working Release build. It may inspect public
 package APIs and follow links shipped in the generated project.
 

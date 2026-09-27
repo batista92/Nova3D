@@ -47,6 +47,6 @@ Template release validation must generate and build default, `--physics`,
 and verifies that optional packages remain absent from the default project.
 
 The generated project references the `Nova3D` NuGet package rather than the
-CityBuilder repository. The local installer registers `artifacts/packages` as
+Nova3D source repository. The local installer registers `artifacts/packages` as
 the `Nova3D-Local` feed. When Nova3D is published, users only need to install
 `Nova3D.Templates` from NuGet and the same project template remains valid.
