@@ -23,7 +23,11 @@ packages. The CityBuilder benchmark is a consumer and is not included in them.
   [RELEASE_0.2.0.md](RELEASE_0.2.0.md).
 - [ ] Repeat the published executable test on a clean Windows machine or VM
   without the .NET SDK.
-- [ ] Tag the same `0.2.0` source revision used to create the packages.
+- [x] Tag the same `0.2.0` source revision used to create the packages
+  (`532eb0986bed9846a6cb64d1c8bc81b84abfdbe1`).
+- [ ] Create the GitHub Release and attach the four `.nupkg` files. This needs an
+  authenticated GitHub CLI/session; Git push credentials alone are not exposed
+  as an API token.
 
 ## Local validation
 

@@ -52,3 +52,14 @@ This is an automated startup smoke, not a clean-machine certification. It does
 not prove operation on a Windows installation without the .NET SDK. Menu,
 audio, physics, checkpoint and victory were previously validated interactively
 for Gate #5; those full flows were not repeated after the package-version bump.
+
+## Source revision
+
+The four final packages were rebuilt from and embed repository commit:
+
+```text
+532eb0986bed9846a6cb64d1c8bc81b84abfdbe1
+```
+
+Annotated tag `v0.2.0` points to that commit and was pushed to `origin` on
+2026-09-26.

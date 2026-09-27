@@ -1131,9 +1131,9 @@ R4 — Validação externa                               CONCLUÍDO
 
 R5 — Publicação                                      EM ANDAMENTO
    confirmar IDs no NuGet                            APROVADO
-   criar commit e reconstruir pacotes                EM ANDAMENTO
-   criar tag v0.2.0 no commit dos pacotes            PLANEJADO
-   criar GitHub Release e anexar artefatos           PLANEJADO
+   criar commit e reconstruir pacotes                APROVADO
+   criar tag v0.2.0 no commit dos pacotes            APROVADO
+   criar GitHub Release e anexar artefatos           AGUARDANDO AUTENTICAÇÃO
 ```
 
 A tag `v0.1.0` permanece no marco original do toolkit. Ela não será movida; os
