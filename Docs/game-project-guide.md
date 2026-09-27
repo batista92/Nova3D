@@ -1,6 +1,6 @@
 # Game project guide
 
-This guide describes the supported v0.1 shape of a game that consumes Nova3D.
+This guide describes the supported v0.2 shape of a game that consumes Nova3D.
 It intentionally keeps MonoGame visible.
 
 For copy-sized implementation paths, use the
@@ -88,7 +88,7 @@ owns pushed screens. Draw Gum after the world is resolved to the back buffer.
 
 ## Audio
 
-Nova3D v0.1 does not wrap audio. Use MonoGame `SoundEffect`,
+Nova3D v0.2 does not wrap audio. Use MonoGame `SoundEffect`,
 `SoundEffectInstance`, `Song` and `MediaPlayer` directly. Game code owns volume,
 music/SFX categories and persistence. Add a Nova3D audio module only if a real
 game reveals reusable behavior beyond MonoGame's API.

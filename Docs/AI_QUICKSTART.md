@@ -66,7 +66,7 @@ Unload
   world and GPU resources
 ```
 
-Create, update and destroy GPU resources on the graphics thread in v0.1.
+Create, update and destroy GPU resources on the graphics thread in v0.2.
 
 ## Ownership
 
@@ -85,7 +85,7 @@ Create, update and destroy GPU resources on the graphics thread in v0.1.
 Rendering owns meshes/materials. Physics owns shapes/poses. Gameplay owns what
 collisions, checkpoints, victory, defeat and UI actions mean.
 
-## v0.1 hard limits
+## v0.2 hard limits
 
 - CSM has exactly four cascades.
 - Treat 16 pixel samplers as a portability limit.
@@ -94,7 +94,7 @@ collisions, checkpoints, victory, defeat and UI actions mean.
 - Terrain is chunk based; local edits rebuild affected chunks only.
 - Streaming retain radius is greater than or equal to load radius.
 - glTF supports `TRIANGLES`, `POSITION`, `NORMAL` and `TEXCOORD_0`.
-- No skinning, animation, morph, sparse accessors, Draco or Meshopt in v0.1.
+- No skinning, animation, morph, sparse accessors, Draco or Meshopt in v0.2.
 - glTF alpha `BLEND` is currently rendered opaque.
 - Physics uses a fixed timestep; render delta is never passed to BEPU directly.
 - UI uses direct Gum controls; do not create `NovaButton` or equivalent wrappers.

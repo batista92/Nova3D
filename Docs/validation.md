@@ -14,8 +14,14 @@ The repository flow validates:
 3. the headless physics regression benchmark;
 4. Release builds of all projects under `Samples/`;
 5. Release packages for core, physics, UI and templates;
-6. isolated generation and Release builds of default, `--physics`, `--ui` and
+6. package identity, metadata, dependencies, required payload and forbidden
+   `bin/`, `obj/` or unsafe paths;
+7. isolated generation and Release builds of default, `--physics`, `--ui` and
    `--physics --ui` template variants.
+
+The template smoke creates an isolated `NuGet.Config` containing only the local
+package output and nuget.org. This prevents user-configured feeds and native
+shell URL parsing from changing the result.
 
 Successful command output is intentionally compact:
 
@@ -23,7 +29,7 @@ Successful command output is intentionally compact:
 RUN  repository Release build + MGCB
 PASS repository Release build + MGCB (2.10s)
 ...
-VALIDATION PASS | scope repository | steps 17 | 24.50s
+VALIDATION PASS | scope repository | steps 25 | 84.20s
 ```
 
 On failure, the command output for the failed step is printed and the script

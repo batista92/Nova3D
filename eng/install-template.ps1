@@ -20,7 +20,11 @@ if ($existing -notmatch [regex]::Escape($packages)) {
     dotnet nuget add source $packages --name Nova3D-Local
 }
 
-$templatePackage = Join-Path $packages 'Nova3D.Templates.0.1.0.nupkg'
+$templatePackage = Get-ChildItem -LiteralPath $packages -Filter 'Nova3D.Templates.*.nupkg' |
+    Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1
+if ($null -eq $templatePackage) {
+    throw 'The Nova3D template package was not produced.'
+}
 # A first-time installation has nothing to uninstall. PowerShell may promote
 # the CLI's stderr message to a terminating error, so this best-effort cleanup
 # must not abort the installer.
@@ -30,7 +34,7 @@ try {
 catch {
     # Template was not installed yet.
 }
-dotnet new install $templatePackage
+dotnet new install $templatePackage.FullName
 
 Write-Host ''
 Write-Host 'Nova3D template installed.' -ForegroundColor Green

@@ -23,7 +23,7 @@ That number is evidence from one machine, not a universal target.
 - `RenderStatistics`: draws, triangles, visible instances and shadow draws.
 - `FrameProfiler`: named CPU sections such as shadow, world and post.
 - Window title: quick live diagnostics, not stored benchmark data.
-- GPU timings are not implemented in v0.1; do not label CPU timings as GPU.
+- GPU timings are not implemented in v0.2; do not label CPU timings as GPU.
 
 ## Performance rules
 

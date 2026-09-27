@@ -29,7 +29,7 @@ provider. A separate gameplay height formula will drift from rendered terrain.
 
 ## Materials
 
-Terrain rendering uses `TerrainMaterial` and `TerrainLayerSet`. The v0.1 shader
+Terrain rendering uses `TerrainMaterial` and `TerrainLayerSet`. The v0.2 shader
 contract supports at most four named layers:
 
 ```text

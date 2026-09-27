@@ -18,6 +18,7 @@ Fase 2 — Nova3D M4             CONCLUÍDO
 Fase 3 — Física opcional       CONCLUÍDA
 Fase 4 — UI opcional           CONCLUÍDA
 Fase 5 — AI Developer Experience CONCLUÍDA
+Fase 6 — Release v0.2.0        EM ANDAMENTO
 ```
 
 Os testes demonstraram que MonoGame fornece uma base 3D adequada quando o
@@ -1022,7 +1023,7 @@ A3 — Catálogo da API                                 CONCLUÍDO
    API_INDEX.md por tipo público                     IMPLEMENTADO
    propósito, ownership e dispose                    IMPLEMENTADO
    módulo/pacote e link para receita                 IMPLEMENTADO
-   limites v0.1 próximos da API afetada              IMPLEMENTADO
+   limites v0.2 próximos da API afetada              IMPLEMENTADO
 
 A4 — Validação de um comando                         CONCLUÍDO
    eng/validate.ps1 para o toolkit                   IMPLEMENTADO
@@ -1096,6 +1097,48 @@ Débito visual não bloqueante: a geometria verde do checkpoint aparece sobre a
 parte inferior da esfera durante a sobreposição. O owner permanece `Unknown`
 até existir uma reprodução mínima; não está classificado como defeito Nova3D.
 
+---
+
+## FASE 6 — RELEASE v0.2.0
+
+Objetivo: publicar uma revisão reproduzível da Nova3D contendo o toolkit base,
+os módulos opcionais de física e UI, o template e a documentação validada pelo
+Marble3D.
+
+```text
+R1 — Versão e documentação                           CONCLUÍDO
+   quatro pacotes alinhados em 0.2.0                 IMPLEMENTADO
+   template referencia pacotes 0.2.0                IMPLEMENTADO
+   instalador independente de versão fixa           IMPLEMENTADO
+   documentação e checklist normalizados            IMPLEMENTADO
+
+R2 — Validação integral                              CONCLUÍDO
+   build Release e MGCB                              APROVADO
+   regressão de física e samples                     APROVADO
+   quatro variantes do template                     APROVADO
+   CityBuilder build/MGCB; performance Gate #2      PRESERVADA
+
+R3 — Auditoria dos pacotes                           CONCLUÍDO
+   conteúdo dos quatro .nupkg                        APROVADO
+   dependências e metadados                          APROVADO
+   ausência de bin/obj e assets acidentais           APROVADO
+   auditoria integrada ao validate.ps1               IMPLEMENTADO
+
+R4 — Validação externa                               CONCLUÍDO
+   Marble3D consumindo somente pacotes 0.2.0         APROVADO
+   publish self-contained win-x64                    APROVADO
+   smoke do executável publicado                     APROVADO
+
+R5 — Publicação                                      EM ANDAMENTO
+   confirmar IDs no NuGet                            APROVADO
+   criar commit e reconstruir pacotes                EM ANDAMENTO
+   criar tag v0.2.0 no commit dos pacotes            PLANEJADO
+   criar GitHub Release e anexar artefatos           PLANEJADO
+```
+
+A tag `v0.1.0` permanece no marco original do toolkit. Ela não será movida; os
+módulos opcionais e a experiência para agentes formam a versão `v0.2.0`.
+
 ## Roadmap resumido
 
 ```text
@@ -1138,6 +1181,11 @@ FASE 4 — UI OPCIONAL                     APROVADA
 FASE 5 — AI DEVELOPER EXPERIENCE         CONCLUÍDA
 │
 └─ A1–A7 Marble3D              ← GATE #5 APROVADO
+             │
+             ▼
+FASE 6 — RELEASE v0.2.0                   EM ANDAMENTO
+│
+└─ R1–R5                         ← R1–R4 CONCLUÍDOS
 ```
 
 Os oito testes produziram evidência suficiente para investir na ferramenta. A

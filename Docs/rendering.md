@@ -48,7 +48,7 @@ bounds cause visible popping, not a shadow or camera problem.
 
 ## Shadows
 
-`CascadedShadowMap.CascadeCount` is fixed at four in v0.1. Call `Update`, render
+`CascadedShadowMap.CascadeCount` is fixed at four in v0.2. Call `Update`, render
 each cascade between `BeginCascade(i)` and `End`, then call `Apply(effect)` for
 receivers. Do not infer shadow coverage from screen distance: diagnose cascade
 selection, light-space XY/Z coverage and receiver normals separately.

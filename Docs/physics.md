@@ -8,7 +8,7 @@ world toolkit does not require it.
 After installing the local Nova3D feed:
 
 ```powershell
-dotnet add package Nova3D.Physics.Bepu --version 0.1.0
+dotnet add package Nova3D.Physics.Bepu --version 0.2.0
 ```
 
 ## Creating a world

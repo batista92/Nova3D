@@ -198,5 +198,5 @@ are CPU timings, not GPU timings.
 | Diagnose rendering | `DebugRenderer`, `RenderStatistics`, `FrameProfiler` |
 
 If a required behavior is absent here, inspect the relevant topic document
-before adding a public abstraction. Exceeding a v0.1 limit requires coordinated
+before adding a public abstraction. Exceeding a v0.2 limit requires coordinated
 implementation, regression coverage and documentation changes.

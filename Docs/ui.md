@@ -236,7 +236,7 @@ diagnostics rather than GPU measurements and remain visible for future
 regression comparisons. Package and template validation additionally built all
 four generated variants: default, `--physics`, `--ui`, and `--physics --ui`.
 
-The v0.1 visual presentation is intentionally utilitarian. Visual polish,
+The v0.2 visual presentation is intentionally utilitarian. Visual polish,
 custom art direction and richer animation are future product work and were not
 gate blockers; functional behavior and architectural isolation were approved.
 

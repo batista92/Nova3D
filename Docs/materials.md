@@ -29,7 +29,7 @@ split-sum IBL. Supported inputs are:
 - exposure and debug views.
 
 Normal mapping reconstructs the tangent basis from world-position and UV
-derivatives. v0.1 supports `TEXCOORD_0` only. glTF alpha `BLEND` is currently
+derivatives. v0.2 supports `TEXCOORD_0` only. glTF alpha `BLEND` is currently
 rendered as opaque.
 
 ## Terrain material

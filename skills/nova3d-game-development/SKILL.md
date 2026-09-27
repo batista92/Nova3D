@@ -11,7 +11,7 @@ load only the context needed for the current task.
 ## Start
 
 Locate the project root containing `AGENTS.md` or `Docs/AI_QUICKSTART.md`.
-Read `Docs/AI_QUICKSTART.md` completely before editing. Treat its v0.1 limits,
+Read `Docs/AI_QUICKSTART.md` completely before editing. Treat its v0.2 limits,
 ownership rules and module boundaries as constraints.
 
 Classify the requested work before loading more context:

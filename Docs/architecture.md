@@ -49,7 +49,7 @@ Rendering  World  Production
 
 ## Threading
 
-Nova3D v0.1 creates, updates and destroys GPU resources on the graphics thread.
+Nova3D v0.2 creates, updates and destroys GPU resources on the graphics thread.
 `FileAssetManager.Update`, GLB import, chunk creation and dynamic buffer uploads
 must run there. Background work may prepare CPU-only data, but it must not touch
 `GraphicsDevice` resources.

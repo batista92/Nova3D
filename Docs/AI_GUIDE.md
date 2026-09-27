@@ -19,7 +19,7 @@ general engine conventions or speculative abstractions.
 - Nova3D must never reference CityBuilder gameplay, benchmarks or test scenes.
 - Game code owns gameplay state; renderers consume render data.
 - MonoGame owns the platform/game loop. Do not wrap `Game` or `GraphicsDevice`.
-- GPU resources are created and destroyed on the graphics thread in v0.1.
+- GPU resources are created and destroyed on the graphics thread in v0.2.
 
 ## Ownership
 
@@ -36,7 +36,7 @@ general engine conventions or speculative abstractions.
 - Terrain rendering uses `TerrainMaterial` and `TerrainLayerSet`.
 - Runtime deformation rebuilds affected chunks only.
 - Terrain, placement and vegetation must sample the same height provider.
-- Terrain supports a maximum of four layers in v0.1: Grass, Dirt, Rock and Sand.
+- Terrain supports a maximum of four layers in v0.2: Grass, Dirt, Rock and Sand.
 - Each terrain layer uses `AlbedoHeight` plus `NormalAoRoughness`.
 - `AlbedoHeight`: RGB albedo, A height.
 - `NormalAoRoughness`: RG normal, B AO, A roughness.
@@ -66,7 +66,7 @@ general engine conventions or speculative abstractions.
 - Apply every pass in the current effect technique before drawing.
 - Register draws and triangles in `RenderStatistics`.
 - Shadow draws must be recorded with `shadow: true`.
-- CSM has exactly four cascades in v0.1.
+- CSM has exactly four cascades in v0.2.
 - Diagnose shadows with cascade/debug output before tuning distances or bias.
 - Do not mask a coordinate, normal or matrix bug by increasing shadow coverage.
 
@@ -86,7 +86,7 @@ general engine conventions or speculative abstractions.
 - Supported geometry mode is `TRIANGLES`.
 - Supported attributes are POSITION, NORMAL and TEXCOORD_0.
 - Sparse accessors, skinning, animations, morph targets, Draco and Meshopt are
-  not supported in v0.1.
+  not supported in v0.2.
 - glTF alpha `BLEND` is currently rendered opaque.
 - Preserve external images when a GLB references them; not every GLB is fully embedded.
 
@@ -166,7 +166,7 @@ Before editing:
 1. Read the relevant document in `Docs/`.
 2. Locate the current owner and call site with code search.
 3. Reproduce or instrument bugs before tuning constants.
-4. State any v0.1 limitation the change intends to exceed.
+4. State any v0.2 limitation the change intends to exceed.
 
 Before completing:
 

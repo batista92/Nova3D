@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageType>Template</PackageType>
     <PackageId>Nova3D.Templates</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Authors>Bruno Batista</Authors>
     <Copyright>Copyright © 2026 Bruno Batista</Copyright>
     <Description>Project templates for Nova3D.</Description>

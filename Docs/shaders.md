@@ -6,7 +6,7 @@ DesktopGL and DirectX use different shader profiles, so retain the existing
 
 ## Sampler budget
 
-Treat 16 samplers as the hard v0.1 portability limit for a pixel shader. Count
+Treat 16 samplers as the hard v0.2 portability limit for a pixel shader. Count
 the compiled shader's declared samplers before adding one.
 
 | Shader path | Material | Shadows | IBL | Used | Free |

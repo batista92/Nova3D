@@ -1,7 +1,7 @@
 # Nova3D agent router
 
 Start with `Docs/AI_QUICKSTART.md`. It contains the supported lifecycle,
-ownership table, v0.1 limits, validation commands and topic routing.
+ownership table, v0.2 limits, validation commands and topic routing.
 
 Load only the document required by the task:
 
@@ -20,5 +20,5 @@ public API, module boundaries, ownership or a documented architecture limit.
 For a suspected Nova3D defect, use `Docs/NOVA3D_EVALUATION_TEMPLATE.md` and
 reproduce before editing. Keep game-specific behavior in the game repository.
 
-If a task exceeds a documented v0.1 limit, update implementation, regression
+If a task exceeds a documented v0.2 limit, update implementation, regression
 coverage and documentation together. Do not silently work around constraints.

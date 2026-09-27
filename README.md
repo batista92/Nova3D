@@ -1,4 +1,4 @@
-# Nova3D v0.1
+# Nova3D v0.2
 
 Toolkit 3D reutilizável para MonoGame, validado pelo benchmark do CityBuilder.
 

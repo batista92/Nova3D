@@ -13,8 +13,9 @@ From the Nova3D repository:
 .\eng\install-template.ps1
 ```
 
-The script packs `Nova3D` and `Nova3D.Templates`, registers the local package
-feed and installs the `nova3d` template.
+The script packs `Nova3D`, `Nova3D.Physics.Bepu`, `Nova3D.UI.Gum` and
+`Nova3D.Templates`, registers the local package feed and installs the `nova3d`
+template.
 
 ## Create a game
 
