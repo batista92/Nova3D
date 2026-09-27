@@ -1112,24 +1112,37 @@ R1 — Versão e documentação                           CONCLUÍDO
    instalador independente de versão fixa           IMPLEMENTADO
    documentação e checklist normalizados            IMPLEMENTADO
 
-R2 — Validação integral                              CONCLUÍDO
+R2 — Gerar pacotes                                   CONCLUÍDO
+   Nova3D 0.2.0                                      APROVADO
+   Nova3D.Physics.Bepu 0.2.0                         APROVADO
+   Nova3D.UI.Gum 0.2.0                               APROVADO
+   Nova3D.Templates 0.2.0                            APROVADO
+
+R3 — Validar template isolado                        CONCLUÍDO
+   instalação em custom hive                         APROVADO
+   variante padrão                                   APROVADO
+   variante --physics                                APROVADO
+   variante --ui                                     APROVADO
+   variante --physics --ui                           APROVADO
+
+R4 — Validar consumidor externo                      CONCLUÍDO
+   Marble3D consumindo somente pacotes 0.2.0         APROVADO
+   publish self-contained win-x64                    APROVADO
+   smoke do executável publicado                     APROVADO
+
+R5 — Regressões e benchmark                          CONCLUÍDO
    build Release e MGCB                              APROVADO
    regressão de física e samples                     APROVADO
-   quatro variantes do template                     APROVADO
    CityBuilder build/MGCB; performance Gate #2      PRESERVADA
+   validate.ps1 completo                             25 ETAPAS APROVADAS
 
-R3 — Auditoria dos pacotes                           CONCLUÍDO
+R6 — Auditar conteúdo dos .nupkg                     CONCLUÍDO
    conteúdo dos quatro .nupkg                        APROVADO
    dependências e metadados                          APROVADO
    ausência de bin/obj e assets acidentais           APROVADO
    auditoria integrada ao validate.ps1               IMPLEMENTADO
 
-R4 — Validação externa                               CONCLUÍDO
-   Marble3D consumindo somente pacotes 0.2.0         APROVADO
-   publish self-contained win-x64                    APROVADO
-   smoke do executável publicado                     APROVADO
-
-R5 — Publicação                                      EM ANDAMENTO
+R7 — Tag e GitHub Release                            EM ANDAMENTO
    confirmar IDs no NuGet                            APROVADO
    criar commit e reconstruir pacotes                APROVADO
    criar tag v0.2.0 no commit dos pacotes            APROVADO
@@ -1185,7 +1198,7 @@ FASE 5 — AI DEVELOPER EXPERIENCE         CONCLUÍDA
              ▼
 FASE 6 — RELEASE v0.2.0                   EM ANDAMENTO
 │
-└─ R1–R5                         ← R1–R4 CONCLUÍDOS
+└─ R1–R7                         ← R1–R6 CONCLUÍDOS; R7 EM ANDAMENTO
 ```
 
 Os oito testes produziram evidência suficiente para investir na ferramenta. A
