@@ -1,9 +1,8 @@
 # Nova3D 0.3.0 release checklist
 
-Status: GitHub release candidate; NuGet publication is deferred by project
-decision. This checklist must be completed
-against one clean, committed source revision. Do not tag a previous revision
-or upload packages built from uncommitted source.
+Status: [GitHub Release v0.3.0](https://github.com/batista92/Nova3D/releases/tag/v0.3.0)
+published from commit `018f53de21cf7111f3417d6a4c163c5bafc9010d`.
+NuGet publication is deferred by project decision.
 
 After committing the candidate, run `eng/prepare-release.ps1` on the graphics
 machine. It refuses a dirty tree or an existing `v0.3.0` tag, runs repository,
@@ -35,22 +34,26 @@ records the full candidate.
   all 11 budget limits over 240 sampled frames (frame interval p95 3.505 ms,
   449 draws, 61,392 triangles). The report and captures are under `artifacts/`
   and are local evidence only; repeat on the release commit.
-- [ ] Windows CI `eng/validate.ps1` passes on the release revision: build,
+- [x] Windows CI `eng/validate.ps1` passes on the release revision: build,
   shader probes, contracts, samples, isolated CLI, six template variants and
   archive audit.
-- [ ] Linux CI core build and CPU contracts pass on the same revision.
-- [ ] Controlled-machine visual suite and performance gate pass; attach their
+- [x] Linux CI core build and CPU contracts pass on the same revision.
+- [x] Controlled-machine visual suite and performance gate pass; attach their
   reports and identify hardware/backend. CI's CPU tests are not GPU evidence.
+- Release-commit preflight passed 51 repository steps, three exact visual
+  comparisons and all 11 CityBenchmark budget limits (frame p95 5.182 ms on
+  Windows 10/DesktopGL, NVIDIA GeForce GTX 1660 SUPER, 1280x720). The report,
+  captures and metadata are attached to the GitHub Release.
 - [ ] Publish and smoke a generated game on a clean target machine, including
   native dependencies, audio and input. An SDK-machine build is insufficient.
 
 ## Package identity and provenance
 
-- [ ] Build all five `.nupkg` files from one committed revision. Retain the
+- [x] Build all five `.nupkg` files from one committed revision. Retain the
   archive audit output, `SHA256SUMS.txt` and `RELEASE_PROVENANCE.json` for the
   exact upload files.
-- [ ] Confirm every package and the generated template reference `0.3.0`.
-- [ ] Attach all five packages, including template and CLI, to the GitHub
+- [x] Confirm every package and the generated template reference `0.3.0`.
+- [x] Attach all five packages, including template and CLI, to the GitHub
   Release. They are local-feed packages, not packages published on nuget.org.
 
 NuGet publication is explicitly deferred. The five IDs are not yet on
@@ -67,11 +70,11 @@ CLI; generated games must restore the matching core and optional packages.
 
 ## Tag and GitHub Release
 
-- [ ] Record the exact commit SHA and verify a clean source tree.
-- [ ] Create annotated `v0.3.0` on that commit only after candidate validation.
-- [ ] Create the GitHub Release from that tag with migration notes, known limits,
+- [x] Record the exact commit SHA and verify a clean source tree.
+- [x] Create annotated `v0.3.0` on that commit only after candidate validation.
+- [x] Create the GitHub Release from that tag with migration notes, known limits,
   the five exact `.nupkg` archives and their SHA-256 manifest.
-- [ ] Verify archive hashes after downloading the release assets and confirm
+- [x] Verify archive hashes after downloading the release assets and confirm
   the tag points to the package-building commit.
 
 Never publish or move a tag to make incomplete evidence appear complete.

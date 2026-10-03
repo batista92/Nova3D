@@ -1569,17 +1569,18 @@ G10.1 — Compatibilidade e documentação
    breaking changes e migração documentados           IMPLEMENTADO
 
 G10.2 — Automação
-   CI Windows                                         CONFIGURADO; EXECUÇÃO REMOTA PENDENTE
-   CI Linux para build/test aplicável                 CONFIGURADO; EXECUÇÃO REMOTA PENDENTE
+   CI Windows                                         APROVADO NO COMMIT 018f53d
+   CI Linux para build/test aplicável                 APROVADO NO COMMIT 018f53d
    solution, samples, shaders e templates             VALIDAÇÃO LOCAL APROVADA
    auditoria dos pacotes preservada                   IMPLEMENTADO
 
 G10.3 — Distribuição
    IDs e ownership no NuGet confirmados               ADIADO POR DECISÃO (FEED LOCAL)
-   pacotes assinados/verificáveis, se aplicável       SHA-256 LOCAL; NUGET ADIADO
-   pré-flight reprodutível de release                 IMPLEMENTADO; COMMIT LIMPO PENDENTE
+   pacotes assinados/verificáveis, se aplicável       SHA-256 VERIFICADO; NUGET ADIADO
+   pré-flight reprodutível de release                 APROVADO NO COMMIT 018f53d
+   template e CLI na GitHub Release                   CONCLUÍDO (PACOTES LOCAIS)
    template e CLI no nuget.org                        ADIADO POR DECISÃO (FEED LOCAL)
-   tag e GitHub Release                               PENDENTE
+   tag e GitHub Release                               CONCLUÍDO (v0.3.0)
 ```
 
 ### Ordem de implementação
