@@ -1,6 +1,13 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nova3D.Rendering;
+#if (scene)
+using Nova3D.Production.Debugging;
+using Nova3D.Production.Scenes;
+using Nova3D.Production.Scenes.Assets;
+using Nova3D.Production.Scenes.BuiltIns;
+using Nova3D.Production.Scenes.Prefabs;
+#endif
 #if (physics)
 using Nova3D.Physics.Bepu;
 #endif
@@ -19,6 +26,11 @@ public sealed class World : IDisposable
         NearPlane = 0.1f,
         FarPlane = 100f
     };
+#if (scene)
+    private readonly SceneInstance _scene;
+    private readonly DebugRenderer _sceneDebug;
+    private readonly RenderContext _sceneContext;
+#endif
 #if (physics)
     private readonly BepuPhysicsWorld _physics;
     private readonly BepuBody _body;
@@ -29,12 +41,28 @@ public sealed class World : IDisposable
     public World(GraphicsDevice device)
     {
         _device = device;
+#if (scene)
+        var assetsRoot = Path.Combine(AppContext.BaseDirectory, "Assets");
+        var components = new SceneComponentRegistry();
+        components.RegisterNova3DBuiltIns();
+        var plan = ScenePrefabLoader.Prepare(
+            Path.Combine(assetsRoot, "Scenes", "starter.scene.json"),
+            components,
+            new SceneAssetResolver(assetsRoot));
+#endif
         _cube = CreateCube(device);
         _effect = new BasicEffect(device)
         {
             VertexColorEnabled = true,
             LightingEnabled = false
         };
+#if (scene)
+        _scene = new SceneInstantiator().Instantiate(plan);
+        _camera = _scene.GetComponents<SceneCameraComponent>()
+            .Single(component => component.IsPrimary).Camera;
+        _sceneDebug = new DebugRenderer(device);
+        _sceneContext = new RenderContext(device);
+#endif
 #if (physics)
         _physics = new BepuPhysicsWorld();
         _physics.CreateStaticBox(new Vector3(0f, -0.5f, 0f), new Vector3(12f, 1f, 12f));
@@ -59,11 +87,23 @@ public sealed class World : IDisposable
         _device.RasterizerState = RasterizerState.CullCounterClockwise;
         _effect.View = _camera.View;
         _effect.Projection = _camera.Projection;
+#if (scene)
+        _sceneContext.BeginFrame(_camera);
+        foreach (var node in _scene.Nodes)
+        {
+            if (!node.TryGetComponent<SceneTag>("tag", out _)) continue;
+            DrawCube(Matrix.CreateScale(0.45f) * node.WorldTransform);
+        }
+        SceneDebugVisualization.Queue(_scene, _sceneDebug);
+        _sceneDebug.Flush(_sceneContext);
+#endif
 #if (physics)
         DrawCube(Matrix.CreateScale(6f, 0.5f, 6f) * Matrix.CreateTranslation(0f, -0.5f, 0f));
         DrawCube(_body.WorldMatrix);
 #else
+#if (!scene)
         DrawCube(Matrix.CreateRotationY(_rotation) * Matrix.CreateRotationX(_rotation * 0.35f));
+#endif
 #endif
     }
 
@@ -100,6 +140,10 @@ public sealed class World : IDisposable
 
     public void Dispose()
     {
+#if (scene)
+        _scene.Dispose();
+        _sceneDebug.Dispose();
+#endif
 #if (physics)
         _physics.Dispose();
 #endif

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageType>Template</PackageType>
     <PackageId>Nova3D.Templates</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Bruno Batista</Authors>
     <Copyright>Copyright © 2026 Bruno Batista</Copyright>
     <Description>Project templates for Nova3D.</Description>
@@ -41,14 +41,27 @@
     <Content Include="..\..\Docs\AssetManagement.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\GltfImport.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\rendering.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\scenes.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\Examples\Scenes\**\*"
+             PackagePath="content\Docs\Examples\Scenes" />
+    <Content Include="..\..\Docs\Schemas\**\*"
+             PackagePath="content\Docs\Schemas" />
     <Content Include="..\..\Docs\terrain.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\materials.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\shaders.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\performance.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\physics.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\releasing.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\RELEASE_0.3.0.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\compatibility-0.3.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\validation.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\ui.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\input.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\audio.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\persistence.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\skinning.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\package-boundaries.md" PackagePath="content\Docs" />
+    <Content Include="..\..\Docs\cli.md" PackagePath="content\Docs" />
     <Content Include="..\..\Docs\AI_GUIDE.md" PackagePath="content\Docs" />
     <Content Include="..\..\Nova3D\Shaders\**\*.fx" PackagePath="content\Shaders" />
     <Compile Remove="content\**\*.cs" />

@@ -23,12 +23,20 @@ matches the work being done instead of reading the repository chronologically.
 | Materials and color space | [materials.md](materials.md) |
 | Shader edits and sampler limits | [shaders.md](shaders.md) |
 | Terrain, editing and streaming | [terrain.md](terrain.md) |
+| Scene documents and authoring | [scenes.md](scenes.md) |
 | GLB/glTF import | [GltfImport.md](GltfImport.md) |
 | Runtime assets and hot reload | [AssetManagement.md](AssetManagement.md) |
 | BEPU physics | [physics.md](physics.md) |
 | Gum menus and HUD | [ui.md](ui.md) |
+| Input actions | [input.md](input.md) |
+| Audio mixing and playback lifecycle | [audio.md](audio.md) |
+| Settings, bindings and save slots | [persistence.md](persistence.md) |
+| glTF skinning and animation | [skinning.md](skinning.md) |
 | Profiling and regressions | [performance.md](performance.md) |
 | Packaging and release | [releasing.md](releasing.md) |
+| 0.3 compatibility and format versions | [compatibility-0.3.md](compatibility-0.3.md) |
+| Core and optional package boundaries | [package-boundaries.md](package-boundaries.md) |
+| Nova3D command-line tool | [cli.md](cli.md) |
 | Run repository or game validation | [validation.md](validation.md) |
 | A failure in a generated game | [troubleshooting.md](troubleshooting.md) |
 | Implement a common game feature | [Recipes/README.md](Recipes/README.md) |

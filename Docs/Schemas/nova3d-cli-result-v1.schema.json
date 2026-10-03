@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nova3d.dev/schemas/cli-result-v1.schema.json",
+  "title": "Nova3D CLI result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "command",
+    "status",
+    "exitCode",
+    "summary",
+    "messages",
+    "recommendedActions"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "command": { "type": "string", "minLength": 1 },
+    "status": {
+      "enum": ["pass", "fail", "usage_error", "internal_error"]
+    },
+    "exitCode": { "enum": [0, 1, 2, 3] },
+    "summary": { "type": "string", "minLength": 1 },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["level", "message", "stream"],
+        "properties": {
+          "level": {
+            "enum": ["success", "warning", "error", "info", "detail"]
+          },
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 },
+          "stream": { "enum": ["stdout", "stderr"] }
+        }
+      }
+    },
+    "recommendedActions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    }
+  }
+}

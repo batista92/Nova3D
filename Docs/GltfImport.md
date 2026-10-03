@@ -39,15 +39,33 @@ Suporte atual:
 - buffer views intercaladas (`byteStride`);
 - indices unsigned de 8, 16 e 32 bits;
 - POSITION, NORMAL e TEXCOORD_0;
+- JOINTS_0 e WEIGHTS_0, com palette local de ate 48 joints por primitiva;
 - geracao de normais quando NORMAL nao existe;
 - multiplas primitivas e instancias por hierarquia de nos;
+- skins, inverse bind matrices e skeleton root;
+- clips TRS com canais translation/rotation/scale e interpolacao LINEAR/STEP;
 - fatores metallic-roughness, cor base, alpha e double-sided;
 - texturas base-color, normal, metallic-roughness e occlusion;
 - imagens externas, data URI e imagens em buffer views.
 
-Ainda fora deste primeiro corte: accessors sparse, morph targets, skinning,
-animacoes, Draco/Meshopt e extensoes de materiais. Primitivas diferentes de
-`TRIANGLES` falham explicitamente em vez de produzir geometria incorreta.
+Ainda fora deste corte: accessors sparse, segundo conjunto de influencias,
+morph targets, CUBICSPLINE, Draco/Meshopt e extensoes de materiais. A pose e os
+clips sao avaliados por `GltfSkeletonPose` e `GltfAnimationPlayer`; passe a pose
+ao construtor de `GltfModelRenderer` para PBR e shadows animados.
+Primitivas diferentes de `TRIANGLES` falham explicitamente em vez de produzir
+geometria incorreta.
+
+Antes de abrir uma janela ou criar recursos GPU, um projeto pode verificar o
+container e a compatibilidade do modelo com a CLI:
+
+```powershell
+nova3d inspect Assets\Models\building.glb
+```
+
+O comando valida o GLB/glTF no lado CPU, resolve imagens e buffers externos e
+reporta limites conhecidos como sparse accessors, modos diferentes de
+`TRIANGLES`, segundo conjunto de influências, morph targets, CUBICSPLINE e
+extensões obrigatórias. A inspeção deste marco aceita apenas o container `.glb`.
 
 O renderer conecta as texturas base-color, normal, metallic-roughness e
 occlusion ao shader PBR. Normal mapping reconstrói a base tangente por derivadas

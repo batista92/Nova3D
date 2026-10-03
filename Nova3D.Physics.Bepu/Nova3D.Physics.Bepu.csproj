@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Nova3D.Physics.Bepu</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Bruno Batista</Authors>
     <Copyright>Copyright © 2026 Bruno Batista</Copyright>
     <Description>Optional BEPUphysics 2 integration for Nova3D.</Description>

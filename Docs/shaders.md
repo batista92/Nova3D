@@ -14,6 +14,12 @@ the compiled shader's declared samplers before adding one.
 | `LargeTerrain.fx` | 8 | 4 | 0 | 12 | 4 |
 | `PBR.fx` | 4 | 4 | 3 | 11 | 5 |
 
+Skinning adds a 48-matrix vertex constant palette and **zero samplers**.
+`PBRSkinned` and `SkinnedShadowDepth` must remain aligned on the `JointPalette`
+parameter and `BLENDINDICES0`/`BLENDWEIGHT0` semantics. On DirectX the complete
+PBR pixel path uses `ps_4_0`; its vertex path remains `vs_4_0_level_9_1`, which
+is the profile used to establish the 48-joint portable limit.
+
 The four terrain layers already consume eight samplers because every layer has
 an albedo-height and a normal-AO-roughness texture. Do not add a fifth terrain
 layer without redesigning the texture representation and validating every

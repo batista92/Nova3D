@@ -4,7 +4,9 @@
     #define PS_SHADERMODEL ps_3_0
 #else
     #define VS_SHADERMODEL vs_4_0_level_9_1
-    #define PS_SHADERMODEL ps_4_0_level_9_1
+    // The complete PBR + CSM pixel path exceeds the level_9_1 temporary
+    // register budget. Nova3D's PBR path requires HiDef and shader model 4.
+    #define PS_SHADERMODEL ps_4_0
 #endif
 
 float4x4 World;
@@ -15,6 +17,8 @@ float4x4 LightViewProjection0;
 float4x4 LightViewProjection1;
 float4x4 LightViewProjection2;
 float4x4 LightViewProjection3;
+#define MAX_JOINTS 48
+float4x4 JointPalette[MAX_JOINTS];
 float3 CameraPosition;
 float3 LightDirection;
 float3 LightColor;
@@ -104,6 +108,15 @@ struct VertexShaderInput
     float2 TextureCoordinate : TEXCOORD0;
 };
 
+struct SkinnedVertexShaderInput
+{
+    float4 Position : POSITION0;
+    float3 Normal : NORMAL0;
+    float2 TextureCoordinate : TEXCOORD0;
+    float4 Joints : BLENDINDICES0;
+    float4 Weights : BLENDWEIGHT0;
+};
+
 struct VertexShaderOutput
 {
     float4 Position : SV_POSITION;
@@ -117,20 +130,37 @@ struct VertexShaderOutput
     float2 TextureCoordinate : TEXCOORD7;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+VertexShaderOutput BuildVertexOutput(float4 localPosition, float3 localNormal,
+                                    float2 textureCoordinate)
 {
     VertexShaderOutput output;
-    float4 worldPosition = mul(input.Position, World);
+    float4 worldPosition = mul(localPosition, World);
     output.WorldPosition = worldPosition.xyz;
-    output.Normal = normalize(mul(float4(input.Normal, 0.0), WorldInverseTranspose).xyz);
+    output.Normal = normalize(mul(float4(localNormal, 0.0), WorldInverseTranspose).xyz);
     output.LightPosition0 = mul(worldPosition, LightViewProjection0);
     output.LightPosition1 = mul(worldPosition, LightViewProjection1);
     output.LightPosition2 = mul(worldPosition, LightViewProjection2);
     output.LightPosition3 = mul(worldPosition, LightViewProjection3);
     output.ViewDepth = -mul(worldPosition, View).z;
-    output.TextureCoordinate = input.TextureCoordinate;
+    output.TextureCoordinate = textureCoordinate;
     output.Position = mul(mul(worldPosition, View), Projection);
     return output;
+}
+
+VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+{
+    return BuildVertexOutput(input.Position, input.Normal, input.TextureCoordinate);
+}
+
+VertexShaderOutput SkinnedVertexShaderFunction(SkinnedVertexShaderInput input)
+{
+    float4x4 skin = JointPalette[(int)input.Joints.x] * input.Weights.x +
+                    JointPalette[(int)input.Joints.y] * input.Weights.y +
+                    JointPalette[(int)input.Joints.z] * input.Weights.z +
+                    JointPalette[(int)input.Joints.w] * input.Weights.w;
+    float4 localPosition = mul(input.Position, skin);
+    float3 localNormal = mul(float4(input.Normal, 0.0), skin).xyz;
+    return BuildVertexOutput(localPosition, localNormal, input.TextureCoordinate);
 }
 
 float SampleShadowPcf(sampler2D shadowSampler, float4 lightPosition, float bias)
@@ -343,6 +373,15 @@ technique PBR
     pass Pass0
     {
         VertexShader = compile VS_SHADERMODEL VertexShaderFunction();
+        PixelShader = compile PS_SHADERMODEL PixelShaderFunction();
+    }
+}
+
+technique PBRSkinned
+{
+    pass Pass0
+    {
+        VertexShader = compile VS_SHADERMODEL SkinnedVertexShaderFunction();
         PixelShader = compile PS_SHADERMODEL PixelShaderFunction();
     }
 }

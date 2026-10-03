@@ -8,17 +8,18 @@ inside Gum screens.
 ## Files
 
 ```text
-Game/GameState.cs
+Game/RunOutcome.cs
 Game/RunSession.cs
 Game/UiOverlay.cs
 ```
 
 ## Implementation
 
-Game-owned state:
+Use `SceneFlowController` for the reusable phase; keep game-specific results
+and run data in the game:
 
 ```csharp
-enum GameState { MainMenu, Playing, Paused, Victory, Defeat }
+enum RunOutcome { None, Victory, Defeat }
 
 sealed class RunSession
 {
@@ -35,9 +36,15 @@ Use simple game-owned volumes for checkpoints and finish lines:
 if (checkpointBounds.Contains(marble.Position) != ContainmentType.Disjoint)
     session.ReachCheckpoint(checkpointSpawn);
 if (finishBounds.Contains(marble.Position) != ContainmentType.Disjoint)
-    state = GameState.Victory;
-if (marble.Position.Y < defeatHeight)
-    state = GameState.Defeat;
+{
+    outcome = RunOutcome.Victory;
+    flow.ShowResult();
+}
+else if (marble.Position.Y < defeatHeight)
+{
+    outcome = RunOutcome.Defeat;
+    flow.ShowResult();
+}
 ```
 
 Create Gum controls once and bind changing values:
@@ -52,14 +59,19 @@ timerBinding.Set((int)session.Elapsed.TotalSeconds);
 
 Map states to screens using `GumUiScreenStack`: normal screens cover previous
 screens; pause uses `CoversPrevious = false`. Button handlers request game-owned
-transitions such as `StartRun`, `Resume`, `Restart` and `ReturnToMenu`.
+transitions such as `flow.Start`, `Resume`, `Restart` and `ReturnToMenu`. Subscribe
+to `flow.StateChanged` to update screens; screens do not own the flow state.
+If BEPU is installed, call `BepuSceneFlowAdapter.Update` from the game loop so
+physics does not advance during pause, loading, result or menu.
 
-Only update `RunSession.Elapsed` while `state == GameState.Playing`.
+Only update `RunSession.Elapsed` while `flow.State == SceneFlowState.Playing`.
 
 ## Ownership
 
-Gameplay owns state, timer, checkpoint and transition meaning. The screen stack
-owns pushed screens. Bindings reference existing controls and own no resources.
+Gameplay owns timer, checkpoint and outcome. `SceneFlowController` owns only the
+reusable phase and borrows `SceneService`; the service owns the active scene.
+The screen stack owns pushed screens. Bindings reference existing controls and
+own no resources.
 
 ## Validate
 

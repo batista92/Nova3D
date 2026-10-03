@@ -2,14 +2,14 @@
 
 ## Use when
 
-Adding music/SFX, user options and persistent progress. Nova3D does not wrap
-these MonoGame/game responsibilities.
+Adding music/SFX, user options and persistent progress. Nova3D coordinates
+reusable playback behavior while game code owns event meaning and saved values.
 
 ## Files
 
 ```text
 Content/Content.mgcb
-Game/AudioController.cs
+Nova3D.Production.Audio.AudioSystem
 Game/GameSettings.cs
 Game/SaveData.cs
 ```
@@ -19,19 +19,21 @@ Game/SaveData.cs
 Load compiled audio through `ContentManager`:
 
 ```csharp
-_checkpointSound = Content.Load<SoundEffect>("Audio/checkpoint");
-_music = Content.Load<Song>("Audio/music");
-MediaPlayer.IsRepeating = true;
-MediaPlayer.Volume = settings.MusicVolume;
-MediaPlayer.Play(_music);
+SoundEffect checkpoint = Content.Load<SoundEffect>("Audio/checkpoint");
+Song music = Content.Load<Song>("Audio/music");
 
-_checkpointSound.Play(settings.SfxVolume, 0f, 0f);
+_audio = new AudioSystem();
+_checkpointPool = _audio.CreateSoundPool(checkpoint, capacity: 4);
+_audio.Mixer.Music.Volume = settings.MusicVolume;
+_audio.Music.Play(music, loop: true);
+
+_checkpointPool.Play(new SoundPlaybackOptions(Volume: settings.SfxVolume));
 ```
 
 Do not dispose `Content.Load` results. Stop global playback during unload:
 
 ```csharp
-MediaPlayer.Stop();
+_audio.Dispose();
 ```
 
 Keep serializable game data free of GPU/physics/UI objects:
@@ -42,24 +44,27 @@ public sealed record GameSettings(float MusicVolume = 0.8f,
 public sealed record SaveData(int HighestUnlockedLevel = 1, double BestSeconds = 0);
 ```
 
-Store JSON in a user-writable directory:
+Store JSON in a user-writable directory with a versioned atomic store:
 
 ```csharp
-string root = Path.Combine(
-    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-    "MyStudio", "MyGame");
-Directory.CreateDirectory(root);
-string json = JsonSerializer.Serialize(settings);
-File.WriteAllText(Path.Combine(root, "settings.json"), json);
+var paths = new GameDataPaths("MyStudio", "MyGame");
+var settingsStore = new VersionedJsonStore<GameSettings>(
+    paths.SettingsFile, "mygame.settings", 1,
+    () => new GameSettings());
+
+GameSettings settings = settingsStore.Load().Value;
+settingsStore.Save(settings);
 ```
 
-Load defensively: missing or invalid files return defaults and log the failure.
-Write a temporary file first, then replace the last valid save.
+Missing or invalid files try `.bak`, then return defaults with an explicit
+`PersistenceLoadSource`. See [persistence.md](../persistence.md) for validation,
+migrations, bindings and save slots.
 
 ## Ownership
 
-`ContentManager` owns compiled audio. Game code owns settings/save records and
-file operations. UI edits a working copy; Apply commits it to runtime systems.
+`ContentManager` owns compiled audio. `AudioSystem` owns created voices and its
+music session. Game code owns settings/save records and file operations. UI
+edits a working copy; Apply commits it to runtime systems.
 
 ## Validate
 

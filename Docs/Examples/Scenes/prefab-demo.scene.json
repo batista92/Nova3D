@@ -1,0 +1,45 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "Prefab Demo",
+  "nodes": [
+    {
+      "id": "house-a",
+      "name": "House A",
+      "transform": {
+        "position": [10, 0, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "id": "prefab",
+          "type": "nova3d.prefab",
+          "properties": {
+            "asset": "Prefabs/house.scene.json",
+            "overrides": [
+              { "node": "body", "component": "tag", "property": "value", "value": "red-house" },
+              { "node": "body", "property": "position", "value": [0, 1, 0] }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "house-b",
+      "name": "House B",
+      "transform": {
+        "position": [20, 0, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "id": "prefab",
+          "type": "nova3d.prefab",
+          "properties": { "asset": "Prefabs/house.scene.json" }
+        }
+      ]
+    }
+  ]
+}

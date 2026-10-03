@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Nova3D\Nova3D.csproj" />
+    <None Include="..\..\Docs\Examples\Scenes\minimal.scene.json"
+          Link="Fixtures\minimal.scene.json"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\Docs\Examples\Scenes\prefab-demo.scene.json"
+          Link="Fixtures\prefab-demo.scene.json"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\Docs\Examples\Scenes\Prefabs\*.scene.json"
+          Link="Fixtures\Prefabs\%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\Docs\Schemas\nova3d.scene.1.schema.json"
+          Link="Fixtures\nova3d.scene.1.schema.json"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\Samples\DataDrivenScene\Assets\Scenes\level.scene.json"
+          Link="Fixtures\sample-level.scene.json"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\templates\Nova3D.Templates\content\Assets\Scenes\starter.scene.json"
+          Link="Fixtures\TemplateScene\Assets\Scenes\starter.scene.json"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\templates\Nova3D.Templates\content\Assets\Prefabs\marker.scene.json"
+          Link="Fixtures\TemplateScene\Assets\Prefabs\marker.scene.json"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

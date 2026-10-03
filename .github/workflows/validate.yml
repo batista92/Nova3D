@@ -1,0 +1,54 @@
+name: Validate Nova3D
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows-release:
+    name: Windows packages, shaders, samples and templates
+    runs-on: windows-2022
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore local .NET tools
+        run: dotnet tool restore
+      - name: Validate repository and package archives
+        shell: pwsh
+        run: ./eng/validate.ps1
+      - name: Upload candidate packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: nova3d-packages-${{ github.sha }}
+          path: |
+            artifacts/packages/*.nupkg
+            artifacts/packages/SHA256SUMS.txt
+          if-no-files-found: error
+
+  linux-contracts:
+    name: Linux core and CPU contracts
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Build core
+        run: dotnet build Nova3D/Nova3D.csproj -c Release
+      - name: Scene contracts
+        run: dotnet run --project Benchmarks/SceneContractTests/SceneContractTests.csproj -c Release
+      - name: Input contracts
+        run: dotnet run --project Benchmarks/InputContractTests/InputContractTests.csproj -c Release
+      - name: Persistence contracts
+        run: dotnet run --project Benchmarks/PersistenceContractTests/PersistenceContractTests.csproj -c Release
+      - name: Visual and performance data contracts
+        shell: bash
+        run: |
+          dotnet run --project Benchmarks/VisualCaptureContractTests/VisualCaptureContractTests.csproj -c Release
+          dotnet run --project Benchmarks/VisualRegressionContractTests/VisualRegressionContractTests.csproj -c Release
+          dotnet run --project Benchmarks/PerformanceReportContractTests/PerformanceReportContractTests.csproj -c Release

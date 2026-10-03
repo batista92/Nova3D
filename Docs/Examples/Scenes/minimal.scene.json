@@ -1,0 +1,17 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "Minimal",
+  "nodes": [
+    {
+      "id": "origin",
+      "name": "Origin",
+      "transform": {
+        "position": [0.0, 0.0, 0.0],
+        "rotationDegrees": [0.0, 0.0, 0.0],
+        "scale": [1.0, 1.0, 1.0]
+      },
+      "components": []
+    }
+  ]
+}

@@ -88,17 +88,21 @@ owns pushed screens. Draw Gum after the world is resolved to the back buffer.
 
 ## Audio
 
-Nova3D v0.2 does not wrap audio. Use MonoGame `SoundEffect`,
-`SoundEffectInstance`, `Song` and `MediaPlayer` directly. Game code owns volume,
-music/SFX categories and persistence. Add a Nova3D audio module only if a real
-game reveals reusable behavior beyond MonoGame's API.
+Load `SoundEffect` and `Song` through `ContentManager` and keep using MonoGame
+types directly. `AudioSystem` adds master/music/SFX buses, fades, bounded
+`SoundEffectInstance` pools, 3D listener/emitter updates and focus lifecycle.
+It owns created instances but borrows Content assets. Game code still owns
+which sounds play, user settings and persistence. See [audio.md](audio.md).
 
 ## Configuration and saves
 
 Toolkit configuration covers renderer and streaming defaults. Game settings,
-input bindings, level progress and checkpoint state belong to the game. Store
-writable data in a platform-appropriate user-data directory, never beside
-read-only packaged content.
+input bindings, level progress and checkpoint state belong to the game. Use
+`GameDataPaths` for the platform user-data directory and
+`VersionedJsonStore<T>` for atomic, versioned settings and slots with backup
+fallback. Game code defines records, validators and migrations. Never save
+beside read-only packaged content or in the frame hot path. See
+[persistence.md](persistence.md).
 
 ## Build an executable
 
@@ -111,9 +115,12 @@ dotnet build -c Release
 Then publish for a concrete runtime, for example Windows x64:
 
 ```powershell
-dotnet publish -c Release -r win-x64 --self-contained true `
-  -o .\dist\win-x64
+nova3d publish --runtime win-x64
 ```
+
+The CLI restores the runtime pack, runs its project preflight and replaces
+`dist/win-x64` only after a successful self-contained Release publish. The
+equivalent low-level command is documented in the Windows publish recipe.
 
 The distributable executable is written below `dist/win-x64`. The similarly
 named folder under `bin/Release/net8.0/` is build/publish staging and must not be

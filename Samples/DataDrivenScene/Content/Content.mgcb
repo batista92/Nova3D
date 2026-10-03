@@ -1,0 +1,13 @@
+#----------------------------- Global Properties ----------------------------#
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:HiDef
+/compress:False
+
+#---------------------------------- Content ---------------------------------#
+#begin DebugFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/build:DebugFont.spritefont

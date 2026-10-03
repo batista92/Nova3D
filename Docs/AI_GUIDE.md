@@ -20,6 +20,9 @@ general engine conventions or speculative abstractions.
 - Game code owns gameplay state; renderers consume render data.
 - MonoGame owns the platform/game loop. Do not wrap `Game` or `GraphicsDevice`.
 - GPU resources are created and destroyed on the graphics thread in v0.2.
+- Audio coordination and persistence stay in core while they require only
+  MonoGame/BCL. Do not split packages without satisfying the evidence and
+  reconsideration criteria in `Docs/package-boundaries.md`.
 
 ## Ownership
 
@@ -29,6 +32,42 @@ general engine conventions or speculative abstractions.
 - `GltfModelRenderer` and materials do not own models, effects or textures.
 - A hot reload must create the replacement successfully before swapping it.
 - Never discard the last valid asset when reload fails.
+
+## Scenes
+
+- Parse, validate and build a `SceneLoadPlan` before allocating runtime resources.
+- Register component descriptors explicitly; never scan assemblies or use a
+  service locator to resolve scene dependencies.
+- Use `ISceneRuntimeComponentDescriptor` only when a component creates a runtime
+  value, and implement both its creation and destruction paths.
+- Construct `SceneInstantiator` on the graphics thread. Instantiate, rollback and
+  dispose its `SceneInstance` on that same thread.
+- Let `SceneInstance` own created component values. Do not dispose them separately.
+- Keep parsing, validation and hierarchy resolution independent of
+  `GraphicsDevice`, ContentManager, physics and UI modules.
+- Use the built-in component property names documented in `Docs/scenes.md` and
+  reject unknown fields instead of silently ignoring agent mistakes.
+- Treat the node world matrix as authoritative for built-in camera, light,
+  model and spawn transforms. Gameplay alone interprets tags and spawn kinds.
+- Keep physics scene descriptors in the optional physics module or game; core
+  Nova3D must not acquire a BEPU dependency.
+- Resolve persisted asset references with `SceneAssetResolver`; never concatenate
+  an unchecked scene string with the checkout or output directory.
+- Use a `SceneAssetLease<T>` when sharing cached scene assets. Dispose scenes
+  before their cache and never dispose the leased value directly.
+- Pass cancellation through runtime factories and let `SceneInstantiator`
+  perform rollback; do not create GPU resources on a background task.
+- Use `ScenePrefabLoader.Prepare` for scenes with `nova3d.prefab`. Keep prefab
+  expansion, override checking and recursive-reference detection on the CPU.
+- Address prefab override targets by IDs local to the referenced file. Only
+  override existing typed component properties or local transform vectors.
+- Use `SceneDebugVisualization` with `DebugRenderer` for node/model bounds; the
+  game draws text for the provided world-space name anchors.
+- Let `SceneService` own the active instance and dispose it before shared caches
+  and physics worlds. `SceneFlowController` only coordinates reusable phases;
+  the game owns victory/defeat rules and UI content.
+- Keep Gum as a `StateChanged` observer. Use optional `BepuSceneFlowAdapter` to
+  step physics only in Playing; scene descriptors remove their own bodies.
 
 ## Terrain
 
@@ -84,9 +123,16 @@ general engine conventions or speculative abstractions.
 - Prefer GLB for runtime models and hot reload.
 - glTF 2.x is supported; FBX and STOVE are not supported.
 - Supported geometry mode is `TRIANGLES`.
-- Supported attributes are POSITION, NORMAL and TEXCOORD_0.
-- Sparse accessors, skinning, animations, morph targets, Draco and Meshopt are
-  not supported in v0.2.
+- Supported attributes are POSITION, NORMAL, TEXCOORD_0, JOINTS_0 and WEIGHTS_0.
+- Skin and TRS animation data with LINEAR/STEP interpolation is imported.
+  Create one `GltfSkeletonPose` and `GltfAnimationPlayer` per animated instance
+  and pass that pose to `GltfModelRenderer` for PBR and shadow drawing.
+- Sparse accessors, second influence sets, CUBICSPLINE, morph targets, Draco
+  and Meshopt are not supported.
+- G5's selected skinning transport is a uniform `float4x4` palette with at most
+  48 joints per rendered primitive and zero added samplers. A larger skin must
+  use per-primitive local palette remapping or fail explicitly; do not silently
+  truncate influences or joints.
 - glTF alpha `BLEND` is currently rendered opaque.
 - Preserve external images when a GLB references them; not every GLB is fully embedded.
 
@@ -153,6 +199,54 @@ general engine conventions or speculative abstractions.
   must not disable input feedback or functional state changes.
 - Template UI code must remain behind the `ui` template symbol. The default
   `dotnet new nova3d` output must not reference Gum or `Nova3D.UI.Gum`.
+
+## Input
+
+- Build `InputActionMap` bindings during setup and update once per game frame.
+- Pass native MonoGame keyboard, mouse and gamepad states; do not hide them.
+- Read gameplay intentions from named actions, not repeated key checks inside
+  simulation code. Normalize combined axis values in the game when needed.
+- Route gameplay/menu/debug actions through `InputContextRouter` when they
+  coexist. Make modal contexts block lower priorities; activate them explicitly.
+- Update Gum before the router and pass `GumInputCapture.Read(ui)` to filter
+  captured devices. Core input must remain independent of Gum.
+- Do not synthesize gameplay presses when capture or context ownership changes:
+  held controls must return to neutral before they can trigger again.
+- Capture default bindings before loading user settings. Remap with
+  `ReplaceBindings` so existing action references remain valid, inspect
+  `FindConflicts`, and serialize maps with `InputBindingJson` outside the frame
+  hot path. The game owns save paths, Gum controls and conflict policy.
+
+## Audio
+
+- Preserve MonoGame `SoundEffect`, `SoundEffectInstance`, `Song`,
+  `AudioListener`, `AudioEmitter` and `MediaPlayer` in public game code.
+- Use `AudioSystem` only for reusable behavior: hierarchical buses, fades,
+  bounded voice pools, 3D updates and focus lifecycle.
+- ContentManager owns loaded audio assets. `AudioSystem` owns only instances
+  created by its pools and its exclusive global MediaPlayer session.
+- Keep one music owner per process because `MediaPlayer` is global.
+- Do not load audio or grow voice collections in `Update`; choose fixed pool
+  capacities and an explicit reject/steal policy.
+- Gameplay owns which sounds play and when. Nova3D must not infer events,
+  music states or pause rules from scenes.
+
+## Persistence
+
+- Use `GameDataPaths` instead of writing beside the executable. Persisted
+  studio, game and slot identifiers must be safe single path segments.
+- Keep settings, progress and save-slot records game-owned and free of GPU,
+  physics, Gum and runtime scene objects.
+- Use `VersionedJsonStore<T>` for an explicit document type/version, atomic
+  replacement and last-known-good backup recovery.
+- Add an explicit migration before increasing a persisted version. Reject
+  future versions and never partially apply invalid data.
+- Validate semantic ranges inside the store transaction so invalid primary
+  data can fall back to backup before reaching gameplay.
+- Inspect `PersistenceLoadResult.Source`; log and communicate recovery when it
+  affects player progress.
+- Synchronous file I/O stays outside `Update`. Game code coordinates any
+  background save and prevents concurrent writes to the same path.
 
 ## Change protocol
 

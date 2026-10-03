@@ -8,6 +8,8 @@ namespace Nova3DGame.Game;
 
 internal sealed class UiOverlay : IDisposable
 {
+    // Lifecycle example only. A complete game must replace this layout using
+    // GAME_DESIGN.md and record visual checks in PRESENTATION_REVIEW.md.
     private readonly GumUiScreenStack _screens;
 
     public UiOverlay(GumUiHost host, Action exit)

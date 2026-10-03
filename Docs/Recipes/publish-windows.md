@@ -25,6 +25,14 @@ dotnet run -c Release
 Publish a self-contained executable:
 
 ```powershell
+nova3d publish --runtime win-x64
+```
+
+This is the recommended path. It restores for the RID, runs the Nova3D project
+preflight, publishes through a staging directory and replaces an existing good
+output only after success. The equivalent low-level .NET command is:
+
+```powershell
 dotnet publish -c Release -r win-x64 --self-contained true `
   -o .\dist\win-x64
 ```

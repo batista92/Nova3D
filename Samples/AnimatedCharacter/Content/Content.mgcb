@@ -1,0 +1,25 @@
+#----------------------------- Global Properties ----------------------------#
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:HiDef
+/compress:False
+
+#---------------------------------- Content ---------------------------------#
+#begin Shaders/PBR.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../../../Nova3D/Shaders/PBR.fx;Shaders/PBR
+
+#begin Shaders/ShadowDepth.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:../../../Nova3D/Shaders/ShadowDepth.fx;Shaders/ShadowDepth
+
+#begin DebugFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/build:../../DataDrivenScene/Content/DebugFont.spritefont;DebugFont

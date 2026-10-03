@@ -24,6 +24,12 @@
       "datatype": "bool",
       "defaultValue": "false",
       "description": "Include the optional Nova3D.UI.Gum module and UI starter overlay."
+    },
+    "scene": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Include a data-driven scene and two reusable prefab instances."
     }
   },
   "sources": [
@@ -32,6 +38,10 @@
         {
           "condition": "(!ui)",
           "exclude": [ "Game/UiOverlay.cs" ]
+        },
+        {
+          "condition": "(!scene)",
+          "exclude": [ "Assets/Scenes/**", "Assets/Prefabs/**" ]
         }
       ]
     }

@@ -42,6 +42,25 @@ physics.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 Use `body.WorldMatrix` to render a mesh at the simulated pose. Rendering remains
 separate from simulation.
 
+## Scene flow (optional adapter)
+
+When a game uses `SceneFlowController`, the optional `BepuSceneFlowAdapter`
+borrows its flow and an existing `BepuPhysicsWorld`. It advances physics only
+while a scene is active and the flow is `Playing`:
+
+```csharp
+var stepper = new BepuSceneFlowAdapter(flow, physics);
+// Inside Game.Update, after UI/input and game transition handling:
+stepper.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+```
+
+The adapter does not own the world, scene or bodies. It does not accumulate
+paused time, so resuming cannot produce a catch-up burst. Its return value is
+zero while paused, loading, in menu or showing a result. Scene-specific body
+descriptors, registered by the game or optional physics module, must remove
+their bodies in `Destroy`; returning to menu disposes the scene and invokes
+those destroy callbacks. Dispose `SceneService` before the physics world.
+
 ## Collision layers
 
 ```csharp

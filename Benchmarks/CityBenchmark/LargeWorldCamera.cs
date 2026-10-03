@@ -7,17 +7,20 @@ namespace Nova3D.Benchmarks.CityBenchmark;
 
 internal sealed class LargeWorldCamera
 {
+    private static readonly Vector3 CapturePosition = new(0f, 180f, 430f);
+    private const float CaptureYaw = MathHelper.Pi;
+    private const float CapturePitch = -0.35f;
     private readonly Camera3D _camera = new()
     {
-        Position = new Vector3(0f, 180f, 430f),
+        Position = CapturePosition,
         NearPlane = 1f,
         FarPlane = 3200f,
         FieldOfView = MathHelper.PiOver4
     };
     private MouseState _previousMouse;
     private bool _mouseInitialized;
-    private float _yaw = MathHelper.Pi;
-    private float _pitch = -0.35f;
+    private float _yaw = CaptureYaw;
+    private float _pitch = CapturePitch;
 
     public Camera3D Camera => _camera;
     public Vector3 Position => _camera.Position;
@@ -26,6 +29,15 @@ internal sealed class LargeWorldCamera
     public Vector3 Direction => Forward;
 
     public void SetViewport(Viewport viewport) => _camera.SetViewport(viewport);
+
+    public void UseDeterministicCapturePose(Viewport viewport)
+    {
+        _yaw = CaptureYaw;
+        _pitch = CapturePitch;
+        _camera.Position = CapturePosition;
+        _camera.Direction = Forward;
+        _camera.SetViewport(viewport);
+    }
 
     private Vector3 Forward => Vector3.Normalize(new Vector3(
         MathF.Sin(_yaw) * MathF.Cos(_pitch), MathF.Sin(_pitch), MathF.Cos(_yaw) * MathF.Cos(_pitch)));

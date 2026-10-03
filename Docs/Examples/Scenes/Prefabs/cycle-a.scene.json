@@ -1,0 +1,19 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "Cycle A",
+  "nodes": [
+    {
+      "id": "a",
+      "name": "A",
+      "transform": {
+        "position": [0, 0, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        { "id": "prefab", "type": "nova3d.prefab", "properties": { "asset": "Prefabs/cycle-b.scene.json" } }
+      ]
+    }
+  ]
+}

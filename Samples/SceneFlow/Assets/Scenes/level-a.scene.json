@@ -1,0 +1,19 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "Blue Cascade",
+  "nodes": [
+    { "id": "ground", "name": "Ground", "transform": { "position": [0, -0.25, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": false, "size": [14, 0.5, 14], "color": "slate" } }
+    ] },
+    { "id": "blue-one", "name": "Blue One", "transform": { "position": [-3, 7, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": true, "size": [1.5, 1.5, 1.5], "color": "blue" } }
+    ] },
+    { "id": "blue-two", "name": "Blue Two", "transform": { "position": [0, 10, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": true, "size": [1.5, 1.5, 1.5], "color": "cyan" } }
+    ] },
+    { "id": "blue-three", "name": "Blue Three", "transform": { "position": [3, 13, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": true, "size": [1.5, 1.5, 1.5], "color": "blue" } }
+    ] }
+  ]
+}

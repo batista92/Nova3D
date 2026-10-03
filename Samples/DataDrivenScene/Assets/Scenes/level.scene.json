@@ -1,0 +1,51 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "Data Driven Scene",
+  "nodes": [
+    {
+      "id": "camera",
+      "name": "Camera",
+      "transform": {
+        "position": [0, 7, 18],
+        "rotationDegrees": [-18, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        { "id": "view", "type": "nova3d.camera", "properties": { "primary": true, "farPlane": 200 } }
+      ]
+    },
+    {
+      "id": "house-a",
+      "name": "House A",
+      "transform": {
+        "position": [-3, 0, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "id": "prefab", "type": "nova3d.prefab",
+          "properties": {
+            "asset": "Prefabs/house.scene.json",
+            "overrides": [
+              { "node": "body", "component": "tag", "property": "value", "value": "blue-house" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "house-b",
+      "name": "House B",
+      "transform": {
+        "position": [3, 0, 0],
+        "rotationDegrees": [0, 25, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        { "id": "prefab", "type": "nova3d.prefab", "properties": { "asset": "Prefabs/house.scene.json" } }
+      ]
+    }
+  ]
+}

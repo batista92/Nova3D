@@ -49,4 +49,14 @@ internal sealed class OrbitCamera
         Position = Target + Vector3.Transform(Vector3.Backward * _distance, rotation);
         View = Matrix.CreateLookAt(Position, Target, Vector3.Up);
     }
+
+    public void UseDeterministicPose()
+    {
+        _yaw = MathHelper.ToRadians(35f);
+        _pitch = MathHelper.ToRadians(-20f);
+        _distance = Math.Clamp(11f, _minimumDistance, _maximumDistance);
+        var rotation = Matrix.CreateFromYawPitchRoll(_yaw, _pitch, 0f);
+        Position = Target + Vector3.Transform(Vector3.Backward * _distance, rotation);
+        View = Matrix.CreateLookAt(Position, Target, Vector3.Up);
+    }
 }

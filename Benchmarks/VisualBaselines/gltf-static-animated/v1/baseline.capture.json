@@ -1,0 +1,20 @@
+{
+  "format": "nova3d.visual-capture",
+  "version": 1,
+  "scene": "gltf-static-animated",
+  "image": "gltf-static-animated.png",
+  "width": 1280,
+  "height": 720,
+  "seed": 9127,
+  "fixedTimeStepTicks": 166666,
+  "warmupFrames": 60,
+  "captureFrame": 61,
+  "backend": "DesktopGL",
+  "graphicsAdapter": "NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2",
+  "graphicsProfile": "HiDef",
+  "backBufferFormat": "Color",
+  "depthStencilFormat": "Depth24",
+  "multiSampleCount": 0,
+  "operatingSystem": "Microsoft Windows 10.0.19045",
+  "processArchitecture": "X64"
+}

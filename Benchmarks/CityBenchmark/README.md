@@ -35,6 +35,45 @@ dotnet run --project .\Benchmarks\Nova3D.Benchmarks\Nova3D.Benchmarks.csproj -c 
 ```
 
 `F1` alterna os modos de diagnóstico das cascatas de sombra.
+## Captura determinística
+
+```powershell
+dotnet run --project .\Benchmarks\Nova3D.Benchmarks\Nova3D.Benchmarks.csproj `
+  -c Release -- --capture .\artifacts\visual-captures\city
+```
+
+G8.3 adds two focused capture modes to the same host:
+
+```powershell
+dotnet run --project .\Benchmarks\Nova3D.Benchmarks\Nova3D.Benchmarks.csproj `
+  -c Release -- --capture .\artifacts\visual-captures\pbr --scene Pbr
+dotnet run --project .\Benchmarks\Nova3D.Benchmarks\Nova3D.Benchmarks.csproj `
+  -c Release -- --capture .\artifacts\visual-captures\gltf --scene Gltf
+```
+
+`Pbr` isolates metallic/roughness materials and the four-cascade shader path.
+`Gltf` imports generated deterministic GLB fixtures and draws one static and one
+skinned animated primitive, including both shadow techniques. No external model
+download is required. Run all committed comparisons with
+`eng/run-visual-regression.ps1` on the controlled graphics machine.
+
+Esse modo usa resolução 1280×720, câmera e timestep fixos, seed `9127`, desliga
+MSAA e entrada interativa, aquece 120 frames, salva o frame 121 e encerra. O PNG
+e o `.capture.json` ficam no diretório informado.
+
+## Regressão de performance
+
+```powershell
+.\eng\run-performance-regression.ps1
+```
+
+O gate aquece 180 frames e mede 240 frames fixos em 1280x720 sem MSAA. O
+relatório legível por IA fica em `artifacts/performance/city-benchmark.json` e
+é validado contra `Benchmarks/PerformanceBudgets/city-benchmark.json`. O script
+também preserva a regressão física headless; use `-SkipPhysics` apenas quando
+ela já tiver sido executada separadamente. Comparações em outro hardware são
+evidência auxiliar e geram aviso explícito.
+
 # Controles
 
 - `WASD`, `Q/E`: mover a câmera;

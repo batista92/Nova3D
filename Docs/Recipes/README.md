@@ -22,6 +22,9 @@ Current recipes:
 | menu, timer, checkpoint and end states | [game-flow-ui.md](game-flow-ui.md) |
 | audio, settings and save data | [audio-settings-saves.md](audio-settings-saves.md) |
 | produce a Windows executable | [publish-windows.md](publish-windows.md) |
+| author and validate a scene document | [scene-authoring.md](scene-authoring.md) |
+| remappable controls and settings screen | [control-settings.md](control-settings.md) |
+| theme-specific menus, settings and interactive feedback | [game-presentation.md](game-presentation.md) |
 
 Keep each recipe below 150 lines. Critical rendering, physics, UI and game-flow
 patterns also exist as compilable projects under the repository's `Samples/`

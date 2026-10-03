@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:nova3d:schema:scene:1",
+  "title": "Nova3D scene/1",
+  "description": "Structural schema for a Nova3D scene document. Cross-node references, uniqueness and registered component properties require SceneDocumentValidator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "version",
+    "name",
+    "nodes"
+  ],
+  "properties": {
+    "format": {
+      "const": "nova3d.scene"
+    },
+    "version": {
+      "const": 1
+    },
+    "name": {
+      "$ref": "#/$defs/displayName"
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  },
+  "$defs": {
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$"
+    },
+    "componentType": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 128,
+      "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$"
+    },
+    "finiteSingle": {
+      "type": "number",
+      "minimum": -3.4028235e+38,
+      "maximum": 3.4028235e+38
+    },
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/finiteSingle"
+      }
+    },
+    "positiveVector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number",
+        "exclusiveMinimum": 0,
+        "maximum": 3.4028235e+38
+      }
+    },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "position",
+        "rotationDegrees",
+        "scale"
+      ],
+      "properties": {
+        "position": {
+          "$ref": "#/$defs/vector3"
+        },
+        "rotationDegrees": {
+          "$ref": "#/$defs/vector3"
+        },
+        "scale": {
+          "$ref": "#/$defs/positiveVector3"
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "properties"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "$ref": "#/$defs/componentType"
+        },
+        "properties": {
+          "type": "object"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "transform",
+        "components"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "$ref": "#/$defs/displayName"
+        },
+        "parent": {
+          "$ref": "#/$defs/id"
+        },
+        "transform": {
+          "$ref": "#/$defs/transform"
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/component"
+          }
+        }
+      }
+    }
+  }
+}

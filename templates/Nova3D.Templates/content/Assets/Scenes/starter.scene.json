@@ -1,0 +1,48 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "Starter Scene",
+  "nodes": [
+    {
+      "id": "camera",
+      "name": "Camera",
+      "transform": {
+        "position": [0, 3, 9],
+        "rotationDegrees": [-10, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        { "id": "view", "type": "nova3d.camera", "properties": { "primary": true } }
+      ]
+    },
+    {
+      "id": "left",
+      "name": "Left Marker",
+      "transform": {
+        "position": [-2, 0, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        { "id": "prefab", "type": "nova3d.prefab", "properties": { "asset": "Prefabs/marker.scene.json" } }
+      ]
+    },
+    {
+      "id": "right",
+      "name": "Right Marker",
+      "transform": {
+        "position": [2, 0, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        { "id": "prefab", "type": "nova3d.prefab", "properties": {
+          "asset": "Prefabs/marker.scene.json",
+          "overrides": [
+            { "node": "body", "component": "tag", "property": "value", "value": "right" }
+          ]
+        } }
+      ]
+    }
+  ]
+}

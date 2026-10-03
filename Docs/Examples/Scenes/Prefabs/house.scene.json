@@ -1,0 +1,36 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "House",
+  "nodes": [
+    {
+      "id": "body",
+      "name": "House Body",
+      "transform": {
+        "position": [0, 0, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        { "id": "tag", "type": "nova3d.tag", "properties": { "value": "house" } }
+      ]
+    },
+    {
+      "id": "roof-anchor",
+      "name": "Roof Anchor",
+      "parent": "body",
+      "transform": {
+        "position": [0, 2, 0],
+        "rotationDegrees": [0, 0, 0],
+        "scale": [1, 1, 1]
+      },
+      "components": [
+        {
+          "id": "prefab",
+          "type": "nova3d.prefab",
+          "properties": { "asset": "Prefabs/roof.scene.json" }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "format": "nova3d.visual-baseline",
+  "version": 1,
+  "scene": "pbr-material-csm",
+  "captureVersion": 1,
+  "image": "baseline.png",
+  "captureMetadata": "baseline.capture.json",
+  "imageSha256": "7551bf3cc4bf779d02d48439f477eb0c72e9929d91e68ba0ff07fe979fefaf7a",
+  "captureMetadataSha256": "a050b0d44ceb2960313fdf124be9c3bf0a9ae016194b22a0e3107c27d5b7a021",
+  "channelTolerance": 2,
+  "maxDifferentPixelRatio": 0.001,
+  "environment": {
+    "backend": "DesktopGL",
+    "graphicsAdapter": "NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2",
+    "graphicsProfile": "HiDef",
+    "backBufferFormat": "Color",
+    "depthStencilFormat": "Depth24",
+    "multiSampleCount": 0,
+    "operatingSystem": "Microsoft Windows 10.0.19045",
+    "processArchitecture": "X64"
+  }
+}

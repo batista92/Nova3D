@@ -1152,6 +1152,471 @@ R7 — Tag e GitHub Release                            CONCLUÍDO
 A tag `v0.1.0` permanece no marco original do toolkit. Ela não será movida; os
 módulos opcionais e a experiência para agentes formam a versão `v0.2.0`.
 
+---
+
+## FASE 7 — GAME AUTHORING / Nova3D v0.3
+
+Objetivo: reduzir a quantidade de código e de contexto necessária para uma IA
+transformar assets e uma descrição de gameplay em um jogo 3D completo. A fase
+não busca criar um editor visual, uma linguagem de scripts ou um ECS genérico.
+O foco é um caminho textual, determinístico, validável e compatível com código
+C# escrito pelo jogo.
+
+### Princípios da fase
+
+- MonoGame continua visível; tipos matemáticos, gráficos, áudio e input não são
+  renomeados apenas para criar uma segunda API.
+- Cenas descrevem composição e configuração. Regras de gameplay continuam no
+  projeto do jogo.
+- Todo formato persistido possui versão explícita e diagnóstico com caminho do
+  arquivo, objeto e propriedade que falhou.
+- Parsing e validação devem funcionar sem `GraphicsDevice`; criação e descarte
+  de recursos GPU continuam na graphics thread.
+- Física, UI e futuros módulos permanecem opcionais. O core conhece somente
+  contratos de extensão, nunca implementações dos módulos opcionais.
+- Uma nova abstração só é aprovada com documentação curta, sample compilável,
+  regressão automatizada e evidência de redução de código/contexto para IA.
+- Arquivos inválidos falham claramente. Campos ou componentes desconhecidos
+  não serão ignorados silenciosamente.
+
+```text
+G1 — Scene document e validação                       CONCLUÍDO
+G2 — Scene runtime e prefabs                          CONCLUÍDO
+G3 — Game flow e carregamento                         CONCLUÍDO
+G4 — Input actions e remapeamento                     PLANEJADO
+G5 — glTF skinning e animation                        PLANEJADO
+G6 — Áudio e persistência reutilizável                PLANEJADO
+G7 — Nova3D CLI                                       PLANEJADO
+G8 — Regressão visual e diagnósticos                  PLANEJADO
+G9 — Segundo AI Gate                                  PLANEJADO
+G10 — Release v0.3.0                                  PLANEJADO
+```
+
+### G1 — Scene document e validação
+
+Objetivo: definir um formato declarativo pequeno antes de implementar seu
+runtime. Este marco não renderiza nem instancia física.
+
+```text
+G1.1 — Contrato do formato                           CONCLUÍDO
+   identificador e versão do schema                  IMPLEMENTADO
+   convenção de coordenadas e unidades               IMPLEMENTADO
+   IDs estáveis, nomes e hierarquia                   IMPLEMENTADO
+   transform local: position/rotation/scale           IMPLEMENTADO
+   referências relativas e portáveis                 IMPLEMENTADO
+
+G1.2 — Modelo e parser CPU-only                      CONCLUÍDO
+   documentos de scene, node e component             IMPLEMENTADO
+   leitura/escrita com System.Text.Json               IMPLEMENTADO
+   preservação de ordem determinística                IMPLEMENTADO
+   erro contendo arquivo e JSON path                  IMPLEMENTADO
+
+G1.3 — Validação                                     CONCLUÍDO
+   versão suportada                                   IMPLEMENTADO
+   IDs duplicados e referências ausentes              IMPLEMENTADO
+   ciclos na hierarquia                               IMPLEMENTADO
+   transforms e valores numéricos inválidos           IMPLEMENTADO
+   tipo de componente desconhecido                    IMPLEMENTADO
+   validação agregada sem esconder erros seguintes    IMPLEMENTADO
+
+G1.4 — Contrato para extensão                        CONCLUÍDO
+   registry explícito de component descriptors        IMPLEMENTADO
+   nenhum scan mágico de assemblies                   IMPLEMENTADO
+   módulos opcionais registrados pelo consumidor      IMPLEMENTADO
+   API pública e ownership documentados               IMPLEMENTADO
+
+G1.5 — Evidência                                     CONCLUÍDO
+   fixtures válidas e inválidas                       IMPLEMENTADO (PARSER + VALIDATOR)
+   testes sem janela ou GPU                           IMPLEMENTADO (PARSER + VALIDATOR)
+   JSON Schema distribuído com docs/pacote            IMPLEMENTADO
+   receita curta para agentes                         IMPLEMENTADO
+```
+
+Critério de aceite: um agente consegue gerar uma cena, validá-la e corrigir um
+erro usando apenas o diagnóstico produzido, sem abrir a implementação da
+Nova3D. O schema inicial suportará somente hierarquia, transforms e componentes
+registrados; não haverá herança, expressões ou scripts embutidos.
+
+### G2 — Scene runtime e prefabs
+
+Objetivo: transformar um documento válido em uma instância com lifecycle e
+ownership previsíveis.
+
+```text
+G2.1 — Instanciação em duas fases                    CONCLUÍDO
+   parse/validate no lado CPU                         IMPLEMENTADO
+   resolução/criação GPU na graphics thread           IMPLEMENTADO
+   rollback sem vazamento em falha parcial            IMPLEMENTADO
+   SceneInstance descartável                         IMPLEMENTADO
+
+G2.2 — Componentes v0.3                              CONCLUÍDO
+   model/renderable GLB                               IMPLEMENTADO
+   camera                                             IMPLEMENTADO
+   directional light                                  IMPLEMENTADO
+   ponto de spawn/tag                                 IMPLEMENTADO
+   extensões de física via registry                   IMPLEMENTADO
+
+G2.3 — Assets                                         CONCLUÍDO
+   resolução pelo Assets root + contexto da cena       IMPLEMENTADO
+   cache e ownership explícitos                       IMPLEMENTADO
+   asset ausente com diagnóstico acionável            IMPLEMENTADO
+   cancelamento e descarte seguro                      IMPLEMENTADO
+
+G2.4 — Prefabs                                       CONCLUÍDO
+   formato baseado no mesmo schema de nodes           IMPLEMENTADO
+   instanciação múltipla com IDs isolados             IMPLEMENTADO
+   overrides explícitos e tipados                     IMPLEMENTADO
+   detecção de referência recursiva                    IMPLEMENTADO
+
+G2.5 — Ferramentas e sample                          CONCLUÍDO
+   debug bounds/names por node                        IMPLEMENTADO
+   sample DataDrivenScene                             IMPLEMENTADO
+   template com cena mínima opcional                  IMPLEMENTADO
+```
+
+Gate #6 — Scene Authoring: um nível externo deve ser montado com JSON + assets,
+conter ao menos dois prefabs reutilizados e abrir sem código específico na
+Nova3D. Um arquivo inválido deve falhar antes de alocar recursos GPU. O sample e
+o benchmark atual continuam compilando e sem regressão material.
+
+### G3 — Game flow e carregamento
+
+Objetivo: padronizar troca de fases sem colocar regras de gameplay no toolkit.
+
+```text
+G3.1 — Scene service
+   load, activate, unload e reload                    CONCLUÍDO
+   somente uma transição mutável por vez              CONCLUÍDO
+   cancelamento e recuperação da cena anterior        CONCLUÍDO
+   relatório de progresso sem depender de UI          CONCLUÍDO
+
+G3.2 — Estados reutilizáveis
+   boot, loading, playing, paused e result             CONCLUÍDO
+   hooks controlados pelo jogo                        CONCLUÍDO
+   restart da fase atual                              CONCLUÍDO
+   retorno ao menu sem recursos órfãos                 CONCLUÍDO
+
+G3.3 — Integração
+   UI observa estado, mas não o possui                 CONCLUÍDO
+   física pausa/resume por adaptador opcional          CONCLUÍDO
+   lifecycle documentado no quickstart                CONCLUÍDO
+   regressão de load/unload repetido                  CONCLUÍDO
+```
+
+Critério de aceite: alternar repetidamente entre menu e duas fases não aumenta
+recursos vivos, não deixa corpos físicos antigos e não exige referência de
+`Nova3D` para `Nova3D.UI.Gum` ou `Nova3D.Physics.Bepu`.
+
+### G4 — Input actions e remapeamento
+
+Objetivo: separar intenção de gameplay do dispositivo sem esconder os estados
+MonoGame quando acesso de baixo nível for necessário.
+
+```text
+G4.1 — Action map
+   ações digitais, eixos 1D e eixos 2D                CONCLUÍDO
+   keyboard, mouse e gamepad                          CONCLUÍDO
+   pressed, released, down e value                    CONCLUÍDO
+   deadzone, scale e inversão                         CONCLUÍDO
+
+G4.2 — Contextos
+   gameplay, menu e debug                             CONCLUÍDO
+   prioridade e ativação explícitas                   CONCLUÍDO
+   integração com captura de input do Gum             CONCLUÍDO
+   sem input atravessando modal/pause                 CONCLUÍDO
+
+G4.3 — Remapeamento
+   bindings serializáveis                             CONCLUÍDO
+   detecção de conflito                               CONCLUÍDO
+   defaults recuperáveis                              CONCLUÍDO
+   receita de tela de controles                       CONCLUÍDO
+
+G4.4 — Validação
+   testes de transição determinísticos                CONCLUÍDO
+   teclado e gamepad no sample                        CONCLUÍDO
+   zero alocação por ação no hot path                 CONCLUÍDO
+```
+
+Critério de aceite: o mesmo gameplay funciona com teclado e gamepad, pode ser
+remapeado e persiste os bindings sem conhecer teclas dentro da lógica da fase.
+
+### G5 — glTF skinning e animation
+
+Objetivo: remover a principal limitação para jogos com personagens. A primeira
+etapa é uma prova medida; o transporte da palette para GPU não será escolhido
+sem validar limites reais no perfil HiDef.
+
+```text
+G5.1 — Spike e limites
+   modelos reais de referência                        CONCLUÍDO
+   limite de joints medido/documentado                CONCLUÍDO
+   estratégia de palette comparada                    CONCLUÍDO
+   custo CPU/GPU e sampler budget registrados         CONCLUÍDO
+
+G5.2 — Importação glTF
+   JOINTS_0 e WEIGHTS_0                               CONCLUÍDO
+   skins e inverse bind matrices                      CONCLUÍDO
+   animation samplers e channels                      CONCLUÍDO
+   translation, rotation e scale                      CONCLUÍDO
+   interpolação LINEAR e STEP                         CONCLUÍDO
+
+G5.3 — Runtime
+   skeleton pose                                      CONCLUÍDO
+   clip player: play, loop, speed e stop              CONCLUÍDO
+   blend simples entre dois clips                     CONCLUÍDO
+   atualização sem alocação por joint/frame           CONCLUÍDO
+
+G5.4 — Rendering e debug
+   shader de skinning                                 CONCLUÍDO
+   bounds corretos para pose animada                  CONCLUÍDO
+   skeleton/bones debug                               CONCLUÍDO
+   personagem animado no sample                       CONCLUÍDO
+```
+
+Fora do primeiro corte: IK, retargeting, animação facial, morph targets, root
+motion automático e compressão avançada. Esses itens só entram após uso real.
+
+Gate #7 — Animated Character: um GLB externo deve carregar, reproduzir idle e
+walk, alternar clips sem vazamentos e manter bounds/culling corretos. O gate
+registra número de joints, custo de update, draw calls e limitações do asset.
+
+### G6 — Áudio e persistência reutilizável
+
+Objetivo: extrair apenas comportamento repetido, preservando `SoundEffect`,
+`Song` e `MediaPlayer` na API do jogo.
+
+```text
+G6.1 — Áudio
+   master/music/SFX buses                             CONCLUÍDO
+   volume, mute, fade e loop                          CONCLUÍDO
+   pool limitado de SoundEffectInstance               CONCLUÍDO
+   emitter/listener 3D                               CONCLUÍDO
+   lifecycle e perda de foco                         CONCLUÍDO
+
+G6.2 — Persistência
+   diretório correto por plataforma                   CONCLUÍDO
+   JSON versionado                                    CONCLUÍDO
+   escrita atômica e fallback                         CONCLUÍDO
+   settings, bindings e save slots                    CONCLUÍDO
+   hook explícito para migração                       CONCLUÍDO
+
+G6.3 — Decisão de empacotamento
+   medir repetição em dois jogos                      CONCLUÍDO
+   decidir core versus módulo opcional                CONCLUÍDO
+   impedir dependência de gameplay                    CONCLUÍDO
+```
+
+Critério de aceite: configurações corrompidas recuperam defaults com log claro;
+volume e bindings sobrevivem ao restart; saves usam diretório de usuário e não
+o diretório do executável.
+
+### G7 — Nova3D CLI
+
+Objetivo: disponibilizar validação e diagnóstico sem exigir checkout do
+repositório Nova3D.
+
+```text
+G7.1 — Produto e distribuição
+   projeto dotnet tool separado                      CONCLUÍDO
+   pacote e versão alinhados                         CONCLUÍDO
+   instalação local e via NuGet                      CONCLUÍDO
+
+G7.2 — Comandos
+   nova3d doctor                                     CONCLUÍDO
+   nova3d validate                                   CONCLUÍDO
+   nova3d inspect <model.glb>                        CONCLUÍDO
+   nova3d inspect <scene.json>                       CONCLUÍDO
+   nova3d publish --runtime <RID>                    CONCLUÍDO
+
+G7.3 — Contrato para agentes
+   exit codes estáveis                               CONCLUÍDO
+   saída humana curta                                CONCLUÍDO
+   opção --format json                               CONCLUÍDO
+   nenhuma pergunta interativa em CI                 CONCLUÍDO
+   erros com ação recomendada                        CONCLUÍDO
+```
+
+Em G7.1, "via NuGet" significa que o `DotnetTool` produzido é instalado e
+testado pelo fluxo padrão `dotnet tool install` usando o feed local isolado. A
+publicação desse mesmo pacote em nuget.org permanece uma ação de release em
+G10.3.
+
+Critério de aceite: um projeto gerado e isolado consegue diagnosticar ambiente,
+validar assets/cenas e produzir um executável usando somente o SDK, pacotes e a
+CLI distribuídos.
+
+### G8 — Regressão visual e diagnósticos
+
+Objetivo: detectar automaticamente regressões que compilação e FPS não revelam.
+
+```text
+G8.1 — Captura determinística
+   câmera, resolução, seed e timestep fixos           CONCLUÍDO
+   captura após warm-up conhecido                     CONCLUÍDO
+   metadata de GPU/backend junto da imagem            CONCLUÍDO
+
+G8.2 — Comparação
+   baseline versionada por cena                       CONCLUÍDO
+   tolerância configurável                            CONCLUÍDO
+   diff visual e métricas                             CONCLUÍDO
+   atualização de baseline explícita                  CONCLUÍDO
+
+G8.3 — Cobertura inicial
+   PBR/material                                       CONCLUÍDO
+   CSM                                                CONCLUÍDO
+   terrain/vegetation                                 CONCLUÍDO
+   água/post-FX                                       CONCLUÍDO
+   GLB estático e animado                             CONCLUÍDO
+
+G8.4 — Performance
+   orçamento de frame, draws e triângulos             CONCLUÍDO
+   regressão física                                   PRESERVADA
+   relatório legível por IA                          CONCLUÍDO
+```
+
+Comparações entre GPUs diferentes serão evidência auxiliar, não igualdade
+pixel-perfect. O gate oficial usa ambiente controlado e tolerância registrada.
+
+### G9 — Segundo AI Gate
+
+Objetivo: provar generalidade com um jogo diferente de Marble3D e do benchmark
+de cidade. O projeto permanece em repositório externo e consome somente pacotes
+públicos/locais documentados.
+
+Brief mínimo do jogo de validação:
+
+```text
+personagem GLB animado
+controle em terceira pessoa
+duas cenas carregáveis
+prefabs reutilizados
+obstáculos ou inimigos simples
+input teclado + gamepad remapeável
+menu, pause e HUD
+áudio e settings persistentes
+objetivo, vitória e derrota
+save/progresso mínimo
+publish executável
+```
+
+Evidência obrigatória:
+
+- agente começa somente com `AGENTS.md`, `AI_QUICKSTART.md` e o brief;
+- registrar documentos abertos, intervenções humanas, comandos e falhas;
+- nenhuma cópia de fonte interno da Nova3D para o jogo;
+- cenas e prefabs representam o level, não código procedural equivalente;
+- build, validação, publish e smoke executados por comandos reproduzíveis;
+- issues classificadas pelo template de avaliação antes de alterar a toolkit;
+- comparar linhas de código e contexto consumido com o Gate #5.
+
+Gate #8 — AI Game Production: aprovado quando um agente novo entrega o brief,
+com no máximo correções humanas de requisitos/arte, sem mudanças ad hoc na
+Nova3D e com redução mensurável de código/contexto contra o Marble3D.
+
+O GateGame revelou uma lacuna distinta da capacidade técnica: o menu e as
+configurações seguem um layout genérico, volume é alterado por botões de 25% e
+as células de coleta ficam estáticas. Marble3D mostrou o mesmo problema nos
+menus, embora suas gemas já tenham animação simples.
+Esses jogos são evidência para o próximo marco; build, FPS e funcionalidade não
+atestam qualidade visual ou clareza para o jogador.
+
+### G9.1 — Qualidade de apresentação dos jogos por IA
+
+Este marco melhora o contrato de criação dos próximos jogos, mantendo tema e
+comportamento específicos em cada repositório. Marble3D e GateGame são casos
+de diagnóstico; não serão retrabalhados como produtos. O guia está em
+`Docs/Recipes/game-presentation.md` e é distribuído com o template.
+
+```text
+G9.1a — Brief e direção visual
+   brief GAME_DESIGN.md distribuído no template                         CONCLUÍDO
+   agente inspeciona assets antes de compor menus                        CONTRATO
+   direção visual própria de cada jogo documentada                      CONTRATO
+
+G9.1b — Menus, HUD e settings
+   menus com hierarquia, foco e identidade do jogo                       CONTRATO
+   volume contínuo com slider e valor visível; mute com toggle          CONTRATO
+   remapeamento com cancelar, conflito e restaurar padrões              CONTRATO
+   mouse, teclado, gamepad, resize e persistência                         CONTRATO
+
+G9.1c — Feedback e movimento de objetos
+   pickups com movimento sutil, destaque e coleta                       CONTRATO
+   hazards, checkpoint, saída, vitória e derrota com sinais legíveis     CONTRATO
+   preferência de movimento reduzido respeitada                          CONTRATO
+   sem alocações por objeto a cada frame                                  CONTRATO
+
+G9.1d — Validação por evidência
+   PRESENTATION_REVIEW.md distribuído no template                        CONCLUÍDO
+   capturas de menu, settings, pausa, HUD e resultado                    CONTRATO
+   revisão em resolução alvo e janela menor                              CONTRATO
+   teste real de slider, foco, Back, áudio e coleta                      CONTRATO
+   validação em dois jogos novos, com estilos diferentes                 PENDENTE
+```
+
+Critério de aceite: agentes recebem briefs diferentes e os documentos distribuídos,
+entregam dois jogos novos com menus legíveis e distintos, controles apropriados
+e feedback visível para objetos interativos, e registram capturas e observações.
+Uma inspeção humana das telas e do movimento continua necessária; o prompt
+orienta decisões, mas não garante qualidade por si só. Esta revisão complementa
+os critérios técnicos do Gate #8 e deve ocorrer antes da release seguinte.
+
+### G10 — Release v0.3.0
+
+```text
+G10.1 — Compatibilidade e documentação
+   API index e quickstart atualizados                 IMPLEMENTADO
+   schemas e formatos versionados                     DOCUMENTADO (v1 preservado)
+   breaking changes e migração documentados           IMPLEMENTADO
+
+G10.2 — Automação
+   CI Windows                                         CONFIGURADO; EXECUÇÃO REMOTA PENDENTE
+   CI Linux para build/test aplicável                 CONFIGURADO; EXECUÇÃO REMOTA PENDENTE
+   solution, samples, shaders e templates             VALIDAÇÃO LOCAL APROVADA
+   auditoria dos pacotes preservada                   IMPLEMENTADO
+
+G10.3 — Distribuição
+   IDs e ownership no NuGet confirmados               PENDENTE
+   pacotes assinados/verificáveis, se aplicável       SHA-256 LOCAL; ASSINATURA/CONTA PENDENTE
+   pré-flight reprodutível de release                 IMPLEMENTADO; COMMIT LIMPO PENDENTE
+   template e CLI publicados                          PENDENTE
+   tag e GitHub Release                               PENDENTE
+```
+
+### Ordem de implementação
+
+```text
+G1 Scene document
+ └─► G2 Scene runtime/prefabs ─► G3 Game flow
+             │                         │
+             └─────────────────────────┼─► G9 Segundo AI Gate
+G4 Input actions ──────────────────────┤
+G5 Animation ──────────────────────────┤
+G6 Audio/persistence ──────────────────┤
+G7 CLI ────────────────────────────────┤
+G8 Visual regression ──────────────────┘
+                                      │
+                                      └─► G9.1 Apresentação ─► G10 Release v0.3.0
+```
+
+G8 começa de forma incremental durante G1 e cresce com cada marco; não deve ser
+adiado integralmente para o fim. G5 pode avançar em paralelo conceitualmente,
+mas sua API pública só é estabilizada depois do spike de limits/performance.
+
+### Primeiro incremento implementável
+
+O início da fase será `G1.1–G1.3`, limitado a:
+
+1. escrever a especificação `scene/1` e um exemplo mínimo;
+2. implementar modelo, parser e validador CPU-only;
+3. cobrir arquivos válidos, versão inválida, IDs duplicados, ciclos, referência
+   ausente, componente desconhecido e números não finitos;
+4. integrar a validação ao comando do repositório;
+5. documentar como uma IA cria e corrige uma cena.
+
+Não entram nesse incremento: `GraphicsDevice`, GLB, física, prefabs, hot reload,
+game flow ou mudanças no template. Essa fronteira permite validar o contrato do
+formato antes de acoplar recursos runtime.
+
 ## Roadmap resumido
 
 ```text
@@ -1199,12 +1664,25 @@ FASE 5 — AI DEVELOPER EXPERIENCE         CONCLUÍDA
 FASE 6 — RELEASE v0.2.0                   CONCLUÍDA
 │
 └─ R1–R7                         ← RELEASE v0.2.0 PUBLICADA
+             │
+             ▼
+FASE 7 — GAME AUTHORING / v0.3             PLANEJADA
+│
+├─ G1–G2 Scenes e prefabs          ← GATE #6
+├─ G3–G4 Flow e input
+├─ G5 Animation                    ← GATE #7
+├─ G6–G8 Produção, CLI e regressões
+├─ G9 Segundo jogo por IA          ← GATE #8
+├─ G9.1 Apresentação dos jogos      ← CONTRATO NO TEMPLATE; GATE EM JOGOS NOVOS PENDENTE
+└─ G10 Release v0.3.0
 ```
 
-Os oito testes produziram evidência suficiente para investir na ferramenta. A
-extração começa pelo M1 e deve preservar o benchmark funcionando a cada etapa.
-Não criaremos ECS, scene system ou abstrações de engine sem uma necessidade
-concreta do city builder.
+Os gates anteriores validaram a base técnica, os módulos opcionais, a experiência
+para agentes e a distribuição v0.2. A Fase 7 deve preservar esses gates enquanto
+reduz o trabalho necessário para produzir jogos. Não criaremos ECS, editor visual
+ou abstrações gerais sem evidência nos jogos. O scene system existe
+especificamente para reduzir composição manual, código repetido e contexto
+consumido por agentes.
 
 E há um bônus interessante: o MonoGame continua suportando Windows, Linux e macOS, enquanto Vulkan/DX12 estão entrando como suporte preview na linha 3.8.5. Então podemos começar conservadoramente no backend estável e manter espaço para evoluir depois. ([GitHub][1])
 

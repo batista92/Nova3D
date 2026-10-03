@@ -5,11 +5,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Nova3D</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Authors>Bruno Batista</Authors>
     <Copyright>Copyright © 2026 Bruno Batista</Copyright>
     <Description>3D rendering and world toolkit for MonoGame.</Description>
-    <PackageTags>monogame;3d;rendering;terrain;gltf</PackageTags>
+    <PackageTags>monogame;3d;rendering;terrain;gltf;audio;persistence</PackageTags>
     <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/batista92/Nova3D</PackageProjectUrl>
@@ -22,6 +22,15 @@
     <None Include="PACKAGE.md" Pack="true" PackagePath="\" />
     <None Include="Shaders\**\*.fx" Pack="true"
           PackagePath="contentFiles\any\any\Shaders" />
+    <None Include="..\Docs\Schemas\nova3d.scene.1.schema.json" Pack="true"
+          PackagePath="contentFiles\any\any\Schemas" />
+    <None Include="..\Docs\Schemas\nova3d.visual-capture.1.schema.json" Pack="true"
+          PackagePath="contentFiles\any\any\Schemas" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="SkinningSpike" />
+    <InternalsVisibleTo Include="AudioContractTests" />
   </ItemGroup>
 
 </Project>

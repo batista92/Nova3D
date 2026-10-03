@@ -38,6 +38,11 @@ state.
 16-bit and 32-bit indices. Prefer 16-bit indices when a mesh has at most 65,535
 vertices. A draw must apply every pass of the active effect technique.
 
+For animated glTF, create one `GltfSkeletonPose` per rendered instance and pass
+it to `GltfModelRenderer`. Update the player and call `UpdateBounds` before
+culling; `Draw` refreshes bounds again before submission. The renderer selects
+static or skinned PBR/shadow techniques per primitive.
+
 ## Instancing and LOD
 
 `LodInstancedMeshBatch` performs spatial candidate selection, distance culling,

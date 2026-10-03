@@ -15,7 +15,21 @@ From the Nova3D repository:
 
 The script packs `Nova3D`, `Nova3D.Physics.Bepu`, `Nova3D.UI.Gum` and
 `Nova3D.Templates`, registers the local package feed and installs the `nova3d`
-template.
+template. This enables `dotnet new nova3d`; it does not install the command-line
+tool.
+
+## Install the local CLI
+
+From the same checkout:
+
+```powershell
+.\eng\install-cli.ps1
+.\artifacts\tools\nova3d-cli\nova3d.exe --version
+```
+
+The tool is installed under the repository instead of modifying the user's
+global tool state. See [cli.md](cli.md) for the package and installation
+contract.
 
 ## Create a game
 

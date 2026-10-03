@@ -1,6 +1,8 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.Xna.Framework;
 using Nova3D.Physics.Bepu;
+using Nova3D.Production.Scenes;
 using Nova3D.World.Terrain;
 using Nova3D.World.Streaming;
 
@@ -9,6 +11,7 @@ ValidateKinematicsAndTriggers();
 ValidateShapeCasts();
 ValidateConstraints();
 ValidateCharacterController();
+ValidateSceneFlowIntegration();
 PhysicsGateResult gate = PhysicsGateValidation.Run();
 
 using var physics = new BepuPhysicsWorld(new PhysicsWorldOptions
@@ -90,6 +93,85 @@ Console.WriteLine(
     $"Physics P5 automated PASS | bodies {bodyCount} | {millisecondsPerStep:F3} ms/step | " +
     $"alloc {gate.AllocatedBytesPerStep} B/step | deterministic {gate.DeterminismHash:X16} | " +
     $"ray {hit.Distance:F3} m");
+
+static void ValidateSceneFlowIntegration()
+{
+    using var physics = new BepuPhysicsWorld(new PhysicsWorldOptions { WorkerCount = 1 });
+    using var scenes = new SceneService(new SceneInstantiator());
+    var flow = new SceneFlowController(scenes);
+    var adapter = new BepuSceneFlowAdapter(flow, physics);
+    var observed = new List<SceneFlowState>();
+    flow.StateChanged += (_, current) => observed.Add(current); // A UI only observes.
+
+    using var properties = JsonDocument.Parse("{}");
+    var registry = new SceneComponentRegistry();
+    registry.Register(new TestSceneBodyDescriptor(physics));
+    SceneLoadPlan MakePlan(string id) => SceneLoader.Prepare(
+        new SceneDocument(SceneDocument.FormatName, SceneDocument.CurrentVersion, id,
+        [new SceneNodeDocument(id, id, null,
+            new SceneTransformDocument(new Vector3(0f, 10f, 0f), Vector3.Zero, Vector3.One),
+            [new SceneComponentDocument("body", "test.body", properties.RootElement)])]),
+        registry);
+    var first = MakePlan("phase-a");
+    var second = MakePlan("phase-b");
+
+    flow.ReturnToMenu();
+    if (adapter.Update(1f / 30f) != 0 || physics.BodyCount != 0)
+        throw new InvalidOperationException("Menu must not step or retain scene bodies.");
+    flow.Start(first);
+    if (physics.BodyCount != 1 || !adapter.CanStep || adapter.Update(1f / 30f) == 0)
+        throw new InvalidOperationException("Playing must step its scene-owned physics body.");
+    var body = flow.ActiveScene!.GetComponents<BepuBodyBox>().Single().Body;
+    var failingRegistry = new SceneComponentRegistry();
+    failingRegistry.Register(new TestSceneBodyDescriptor(physics));
+    failingRegistry.Register(new TestSceneFailureDescriptor());
+    var failingPlan = SceneLoader.Prepare(
+        new SceneDocument(SceneDocument.FormatName, SceneDocument.CurrentVersion, "failing",
+        [new SceneNodeDocument("failing", "Failing", null,
+            new SceneTransformDocument(new Vector3(0f, 10f, 0f), Vector3.Zero, Vector3.One),
+            [new SceneComponentDocument("body", "test.body", properties.RootElement),
+             new SceneComponentDocument("failure", "test.failure", properties.RootElement)])]),
+        failingRegistry);
+    try
+    {
+        flow.Start(failingPlan);
+        throw new InvalidOperationException("Expected scene-body rollback test to fail.");
+    }
+    catch (SceneInstantiationException) { }
+    if (flow.State != SceneFlowState.Playing || physics.BodyCount != 1 || !body.Exists)
+        throw new InvalidOperationException("Failed phase replacement leaked a body or lost the old phase.");
+    flow.Pause();
+    var pausedPosition = body.Position;
+    for (var i = 0; i < 4; i++)
+    {
+        if (adapter.Update(1f) != 0 || body.Position != pausedPosition)
+            throw new InvalidOperationException("Paused physics advanced or accumulated elapsed time.");
+    }
+    flow.Resume();
+    if (adapter.Update(1f / 30f) == 0 || body.Position == pausedPosition)
+        throw new InvalidOperationException("Physics did not resume after pause.");
+    flow.ShowResult();
+    if (adapter.Update(1f / 30f) != 0)
+        throw new InvalidOperationException("Result must not step physics.");
+    flow.Restart();
+    if (physics.BodyCount != 1 || body.Exists)
+        throw new InvalidOperationException("Restart retained an old physics body.");
+
+    for (var cycle = 0; cycle < 8; cycle++)
+    {
+        flow.ReturnToMenu();
+        if (physics.BodyCount != 0 || physics.StaticCount != 0 || adapter.CanStep)
+            throw new InvalidOperationException("Menu retained physics resources.");
+        flow.Start(cycle % 2 == 0 ? second : first);
+        if (physics.BodyCount != 1 || adapter.Update(1f / 30f) == 0)
+            throw new InvalidOperationException("Phase switch did not initialize physics cleanly.");
+    }
+    flow.ReturnToMenu();
+    if (physics.BodyCount != 0 || physics.StaticCount != 0 ||
+        !observed.Contains(SceneFlowState.Loading) || !observed.Contains(SceneFlowState.Paused) ||
+        observed[^1] != SceneFlowState.Menu)
+        throw new InvalidOperationException("Flow/UI observation or physics cleanup regressed.");
+}
 
 static void ValidateTerrainPhysics()
 {
@@ -239,4 +321,29 @@ static void ValidateCharacterController()
     Vector3 slid = controller.Move(new Vector3(1f, 0f, 2f));
     if (slid.X > 2.05f || slid.Z < 1.9f)
         throw new InvalidOperationException($"Character sweep-and-slide is incorrect: {slid}");
+}
+
+sealed class BepuBodyBox(BepuBody body)
+{
+    public BepuBody Body { get; } = body;
+}
+
+sealed class TestSceneBodyDescriptor(BepuPhysicsWorld physics) : ISceneRuntimeComponentDescriptor
+{
+    public string Type => "test.body";
+    public void Validate(SceneComponentValidationContext context) { }
+
+    public object Create(SceneComponentInstantiationContext context) =>
+        new BepuBodyBox(physics.CreateDynamicBox(context.WorldTransform.Translation, Vector3.One));
+
+    public void Destroy(object instance) => physics.Remove(((BepuBodyBox)instance).Body);
+}
+
+sealed class TestSceneFailureDescriptor : ISceneRuntimeComponentDescriptor
+{
+    public string Type => "test.failure";
+    public void Validate(SceneComponentValidationContext context) { }
+    public object Create(SceneComponentInstantiationContext context) =>
+        throw new InvalidOperationException("Intentional scene factory failure.");
+    public void Destroy(object instance) { }
 }

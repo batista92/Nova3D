@@ -9,6 +9,8 @@
 
 float4x4 World;
 float4x4 LightViewProjection;
+#define MAX_JOINTS 48
+float4x4 JointPalette[MAX_JOINTS];
 
 struct VertexShaderInput
 {
@@ -21,16 +23,37 @@ struct VertexShaderOutput
     float Depth : TEXCOORD0;
 };
 
-VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+struct SkinnedVertexShaderInput
+{
+    float4 Position : POSITION0;
+    float4 Joints : BLENDINDICES0;
+    float4 Weights : BLENDWEIGHT0;
+};
+
+VertexShaderOutput BuildVertexOutput(float4 localPosition)
 {
     VertexShaderOutput output;
-    float4 clipPosition = mul(mul(input.Position, World), LightViewProjection);
+    float4 clipPosition = mul(mul(localPosition, World), LightViewProjection);
     output.Position = clipPosition;
     output.Depth = clipPosition.z / clipPosition.w;
 #if OPENGL
     output.Depth = output.Depth * 0.5 + 0.5;
 #endif
     return output;
+}
+
+VertexShaderOutput VertexShaderFunction(VertexShaderInput input)
+{
+    return BuildVertexOutput(input.Position);
+}
+
+VertexShaderOutput SkinnedVertexShaderFunction(SkinnedVertexShaderInput input)
+{
+    float4x4 skin = JointPalette[(int)input.Joints.x] * input.Weights.x +
+                    JointPalette[(int)input.Joints.y] * input.Weights.y +
+                    JointPalette[(int)input.Joints.z] * input.Weights.z +
+                    JointPalette[(int)input.Joints.w] * input.Weights.w;
+    return BuildVertexOutput(mul(input.Position, skin));
 }
 
 float4 PixelShaderFunction(VertexShaderOutput input) : COLOR0
@@ -43,6 +66,15 @@ technique ShadowDepth
     pass Pass0
     {
         VertexShader = compile VS_SHADERMODEL VertexShaderFunction();
+        PixelShader = compile PS_SHADERMODEL PixelShaderFunction();
+    }
+}
+
+technique SkinnedShadowDepth
+{
+    pass Pass0
+    {
+        VertexShader = compile VS_SHADERMODEL SkinnedVertexShaderFunction();
         PixelShader = compile PS_SHADERMODEL PixelShaderFunction();
     }
 }

@@ -1,4 +1,8 @@
-# Nova3D v0.2
+# Nova3D (candidato v0.3.0)
+
+A versão 0.3.0 está em preparação; os pacotes ainda não foram publicados.
+Veja a [compatibilidade e migração](Docs/compatibility-0.3.md) e o
+[checklist de release](Docs/RELEASE_0.3.0.md).
 
 Toolkit 3D reutilizável para MonoGame, validado pelo CityBenchmark.
 
@@ -26,7 +30,24 @@ O `Bypass` vale apenas para esse processo e não altera permanentemente a
 política de execução do Windows.
 
 O instalador empacota `Nova3D`, os módulos opcionais e `Nova3D.Templates`,
-registra o feed local e instala o comando `nova3d`.
+registra o feed local e instala o template cujo short name é `nova3d`. Ele
+habilita `dotnet new nova3d`; não instala a ferramenta de linha de comando.
+
+## Instalar a CLI local
+
+```powershell
+.\eng\install-cli.ps1
+```
+
+O script empacota e instala `Nova3D.Cli` de forma local em
+`artifacts/tools/nova3d-cli`. Execute-a com:
+
+```powershell
+.\artifacts\tools\nova3d-cli\nova3d.exe --version
+```
+
+Depois da publicação do pacote, a mesma ferramenta poderá ser instalada como
+qualquer `dotnet tool`; consulte [Docs/cli.md](Docs/cli.md).
 
 ## Criar um jogo
 
@@ -70,6 +91,7 @@ não é versionado. Consulte [ROADMAP.md](ROADMAP.md) para o histórico dos gate
 Nova3D/                    biblioteca principal
 Nova3D.Physics.Bepu/       módulo opcional de física
 Nova3D.UI.Gum/             módulo opcional de UI
+Nova3D.Cli/                ferramenta `dotnet tool`
 Benchmarks/                hosts, cenários e validações de desempenho
 Samples/                   exemplos pequenos e independentes
 templates/                 template `dotnet new nova3d`

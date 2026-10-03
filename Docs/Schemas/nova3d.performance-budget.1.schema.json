@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nova3d.dev/schemas/nova3d.performance-budget.1.schema.json",
+  "title": "Nova3D performance budget version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "version", "scene", "minimumSampleFrames", "referenceEnvironment", "limits"],
+  "properties": {
+    "format": { "const": "nova3d.performance-budget" },
+    "version": { "const": 1 },
+    "scene": { "type": "string", "minLength": 1 },
+    "minimumSampleFrames": { "type": "integer", "minimum": 1 },
+    "referenceEnvironment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "backend", "graphicsAdapter", "graphicsProfile", "multiSampleCount"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "backend": { "type": "string", "minLength": 1 },
+        "graphicsAdapter": { "type": "string", "minLength": 1 },
+        "graphicsProfile": { "type": "string", "minLength": 1 },
+        "multiSampleCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frameIntervalP95Milliseconds", "updateCpuP95Milliseconds", "drawCpuP95Milliseconds", "shadowCpuP95Milliseconds", "worldCpuP95Milliseconds", "postCpuP95Milliseconds", "drawCallsMaximum", "trianglesMaximum", "shadowTrianglesMaximum", "shadowDrawCallsMaximum", "candidatesMaximum"],
+      "properties": {
+        "frameIntervalP95Milliseconds": { "$ref": "#/$defs/limit" },
+        "updateCpuP95Milliseconds": { "$ref": "#/$defs/limit" },
+        "drawCpuP95Milliseconds": { "$ref": "#/$defs/limit" },
+        "shadowCpuP95Milliseconds": { "$ref": "#/$defs/limit" },
+        "worldCpuP95Milliseconds": { "$ref": "#/$defs/limit" },
+        "postCpuP95Milliseconds": { "$ref": "#/$defs/limit" },
+        "drawCallsMaximum": { "type": "integer", "minimum": 0 },
+        "trianglesMaximum": { "type": "integer", "minimum": 0 },
+        "shadowTrianglesMaximum": { "type": "integer", "minimum": 0 },
+        "shadowDrawCallsMaximum": { "type": "integer", "minimum": 0 },
+        "candidatesMaximum": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "$defs": { "limit": { "type": "number", "minimum": 0 } }
+}

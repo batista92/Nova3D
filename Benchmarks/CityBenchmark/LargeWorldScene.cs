@@ -15,6 +15,7 @@ using Nova3D.Physics.Bepu;
 using Nova3D.World.Terrain;
 using Nova3D.World.Streaming;
 using Nova3D.World.Vegetation;
+using Nova3D.Benchmarks.Validation.Performance;
 using NovaDirectionalLight = Nova3D.Rendering.Lighting.DirectionalLight;
 
 namespace Nova3D.Benchmarks.CityBenchmark;
@@ -66,6 +67,23 @@ internal sealed class LargeWorldScene : IDisposable
     public Matrix View => _camera.View;
     public Matrix Projection => _projection;
     public Vector3 HudMarkerPosition => new(0f, LargeWorldTerrain.SampleHeight(0f, 0f) + 45f, 0f);
+
+    public CityPerformanceSnapshot GetPerformanceSnapshot()
+    {
+        var statistics = _renderContext.Statistics;
+        var timings = _renderContext.Profiler.LastMilliseconds;
+        return new CityPerformanceSnapshot(
+            timings.GetValueOrDefault("shadow"),
+            timings.GetValueOrDefault("world"),
+            timings.GetValueOrDefault("post"),
+            statistics.DrawCalls,
+            statistics.Triangles,
+            statistics.ShadowTriangles,
+            statistics.ShadowDrawCalls,
+            statistics.Instances,
+            statistics.VisibleChunks,
+            _forest.CandidateCount + _population.CandidateCount);
+    }
 
     public LargeWorldScene(GraphicsDevice device, Effect terrainEffect, Effect terrainMaterialEffect, Effect waterEffect, Effect vegetationEffect, Effect skyboxEffect,
         Effect shadowEffect, Effect instancedShadowEffect, Effect postProcessEffect, Effect pbrEffect,
@@ -142,37 +160,44 @@ internal sealed class LargeWorldScene : IDisposable
             }));
     }
 
-    public void Update(GameTime gameTime, GameWindow window)
+    public void Update(GameTime gameTime, GameWindow window, bool acceptInput = true)
     {
-        var debugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F1);
-        if (debugKeyDown && !_shadowDebugKeyWasDown)
-            _shadowDebugMode = (_shadowDebugMode + 1) % 5;
-        _shadowDebugKeyWasDown = debugKeyDown;
-        var deformKeyDown = Keyboard.GetState().IsKeyDown(Keys.F2);
-        if (deformKeyDown && !_deformKeyWasDown)
+        if (!acceptInput)
         {
-            TerrainRegion changed = _terrain.DeformRadial(0f, 0f, 95f, 12f);
-            _physicsTerrain.RebuildRegion(changed);
+            _camera.UseDeterministicCapturePose(_vegetationEffect.GraphicsDevice.Viewport);
         }
-        _deformKeyWasDown = deformKeyDown;
-        var geometryDebugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F3);
-        if (geometryDebugKeyDown && !_debugKeyWasDown)
-            _showDebugGeometry = !_showDebugGeometry;
-        _debugKeyWasDown = geometryDebugKeyDown;
-        var galleryKeyDown = Keyboard.GetState().IsKeyDown(Keys.F4);
-        if (galleryKeyDown && !_galleryKeyWasDown)
-            _showGltfGallery = !_showGltfGallery;
-        _galleryKeyWasDown = galleryKeyDown;
-        var physicsDebugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F5);
-        if (physicsDebugKeyDown && !_physicsDebugKeyWasDown)
-            _showPhysicsDebug = !_showPhysicsDebug;
-        _physicsDebugKeyWasDown = physicsDebugKeyDown;
-        var physicsResetKeyDown = Keyboard.GetState().IsKeyDown(Keys.F6);
-        if (physicsResetKeyDown && !_physicsResetKeyWasDown)
-            ResetPhysicsBodies();
-        _physicsResetKeyWasDown = physicsResetKeyDown;
-        _camera.Update(gameTime, window);
-        _camera.SetViewport(_vegetationEffect.GraphicsDevice.Viewport);
+        else
+        {
+            var debugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F1);
+            if (debugKeyDown && !_shadowDebugKeyWasDown)
+                _shadowDebugMode = (_shadowDebugMode + 1) % 5;
+            _shadowDebugKeyWasDown = debugKeyDown;
+            var deformKeyDown = Keyboard.GetState().IsKeyDown(Keys.F2);
+            if (deformKeyDown && !_deformKeyWasDown)
+            {
+                TerrainRegion changed = _terrain.DeformRadial(0f, 0f, 95f, 12f);
+                _physicsTerrain.RebuildRegion(changed);
+            }
+            _deformKeyWasDown = deformKeyDown;
+            var geometryDebugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F3);
+            if (geometryDebugKeyDown && !_debugKeyWasDown)
+                _showDebugGeometry = !_showDebugGeometry;
+            _debugKeyWasDown = geometryDebugKeyDown;
+            var galleryKeyDown = Keyboard.GetState().IsKeyDown(Keys.F4);
+            if (galleryKeyDown && !_galleryKeyWasDown)
+                _showGltfGallery = !_showGltfGallery;
+            _galleryKeyWasDown = galleryKeyDown;
+            var physicsDebugKeyDown = Keyboard.GetState().IsKeyDown(Keys.F5);
+            if (physicsDebugKeyDown && !_physicsDebugKeyWasDown)
+                _showPhysicsDebug = !_showPhysicsDebug;
+            _physicsDebugKeyWasDown = physicsDebugKeyDown;
+            var physicsResetKeyDown = Keyboard.GetState().IsKeyDown(Keys.F6);
+            if (physicsResetKeyDown && !_physicsResetKeyWasDown)
+                ResetPhysicsBodies();
+            _physicsResetKeyWasDown = physicsResetKeyDown;
+            _camera.Update(gameTime, window);
+            _camera.SetViewport(_vegetationEffect.GraphicsDevice.Viewport);
+        }
         _renderContext.BeginFrame(_camera.Camera);
         _time += (float)gameTime.ElapsedGameTime.TotalSeconds;
         _projection = _camera.Projection;

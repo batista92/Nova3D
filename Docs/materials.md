@@ -32,6 +32,10 @@ Normal mapping reconstructs the tangent basis from world-position and UV
 derivatives. v0.2 supports `TEXCOORD_0` only. glTF alpha `BLEND` is currently
 rendered as opaque.
 
+`PBR.fx` contains both `PBR` and `PBRSkinned`. `GltfModelRenderer` selects the
+technique; game code should pass its `GltfSkeletonPose` instead of changing the
+effect technique or uploading `JointPalette` directly.
+
 ## Terrain material
 
 `TerrainMaterial` binds directional light, texture scale, triplanar sharpness

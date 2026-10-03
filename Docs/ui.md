@@ -54,10 +54,27 @@ their APIs.
 being dragged. `Exclusive` captures mouse, keyboard and gamepad, which is suited
 to full-screen menus and modal screens. Read `CapturesMouse`,
 `CapturesKeyboard` and `CapturesGamePad` before forwarding input to gameplay.
+With the core input router, call `GumInputCapture.Read(ui)` after `ui.Update`
+and pass the resulting flags to `InputContextRouter.Update`. Activate a
+blocking menu context for pause/modals; a held key is suppressed until neutral
+when the menu closes, preventing it from triggering gameplay.
 
 Scaling policies are `Expand`, `ZoomHeight` and `ZoomWidth`. `DefaultZoom` is an
 explicit UI/DPI multiplier and must be positive. Gum automatically reapplies the
 chosen policy after a window resize.
+
+## Scene flow observation
+
+`SceneFlowController` belongs to core Nova3D and owns no Gum object. A game
+subscribes to its `StateChanged` event and maps phases to its own Gum screens;
+Gum is an observer, never the source of the current phase. For example, a
+game-owned handler can clear/push its menu screen on `Menu`, HUD on `Playing`
+and a pause modal on `Paused`. Button handlers request `flow.Start`, `Pause`,
+`Resume`, `Restart` or `ReturnToMenu`; they do not mutate screens as a substitute
+for changing the flow. Run these transitions on the graphics thread. Let the
+`GumUiScreenStack` own pushed screens, and dispose it before `GumUiHost`.
+
+No `Nova3D.UI.Gum` reference is required by core scene loading or flow.
 
 ## U3 navigation
 

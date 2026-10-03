@@ -1,0 +1,27 @@
+{
+  "format": "nova3d.performance-budget",
+  "version": 1,
+  "scene": "city-benchmark",
+  "minimumSampleFrames": 240,
+  "referenceEnvironment": {
+    "width": 1280,
+    "height": 720,
+    "backend": "DesktopGL",
+    "graphicsAdapter": "NVIDIA GeForce GTX 1660 SUPER/PCIe/SSE2",
+    "graphicsProfile": "HiDef",
+    "multiSampleCount": 0
+  },
+  "limits": {
+    "frameIntervalP95Milliseconds": 6.5,
+    "updateCpuP95Milliseconds": 4.25,
+    "drawCpuP95Milliseconds": 2.0,
+    "shadowCpuP95Milliseconds": 0.3,
+    "worldCpuP95Milliseconds": 1.65,
+    "postCpuP95Milliseconds": 0.12,
+    "drawCallsMaximum": 500,
+    "trianglesMaximum": 70000,
+    "shadowTrianglesMaximum": 280000,
+    "shadowDrawCallsMaximum": 24,
+    "candidatesMaximum": 12000
+  }
+}

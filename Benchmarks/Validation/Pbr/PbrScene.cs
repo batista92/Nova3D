@@ -59,8 +59,15 @@ internal sealed class PbrScene : IDisposable
                 0, RenderTargetUsage.DiscardContents);
     }
 
-    public void Update(GameTime gameTime, GameWindow window)
+    public void Update(GameTime gameTime, GameWindow window, bool acceptInput = true)
     {
+        if (!acceptInput)
+        {
+            _camera.UseDeterministicPose();
+            window.Title = "Nova3D visual coverage - PBR/material/CSM";
+            return;
+        }
+
         _camera.Update(window);
         var keyboard = Keyboard.GetState();
         for (var i = 0; i <= 8; i++)

@@ -1,0 +1,22 @@
+{
+  "format": "nova3d.scene",
+  "version": 1,
+  "name": "Orange Steps",
+  "nodes": [
+    { "id": "ground", "name": "Ground", "transform": { "position": [0, -0.25, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": false, "size": [14, 0.5, 14], "color": "slate" } }
+    ] },
+    { "id": "step-left", "name": "Left Step", "transform": { "position": [-3, 1.5, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": false, "size": [3, 0.5, 3], "color": "gold" } }
+    ] },
+    { "id": "step-right", "name": "Right Step", "transform": { "position": [3, 3, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": false, "size": [3, 0.5, 3], "color": "gold" } }
+    ] },
+    { "id": "orange-one", "name": "Orange One", "transform": { "position": [-3, 8, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": true, "size": [1.5, 1.5, 1.5], "color": "orange" } }
+    ] },
+    { "id": "orange-two", "name": "Orange Two", "transform": { "position": [3, 11, 0], "rotationDegrees": [0, 0, 0], "scale": [1, 1, 1] }, "components": [
+      { "id": "box", "type": "sample.rigid-box", "properties": { "dynamic": true, "size": [1.5, 1.5, 1.5], "color": "orange" } }
+    ] }
+  ]
+}

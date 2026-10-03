@@ -42,11 +42,33 @@ initialization, supplies a focused button and draws after the 3D world. Without
 `--ui`, the generated project has no Gum dependency. Both modules can be used
 together with `--physics --ui`.
 
-Template release validation must generate and build default, `--physics`,
-`--ui` and `--physics --ui` variants. This catches conditional-source failures
-and verifies that optional packages remain absent from the default project.
+Add an editable JSON scene with two instances of one prefab:
+
+```powershell
+dotnet new nova3d -n MySceneGame --scene
+cd MySceneGame
+dotnet run
+```
+
+The scene variant reads `Assets/Scenes/starter.scene.json` and
+`Assets/Prefabs/marker.scene.json`, prepares the hierarchy before runtime
+allocation and renders placeholder cubes for tagged nodes. The same option can
+be combined with `--physics` and `--ui`. The default template does not include
+these scene files.
+
+Template release validation generates and builds default, `--physics`,
+`--ui`, `--physics --ui`, `--scene` and fully combined variants. This catches
+conditional-source failures and verifies that optional packages remain absent
+from the default project.
 
 The generated project references the `Nova3D` NuGet package rather than the
 Nova3D source repository. The local installer registers `artifacts/packages` as
 the `Nova3D-Local` feed. When Nova3D is published, users only need to install
 `Nova3D.Templates` from NuGet and the same project template remains valid.
+
+Every generated project also includes `GAME_DESIGN.md` and
+`PRESENTATION_REVIEW.md`. An AI agent should fill the first from the game's brief
+and assets before composing UI, then inspect real screenshots and complete the
+second before presenting the game as finished. The bundled
+`Docs/Recipes/game-presentation.md` gives the short design and validation
+contract. The optional Gum overlay demonstrates lifecycle only.

@@ -1,4 +1,12 @@
-# Releasing Nova3D 0.2.0
+# Releasing Nova3D
+
+For the current 0.3 candidate, use the [0.3 release checklist](RELEASE_0.3.0.md)
+and [compatibility guide](compatibility-0.3.md). The 0.2 record below is
+historical and does not imply that 0.3 has been published.
+On a clean release commit, `eng/prepare-release.ps1` binds package hashes and
+graphics evidence to that commit without publishing or creating a tag.
+
+## Historical 0.2.0 release
 
 Nova3D, its optional physics/UI modules and its project template are independent
 packages. `Nova3D.Benchmarks` is a consumer and is not included in them.
@@ -34,9 +42,17 @@ packages. `Nova3D.Benchmarks` is a consumer and is not included in them.
 .\eng\validate.ps1
 ```
 
-The command builds MGCB content, runs the physics regression, packs and audits
-all four packages, and builds all four template variants using an isolated
-template hive.
+The command builds MGCB content, runs the automated regressions, packs and
+audits all five packages, installs the CLI package in an isolated tool path and
+builds all six template variants using an isolated template hive.
 See [validation.md](validation.md) for focused options. Use
 `eng/install-template.ps1` only when the template should be installed globally
 for interactive development.
+
+## Next coordinated release
+
+`Nova3D.Cli` is now a fifth package with the same version as the core, optional
+modules and templates. Before publishing it, repository validation must audit
+its `DotnetTool` payload and complete an isolated install plus
+`nova3d --version` smoke. Publication to nuget.org remains a release action;
+G7.1 only prepares and verifies the package locally. See [cli.md](cli.md).

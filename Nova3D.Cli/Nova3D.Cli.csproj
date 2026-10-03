@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>nova3d</ToolCommandName>
+    <PackageId>Nova3D.Cli</PackageId>
+    <Version>0.3.0</Version>
+    <Authors>Bruno Batista</Authors>
+    <Copyright>Copyright © 2026 Bruno Batista</Copyright>
+    <Description>Command-line validation and diagnostics for Nova3D projects.</Description>
+    <PackageTags>monogame;nova3d;cli;tool;validation</PackageTags>
+    <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/batista92/Nova3D</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/batista92/Nova3D.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Nova3D\Nova3D.csproj" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <None Include="PACKAGE.md" Pack="true" PackagePath="\" />
+    <None Include="..\Docs\Schemas\nova3d.visual-baseline.1.schema.json" Pack="true"
+          PackagePath="tools\net8.0\any\Schemas" />
+    <None Include="..\Docs\Schemas\nova3d.performance-report.1.schema.json" Pack="true"
+          PackagePath="tools\net8.0\any\Schemas" />
+    <None Include="..\Docs\Schemas\nova3d.performance-budget.1.schema.json" Pack="true"
+          PackagePath="tools\net8.0\any\Schemas" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="VisualRegressionContractTests" />
+    <InternalsVisibleTo Include="PerformanceReportContractTests" />
+  </ItemGroup>
+
+</Project>

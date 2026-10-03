@@ -20,16 +20,22 @@ Classify the requested work before loading more context:
 |---|---|
 | known implementation task | `Docs/Recipes/README.md`, then one recipe |
 | choose or understand a public type | `Docs/API_INDEX.md` |
-| lifecycle, persistence, audio, publish | `Docs/game-project-guide.md` |
+| lifecycle, persistence, publish | `Docs/game-project-guide.md` |
+| audio mixing and playback lifecycle | `Docs/audio.md` |
+| settings, bindings and save slots | `Docs/persistence.md` |
 | rendering/frame passes | `Docs/rendering.md` |
 | shaders/materials | `Docs/shaders.md`, `Docs/materials.md` |
 | terrain/streaming/vegetation | `Docs/terrain.md` |
+| scene documents/authoring | `Docs/scenes.md` |
 | GLB/runtime assets | `Docs/GltfImport.md`, `Docs/AssetManagement.md` |
 | physics | `Docs/physics.md` |
 | UI/menu/HUD | `Docs/ui.md` |
+| full game presentation and interactive feedback | `GAME_DESIGN.md`, `Docs/Recipes/game-presentation.md` |
 | performance | `Docs/performance.md` |
 | failure diagnosis | `Docs/troubleshooting.md` |
 | public API or architecture change | `Docs/architecture.md`, `Docs/AI_GUIDE.md` |
+| core versus optional package | `Docs/package-boundaries.md` |
+| CLI installation and commands | `Docs/cli.md` |
 
 In a Nova3D source checkout, use `Samples/README.md` to find the smallest
 compilable example. Do not load every sample or topic document preemptively.
@@ -59,9 +65,17 @@ Search existing APIs and samples before adding a type. Keep rendering and
 simulation separate, preserve documented resource ownership and create/destroy
 GPU resources on the graphics thread.
 
-Use direct MonoGame input/audio/content APIs. Use the optional physics and UI
-packages only when the game requests those capabilities. Critical snippets
+Use direct MonoGame input and content APIs. Preserve MonoGame audio asset and
+playback types; use `AudioSystem` only for its documented coordination behavior.
+Use the optional physics and UI packages only when the game requests those capabilities. Critical snippets
 should become a compilable sample or regression check when changing Nova3D.
+
+For a full game, complete `GAME_DESIGN.md` using the actual brief and assets
+before making menus. Give continuous settings continuous controls, binary
+settings toggles, and interactive objects visible feedback. Replace the starter
+Gum overlay with a design that fits the game. Capture and inspect the rendered
+screens, record results in `PRESENTATION_REVIEW.md`, and revise weak layouts
+before calling the game finished. Never infer visual quality from a build.
 
 ## Validate
 
