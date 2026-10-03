@@ -111,6 +111,20 @@ function Write-PackageHashManifest {
     Write-Host "PASS package SHA-256 manifest $manifest"
 }
 
+function Test-GeneratedGitIgnore {
+    param(
+        [Parameter(Mandatory)] [string]$Contents,
+        [Parameter(Mandatory)] [string]$Path
+    )
+
+    # dotnet new may normalize the generated file to the host's line endings.
+    # Check an entire rule line without assuming LF or CRLF.
+    $rules = @($Contents -split '\r\n|\n|\r')
+    if ($rules -notcontains 'dist/') {
+        throw "Generated project does not ignore publish output: $Path"
+    }
+}
+
 function Get-ZipEntryText {
     param(
         [Parameter(Mandatory)] $Archive,
@@ -695,6 +709,8 @@ function Test-TemplateVariants {
 
     $script:temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) (
         'nova3d-validation-' + [Guid]::NewGuid().ToString('N'))
+    Test-GeneratedGitIgnore "bin/`ndist/`n" 'LF regression fixture'
+    Test-GeneratedGitIgnore "bin/`r`ndist/`r`n" 'CRLF regression fixture'
     $hive = Join-Path $temporaryRoot 'template-hive'
     $games = Join-Path $temporaryRoot 'games'
     New-Item -ItemType Directory -Force -Path $hive, $games | Out-Null
@@ -785,9 +801,7 @@ function Test-TemplateVariants {
             throw "Non-scene variant unexpectedly contains a scene document: $sceneFile"
         }
         $gitIgnoreContents = Get-Content -Raw -LiteralPath $gitIgnore
-        if ($gitIgnoreContents -notmatch '(?m)^dist/$') {
-            throw "Generated project does not ignore publish output: $gitIgnore"
-        }
+        Test-GeneratedGitIgnore $gitIgnoreContents $gitIgnore
         Invoke-DotNetStep ("restore {0}" -f $variant.Name) @(
             'restore', $project, '--configfile', $nugetConfig)
         Invoke-DotNetStep ("build {0}" -f $variant.Name) @(

@@ -4,6 +4,8 @@ All notable changes to Nova3D are recorded in this file.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-03
+
 ### Added
 
 - versioned `nova3d.scene` version 1 authoring contract, strict CPU-only parser,
@@ -60,8 +62,8 @@ All notable changes to Nova3D are recorded in this file.
 
 ### Changed
 
-- coordinated package and generated-template references for the 0.3.0 release
-  candidate; added Windows package/template CI, Linux CPU-contract CI and an
+- coordinated package and generated-template references for the 0.3.0 release;
+  added Windows package/template CI, Linux CPU-contract CI and an
   explicit compatibility/format-version guide;
 - audio coordination and persistence remain in the core `Nova3D` package after
   a two-consumer repetition/dependency audit; BEPU and Gum remain optional;

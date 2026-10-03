@@ -25,7 +25,7 @@ rules stay in the game repository.
 | `Nova3D.UI.Gum` | Gum lifecycle, navigation and HUD helpers | yes |
 | `Nova3D.Cli` | Distributed validation and diagnostics command | tool |
 
-The 0.3 candidate keeps all five package versions coordinated. Its additive
+The 0.3 release keeps all five package versions coordinated. Its additive
 upgrade path and independent document-format versions are in
 [compatibility-0.3.md](compatibility-0.3.md).
 
@@ -74,7 +74,7 @@ Unload
 ```
 
 Create, update and destroy GPU resources on the graphics thread in v0.2 and
-the 0.3 candidate.
+v0.3.
 
 ## Ownership
 
@@ -120,7 +120,7 @@ and prefabs to a generated game.
 For visual G3 flow validation, run `Samples/SceneFlow`: it switches two JSON
 levels and shows Gum state plus BEPU body/static counts.
 
-## Current hard limits (v0.2 and 0.3 candidate)
+## Current hard limits (v0.2 and v0.3)
 
 - CSM has exactly four cascades.
 - Treat 16 pixel samplers as a portability limit.

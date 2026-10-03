@@ -1,6 +1,7 @@
 # Nova3D 0.3.0 release checklist
 
-Status: release candidate, not published. This checklist must be completed
+Status: GitHub release candidate; NuGet publication is deferred by project
+decision. This checklist must be completed
 against one clean, committed source revision. Do not tag a previous revision
 or upload packages built from uncommitted source.
 
@@ -45,25 +46,24 @@ records the full candidate.
 
 ## Package identity and provenance
 
-- [ ] Confirm `Nova3D`, `Nova3D.Physics.Bepu`, `Nova3D.UI.Gum`,
-  `Nova3D.Cli` and `Nova3D.Templates` IDs and publisher ownership in the
-  authenticated NuGet account. An unlisted/404 page proves neither ownership
-  nor reserved-ID availability.
-- [ ] Choose an applicable package-signing method or explicitly document why
-  signing is unavailable. Do not claim an unsigned package is signed.
-  Current local packages are unsigned (`dotnet nuget verify` reports `NU3004`).
-  The SHA-256 manifest detects byte changes but does not authenticate an
-  author. [NuGet.org repository-signs packages](https://learn.microsoft.com/en-us/nuget/reference/signed-packages-reference)
-  after publication; [author signing requires a suitable registered certificate](https://learn.microsoft.com/en-us/nuget/create-packages/sign-a-package).
-  Decide this in the
-  authenticated publisher account before uploading.
 - [ ] Build all five `.nupkg` files from one committed revision. Retain the
   archive audit output, `SHA256SUMS.txt` and `RELEASE_PROVENANCE.json` for the
   exact upload files.
 - [ ] Confirm every package and the generated template reference `0.3.0`.
-- [ ] Publish all five packages, including the template and CLI, only after
-  ownership and provenance checks; verify the published dependencies and an
-  isolated install from nuget.org.
+- [ ] Attach all five packages, including template and CLI, to the GitHub
+  Release. They are local-feed packages, not packages published on nuget.org.
+
+NuGet publication is explicitly deferred. The five IDs are not yet on
+nuget.org; confirm publisher ownership and signing policy before the future
+upload. Current local packages are unsigned (`dotnet nuget verify` reports
+`NU3004`). The SHA-256 manifest detects byte changes but does not authenticate
+an author. [NuGet.org repository-signs packages](https://learn.microsoft.com/en-us/nuget/reference/signed-packages-reference)
+after publication; [author signing requires a suitable registered certificate](https://learn.microsoft.com/en-us/nuget/create-packages/sign-a-package).
+
+For local use from this source checkout, run `eng/install-template.ps1` and
+`eng/install-cli.ps1`. For GitHub Release downloads, keep all five `.nupkg`
+files together in one local package source before installing the template or
+CLI; generated games must restore the matching core and optional packages.
 
 ## Tag and GitHub Release
 

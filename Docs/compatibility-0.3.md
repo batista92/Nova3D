@@ -1,7 +1,7 @@
 # Nova3D 0.3 compatibility and migration
 
-This page describes the 0.3 release candidate. It is not evidence that the
-packages have been published. Keep all five Nova3D packages at the same version.
+This page describes the 0.3 source/GitHub release. Publication on nuget.org is
+deferred; keep all five Nova3D local-feed packages at the same version.
 
 ## Upgrade from 0.2.0
 
@@ -21,7 +21,7 @@ packages have been published. Keep all five Nova3D packages at the same version.
    authored files. The starter UI is not a finished game presentation.
 
 No intentionally removed or renamed 0.2 public API is recorded for this
-candidate. This is a source-migration statement, not a binary compatibility
+release. This is a source-migration statement, not a binary compatibility
 guarantee: rebuild consumers and run their own Release and visual checks.
 
 ## Persisted and automation formats

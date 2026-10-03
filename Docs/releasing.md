@@ -1,8 +1,8 @@
 # Releasing Nova3D
 
-For the current 0.3 candidate, use the [0.3 release checklist](RELEASE_0.3.0.md)
+For the 0.3 source/GitHub release, use the [0.3 release checklist](RELEASE_0.3.0.md)
 and [compatibility guide](compatibility-0.3.md). The 0.2 record below is
-historical and does not imply that 0.3 has been published.
+historical. NuGet publication for 0.3 is deferred.
 On a clean release commit, `eng/prepare-release.ps1` binds package hashes and
 graphics evidence to that commit without publishing or creating a tag.
 

@@ -1,6 +1,7 @@
-# Nova3D (candidato v0.3.0)
+# Nova3D v0.3.0
 
-A versão 0.3.0 está em preparação; os pacotes ainda não foram publicados.
+A distribuição v0.3.0 usa pacotes locais/anexos da GitHub Release; a publicação
+no nuget.org foi adiada.
 Veja a [compatibilidade e migração](Docs/compatibility-0.3.md) e o
 [checklist de release](Docs/RELEASE_0.3.0.md).
 

@@ -1575,10 +1575,10 @@ G10.2 — Automação
    auditoria dos pacotes preservada                   IMPLEMENTADO
 
 G10.3 — Distribuição
-   IDs e ownership no NuGet confirmados               PENDENTE
-   pacotes assinados/verificáveis, se aplicável       SHA-256 LOCAL; ASSINATURA/CONTA PENDENTE
+   IDs e ownership no NuGet confirmados               ADIADO POR DECISÃO (FEED LOCAL)
+   pacotes assinados/verificáveis, se aplicável       SHA-256 LOCAL; NUGET ADIADO
    pré-flight reprodutível de release                 IMPLEMENTADO; COMMIT LIMPO PENDENTE
-   template e CLI publicados                          PENDENTE
+   template e CLI no nuget.org                        ADIADO POR DECISÃO (FEED LOCAL)
    tag e GitHub Release                               PENDENTE
 ```
 
